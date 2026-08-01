@@ -1,0 +1,715 @@
+<section id="view-stock" class="view-section">
+<x-view-header title="Manajemen Stok Barang" icon="bx bx-package">
+    <div class="flex gap-4 mobile-stack-flex">
+        <div class="search-bar">
+            <i class='bx bx-search'></i>
+            <input type="text" id="stockSearch" placeholder="Cari nama barang atau kode...">
+        </div>
+
+        <button class="btn btn-primary" onclick="openStockModal()">
+            <i class='bx bx-plus'></i> Tambah
+        </button>
+    </div>
+</x-view-header>
+
+<x-table :headers="['Kode', 'Nama Barang', 'Lokasi Rak', 'Supplier Utama', 'Harga Beli', 'Diskon', 'Stok Aktif', 'Tgl Masuk', 'Status', 'Aksi', 'Histori']">
+    <tbody id="stockTableBody">
+        <tr>
+            <td colspan="11" style="text-align:center; padding:20px;">Memuat data stok...</td>
+        </tr>
+    </tbody>
+</x-table>
+</section>
+
+<!-- Modal Input Barang Masuk -->
+<x-modal id="modalStockIn" title="Input Barang Masuk">
+    <x-input-group label="Scan Barcode / ID Barang">
+        <div style="display:flex; gap:8px;">
+            <input type="text" class="input-control" id="scanStock" placeholder="Scan Barcode..."
+                onkeypress="handleScanStock(event)">
+            <button class="btn btn-secondary" onclick="lookupStockBarcode()"><i
+                    class='bx bx-search'></i></button>
+        </div>
+    </x-input-group>
+
+    <x-input-group label="Nama Barang (Auto-fill)">
+        <input type="text" class="input-control" id="stkNamaBarang" value="" disabled
+            style="background:#F3F4F6;">
+        <input type="hidden" id="stkIdBarang">
+    </x-input-group>
+
+    <x-glass-card padding="16px" display="block">
+        <h4 style="margin-top:0; margin-bottom: 12px; font-size: 12px; color: var(--text-main);"><i
+                class='bx bx-link'></i> Tautkan Supplier Awal (Opsional)</h4>
+        <div class="grid" style="grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+            <x-input-group label="Pilih Supplier" marginBottom="0">
+                <select id="stkIdSupplier" class="input-control">
+                    <option value="">-- Lewati / Tidak Ada --</option>
+                </select>
+            </x-input-group>
+            <x-input-group label="Harga Beli" marginBottom="0">
+                <input type="number" id="stkHargaBeli" class="input-control" placeholder="Rp">
+            </x-input-group>
+            <x-input-group label="Diskon (%)" marginBottom="0">
+                <input type="number" id="stkDiskonPersen" class="input-control" placeholder="0" min="0" max="100">
+            </x-input-group>
+        </div>
+    </x-glass-card>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
+        <x-input-group label="Stok Barang (Box)" marginBottom="0">
+            <input type="number" class="input-control" id="stkQtyBox" placeholder="0">
+        </x-input-group>
+        <x-input-group label="Satuan (PCS)" marginBottom="0">
+            <input type="number" class="input-control" id="stkSatuanPcs" placeholder="1" value="1">
+        </x-input-group>
+    </div>
+
+    <x-slot name="footer">
+        <button class="btn btn-secondary" onclick="closeStockModal()">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanStok" onclick="simpanBarangMasuk()">Simpan</button>
+    </x-slot>
+</x-modal>
+
+
+<!-- Modal Edit Barang -->
+<x-modal id="modalEditStock" title="Edit Barang" maxWidth="600px">
+    <input type="hidden" id="editStockId">
+    <div class="grid" style="grid-template-columns: 1fr; gap: 12px;">
+        <x-input-group label="Nama Barang *" marginBottom="0">
+            <input type="text" class="input-control" id="editStockNama" required>
+        </x-input-group>
+        <x-input-group label="Barcode 1" marginBottom="0">
+            <input type="text" class="input-control" id="editStockBarcode1">
+        </x-input-group>
+        <x-input-group label="Barcode 2" marginBottom="0">
+            <input type="text" class="input-control" id="editStockBarcode2">
+        </x-input-group>
+        <x-input-group label="Status Barang" marginBottom="0">
+            <select class="input-control" id="editStockStatus">
+                <option value="Aktif">Aktif</option>
+                <option value="Nonaktif">Nonaktif</option>
+            </select>
+        </x-input-group>
+        <x-input-group label="Stok Barang (PCS)" marginBottom="0">
+            <input type="number" class="input-control" id="editStockJumlahBox">
+        </x-input-group>
+    </div>
+
+    <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+    <div style="margin-bottom: 12px;">
+        <h4 style="margin:0; font-size: 12px; color: var(--text-main);"><i class='bx bx-link'></i> Tautan
+            Supplier & Harga Beli</h4>
+    </div>
+
+    <x-glass-card padding="16px" display="block" style="margin-bottom: 20px; background: rgba(0,0,0,0.02);">
+        <div class="grid" style="grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end;">
+            <x-input-group label="Supplier" marginBottom="0">
+                <select class="input-control" id="formStkSupplierSelect"></select>
+            </x-input-group>
+            <x-input-group label="Harga Beli" marginBottom="0">
+                <input type="number" class="input-control" id="formStkHargaBeli" placeholder="0">
+            </x-input-group>
+            <x-input-group label="Diskon (%)" marginBottom="0">
+                <input type="number" class="input-control" id="formStkDiskonPersen" placeholder="0" min="0" max="100">
+            </x-input-group>
+            <button class="btn btn-primary" onclick="tambahStockSupplier()">Tambah</button>
+        </div>
+    </x-glass-card>
+
+    <x-table :headers="['Supplier', 'Harga Beli', 'Diskon (%)', 'Aksi']">
+        <tbody id="stockBarangSupplierTableBody">
+            <tr>
+                <td colspan="4" style="text-align:center;">Memuat data...</td>
+            </tr>
+        </tbody>
+    </x-table>
+
+    <x-slot name="footer">
+        <button class="btn btn-secondary" onclick="tutupModalEditStock()">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanEditStock" onclick="simpanEditStock()">Simpan</button>
+    </x-slot>
+</x-modal>
+
+<!-- Modal Histori -->
+<x-modal id="modalHistoriBarang" title="Histori Barang" titleId="historiBarangTitle" maxWidth="800px">
+    <x-table :headers="['Waktu', 'Jenis', 'Deskripsi Perubahan', 'User']">
+        <tbody id="historiTableBody">
+        </tbody>
+    </x-table>
+</x-modal>
+
+<script>
+    let masterStockList = [];
+    let masterSupplierDataStock = [];
+    let semuaBarangSupplierDataStock = null;
+
+    function initStockView() {
+        if (AppState.user.role === "Kasir") return; // Akses ditolak untuk kasir
+
+        Promise.all([
+            BackendAPI.call('getStockList'),
+            BackendAPI.call('getPengaturanDiskon')
+        ]).then(([data, diskon]) => {
+            if (typeof globalDiskon !== 'undefined') {
+                globalDiskon = diskon;
+            } else {
+                window.globalDiskon = diskon;
+            }
+            masterStockList = data;
+            renderStockTable(data, diskon.MINIMUM_STOK || 5);
+        }).catch(err => {
+            document.getElementById('stockTableBody').innerHTML = `<tr><td colspan="10" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
+        });
+    }
+
+    function renderStockTable(data, minStokGlobal) {
+        const tbody = document.getElementById('stockTableBody');
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Tidak ada data barang.</td></tr>`;
+            return;
+        }
+
+        const currentMinStok = minStokGlobal !== undefined ? minStokGlobal : (typeof globalDiskon !== 'undefined' ? (globalDiskon.MINIMUM_STOK || 5) : 5);
+
+        data.sort((a, b) => new Date(b.tanggal_masuk || 0) - new Date(a.tanggal_masuk || 0));
+        tbody.innerHTML = data.map(b => {
+            const stok = Number(b.stok_saat_ini) || 0;
+            const minStok = currentMinStok; // Force refer ke global minimum stok
+            const isWarning = stok <= minStok;
+            const statusVal = b.status_stok || 'Aktif';
+            const statusBadge = statusVal === "Aktif" ? "badge-success" : "badge-secondary";
+            const satuan = b.satuan || 'PCS';
+            const isiPerBox = Number(b.isi_per_box) || 1;
+            const barcodeStr = [b.barcode1, b.barcode2].filter(Boolean).join(', ');
+
+            let utamaSup = null;
+            if (b.suppliers && b.suppliers.length > 0) {
+                utamaSup = b.suppliers.reduce((max, s) => (Number(s.harga_beli) > Number(max.harga_beli)) ? s : max, b.suppliers[0]);
+            }
+            const namaSup = utamaSup ? utamaSup.nama_supplier : '-';
+            const hargaBeli = utamaSup ? (Number(utamaSup.harga_beli) || 0) : 0;
+            const diskonPersen = utamaSup ? (Number(utamaSup.diskon_persen) || 0) : 0;
+
+            const extraSupCount = (b.suppliers && b.suppliers.length > 1)
+                ? `<br><small style="color:var(--primary-color); font-size: 10px;">(+${b.suppliers.length - 1} lainnya) <i class='bx bx-chevron-down'></i></small>`
+                : `<br><small style="color:var(--primary-color); font-size: 10px;">Lihat Detail <i class='bx bx-chevron-down'></i></small>`;
+
+            const tglMasukStr = b.tanggal_masuk ? new Date(b.tanggal_masuk).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-';
+
+            return `
+            <tr id="row-stock-${b.id_barang}" onclick="toggleDetailSupplierStock('${b.id_barang}')" style="cursor:pointer; border-bottom: 1px solid var(--border-color);">
+                <td>
+                    <div style="display:flex; flex-direction:column; font-weight: 500; word-break: break-all;">
+                        <span>${b.id_barang}</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">${barcodeStr || '-'}</span>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-weight: 500;">${b.nama_barang}</div>
+                </td>
+                <td>
+                    <div style="font-size: 12px; color: var(--text-muted);">${b.lokasi_rak || '-'}</div>
+                </td>
+                <td>
+                    <div style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="${namaSup}">${namaSup}</div>
+                    ${extraSupCount}
+                </td>
+                <td><span style="font-size: 11px;">Rp ${hargaBeli.toLocaleString('id-ID')}</span></td>
+                <td><span style="font-size: 11px;">${diskonPersen}%</span></td>
+                <td>
+                    <span style="color: ${isWarning ? 'var(--danger-color)' : 'inherit'}; font-weight: ${isWarning ? '700' : '500'};">
+                        ${stok} ${satuan}
+                        ${isWarning ? '<span style="color:var(--danger-color); margin-left: 4px;" title="Stok di bawah minimum!"><i class=\'bx bx-error-circle bx-flashing\'></i></span>' : ''}
+                    </span>
+                </td>
+                <td><span style="font-size: 11px;">${tglMasukStr}</span></td>
+                <td><span class="badge ${statusBadge}">${statusVal}</span></td>
+                <td onclick="event.stopPropagation();" style="white-space: nowrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="bukaModalEditStock('${b.id_barang}')"><i class='bx bx-edit'></i> Edit</button>
+                    ${statusVal === "Nonaktif" ? `<button class="btn btn-sm" style="background:var(--danger-color);color:white; margin-left: 4px;" onclick="hapusBarangStok('${b.id_barang}')" title="Hapus Permanen"><i class='bx bx-trash'></i></button>` : ''}
+                </td>
+                <td onclick="event.stopPropagation();">
+                    <button class="btn btn-secondary btn-sm" onclick="bukaHistoriBarang('${b.id_barang}', '${b.nama_barang}')" title="Histori"><i class='bx bx-history'></i></button>
+                </td>
+            </tr>
+            <tr id="detail-stock-${b.id_barang}" style="display:none; background: #fafbfc; border-top: none;">
+                <td colspan="11" style="padding: 0;">
+                    <div id="detail-wrapper-stock-${b.id_barang}" style="display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-in-out;">
+                        <div style="overflow: hidden;">
+                            <div style="padding: 16px 24px;">
+                                <div id="detail-content-stock-${b.id_barang}" style="border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                                    <div style="text-align:center; color:var(--text-muted); font-size: 12px;"><i class='bx bx-loader-alt bx-spin'></i> Memuat detail supplier...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            `;
+        }).join('');
+    }
+
+    function toggleDetailSupplierStock(idBarang) {
+        const tbody = document.getElementById('stockTableBody');
+        if (tbody) {
+            const allDetailRows = tbody.querySelectorAll('tr[id^="detail-stock-"]');
+            allDetailRows.forEach(row => {
+                if (row.id !== `detail-stock-${idBarang}` && row.style.display !== 'none') {
+                    const rowId = row.id.replace('detail-stock-', '');
+                    const wrapper = document.getElementById(`detail-wrapper-stock-${rowId}`);
+                    if (wrapper) wrapper.style.gridTemplateRows = '0fr';
+                    setTimeout(() => {
+                        if (wrapper && wrapper.style.gridTemplateRows === '0fr') row.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+
+        const detailRow = document.getElementById(`detail-stock-${idBarang}`);
+        const wrapper = document.getElementById(`detail-wrapper-stock-${idBarang}`);
+
+        if (detailRow.style.display === 'none') {
+            detailRow.style.display = 'table-row';
+            loadDetailSupplierStock(idBarang);
+            setTimeout(() => {
+                if (wrapper) wrapper.style.gridTemplateRows = '1fr';
+            }, 10);
+        } else {
+            if (wrapper) wrapper.style.gridTemplateRows = '0fr';
+            setTimeout(() => {
+                if (wrapper && wrapper.style.gridTemplateRows === '0fr') detailRow.style.display = 'none';
+            }, 300);
+        }
+    } function loadDetailSupplierStock(idBarang) {
+        const container = document.getElementById(`detail-content-stock-${idBarang}`);
+
+        // Gunakan data suppliers yang sudah di-embed di getStockList (tidak perlu call Barang_Supplier lagi)
+        const b = masterStockList.find(x => x.id_barang === idBarang);
+        if (!b) {
+            container.innerHTML = `<div style="text-align:center; color: var(--text-muted); font-size: 12px;"><i class='bx bx-info-circle'></i> Data barang tidak ditemukan.</div>`;
+            return;
+        }
+
+        const suppliers = b.suppliers || [];
+        if (suppliers.length === 0) {
+            container.innerHTML = `<div style="text-align:center; color: var(--text-muted); font-size: 12px;"><i class='bx bx-info-circle'></i> Belum ada data harga supplier yang ditautkan ke barang ini.</div>`;
+            return;
+        }
+
+        let html = `<h4 style="margin-top:0; margin-bottom:12px; font-size: 12px; color:var(--text-main); display:flex; align-items:center; gap:6px;"><i class='bx bx-buildings'></i> Daftar Harga dari Supplier</h4>`;
+        html += `<table class="table" style="margin:0; background: transparent; box-shadow: none;">
+                    <thead style="background: rgba(0,0,0,0.02);">
+                        <tr>
+                            <th style="padding: 8px 12px;">Nama Supplier</th>
+                            <th style="padding: 8px 12px;">Harga Beli</th>
+                            <th style="padding: 8px 12px;">Diskon</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+        suppliers.forEach(s => {
+            html += `<tr>
+                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee;">
+                            <div style="font-weight:600; font-size: 12px; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+                                ${s.nama_supplier}
+                            </div>
+                        </td>
+                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee; font-weight:600;">Rp ${Number(s.harga_beli).toLocaleString('id-ID')}</td>
+                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee;">${s.diskon_persen ? s.diskon_persen + '%' : '-'}</td>
+                     </tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    }
+
+    // Search filter
+    document.getElementById('stockSearch').addEventListener('input', function (e) {
+        const keyword = this.value.toLowerCase();
+        const filtered = masterStockList.filter(b =>
+            String(b.nama_barang || '').toLowerCase().includes(keyword) ||
+            String(b.barcode || '').toLowerCase().includes(keyword) ||
+            String(b.id_barang || '').toLowerCase().includes(keyword)
+        );
+        renderStockTable(filtered);
+    });
+
+    function bukaHistoriBarang(idBarang, namaBarang) {
+        document.getElementById('modalHistoriBarang').classList.add('active');
+        document.getElementById('historiBarangTitle').textContent = `Histori Barang: ${namaBarang}`;
+        const tbody = document.getElementById('historiTableBody');
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;"><i class='bx bx-loader-alt bx-spin'></i> Memuat histori...</td></tr>`;
+
+        BackendAPI.call('getHistoriBarang', [idBarang])
+            .then(data => {
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Belum ada histori.</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = data.map(h => {
+                    const date = new Date(h.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+                    return `
+                    <tr>
+                        <td>${date}</td>
+                        <td><span class="badge badge-secondary">${h.jenis}</span></td>
+                        <td>${h.deskripsi}</td>
+                        <td>${h.user}</td>
+                    </tr>
+                    `;
+                }).join('');
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">Error: ${err.message}</td></tr>`;
+            });
+    }
+
+    function tutupHistoriBarang() {
+        document.getElementById('modalHistoriBarang').classList.remove('active');
+    }
+
+    function bukaModalEditStock(idBarang) {
+        const b = masterStockList.find(x => x.id_barang === idBarang);
+        if (!b) return;
+        document.getElementById('editStockId').value = b.id_barang;
+        document.getElementById('editStockNama').value = b.nama_barang;
+
+        document.getElementById('editStockBarcode1').value = b.barcode1 || "";
+        document.getElementById('editStockBarcode2').value = b.barcode2 || "";
+        document.getElementById('editStockStatus').value = b.status_stok || "Aktif";
+        // Stok dan satuan dari Barang_Supplier (is_utama)
+        document.getElementById('editStockJumlahBox').value = b.stok_saat_ini || 0;
+
+        if (masterSupplierDataStock.length === 0) {
+            BackendAPI.call('getSemuaSupplier').then(data => {
+                masterSupplierDataStock = data;
+                populateStockSupplierDropdown();
+            });
+        } else {
+            populateStockSupplierDropdown();
+        }
+
+        loadStockBarangSupplier(idBarang);
+
+        document.getElementById('modalEditStock').classList.add('active');
+    }
+
+    function tutupModalEditStock() {
+        document.getElementById('modalEditStock').classList.remove('active');
+    }
+
+    function populateStockSupplierDropdown() {
+        const select = document.getElementById('formStkSupplierSelect');
+        const activeSuppliers = masterSupplierDataStock.filter(s => s.status_supplier === 'Aktif');
+        select.innerHTML = activeSuppliers.map(s => `<option value="${s.id_supplier}">${s.nama_supplier}</option>`).join('');
+    }
+
+    function loadStockBarangSupplier(idBarang) {
+        const tbody = document.getElementById('stockBarangSupplierTableBody');
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Memuat data...</td></tr>`;
+
+        BackendAPI.call('getBarangSupplier').then(bsList => {
+            semuaBarangSupplierDataStock = bsList;
+            const filtered = bsList.filter(row => row.id_barang === idBarang && row.status === "Aktif");
+
+            if (masterSupplierDataStock.length === 0) {
+                return BackendAPI.call('getSemuaSupplier').then(sups => {
+                    masterSupplierDataStock = sups;
+                    renderTableStockBarangSupplier(filtered);
+                });
+            } else {
+                renderTableStockBarangSupplier(filtered);
+            }
+        }).catch(err => {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Error: ${err.message}</td></tr>`;
+        });
+    }
+
+    function renderTableStockBarangSupplier(filteredData) {
+        const tbody = document.getElementById('stockBarangSupplierTableBody');
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Belum ada supplier.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filteredData.map(bs => {
+            const sup = masterSupplierDataStock.find(s => s.id_supplier === bs.id_supplier);
+            const namaSup = sup ? sup.nama_supplier : bs.id_supplier;
+            const diskon = bs.diskon_persen ? bs.diskon_persen : '-';
+            return `
+                <tr id="row-stk-${bs.id_barang_supplier}">
+                    <td>${namaSup}</td>
+                    <td>Rp ${Number(bs.harga_beli || 0).toLocaleString('id-ID')}</td>
+                    <td>${diskon !== '-' ? diskon + '%' : '-'}</td>
+                    <td style="text-align:center;">
+                        <button class="btn btn-sm" style="background:var(--warning-color,#f59e0b);color:white;margin-right:4px;" onclick="editTautanStockSupplier('${bs.id_barang_supplier}', ${bs.harga_beli || 0}, ${bs.diskon_persen || 0})"><i class='bx bx-edit'></i></button>
+                        <button class="btn btn-sm" style="background:var(--danger-color);color:white;" onclick="hapusTautanStockSupplier('${bs.id_barang_supplier}')"><i class='bx bx-trash'></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function editTautanStockSupplier(idBs, hargaBeli, diskonPersen) {
+        const row = document.getElementById('row-stk-' + idBs);
+        if (!row) return;
+        row.innerHTML = `
+            <td colspan="3">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <div style="flex:1;">
+                        <small style="display:block;color:var(--text-muted);margin-bottom:2px;">Harga Beli</small>
+                        <input type="number" id="editStkHarga-${idBs}" class="input-control" value="${hargaBeli}" style="height:32px;font-size: 11px;">
+                    </div>
+                    <div style="flex:0 0 90px;">
+                        <small style="display:block;color:var(--text-muted);margin-bottom:2px;">Diskon (%)</small>
+                        <input type="number" id="editStkDiskon-${idBs}" class="input-control" value="${diskonPersen}" min="0" max="100" style="height:32px;font-size: 11px;">
+                    </div>
+                </div>
+            </td>
+            <td style="text-align:center;">
+                <button class="btn btn-sm" style="background:var(--primary-color);color:white;margin-right:4px;" onclick="simpanEditTautanStockSupplier('${idBs}')"><i class='bx bx-check'></i></button>
+                <button class="btn btn-sm" style="background:var(--secondary-color,#6b7280);color:white;" onclick="batalEditTautanStockSupplier()"><i class='bx bx-x'></i></button>
+            </td>
+        `;
+    }
+
+    function simpanEditTautanStockSupplier(idBs) {
+        const harga = document.getElementById('editStkHarga-' + idBs);
+        const diskon = document.getElementById('editStkDiskon-' + idBs);
+        if (!harga) return;
+
+        const newHarga = Number(harga.value);
+        const newDiskon = Number(diskon ? diskon.value : 0) || 0;
+
+        if (!newHarga) return showToast("Harga Beli tidak boleh kosong.", "error");
+
+        showToast("Menyimpan...", "info");
+        BackendAPI.call('updateBarangSupplier', [idBs, {
+            harga_beli: newHarga,
+            diskon_persen: newDiskon,
+            status: "Aktif"
+        }]).then(() => {
+            showToast("Berhasil diupdate", "success");
+            const idBarang = document.getElementById('editStockId').value;
+            loadStockBarangSupplier(idBarang);
+        }).catch(err => showToast(err.message, "error"));
+    }
+
+    function batalEditTautanStockSupplier() {
+        const idBarang = document.getElementById('editStockId').value;
+        loadStockBarangSupplier(idBarang);
+    }
+
+    function tambahStockSupplier() {
+        const idBarang = document.getElementById('editStockId').value;
+        const idSupplier = document.getElementById('formStkSupplierSelect').value;
+        const hargaBeli = document.getElementById('formStkHargaBeli').value;
+        const diskonPersen = document.getElementById('formStkDiskonPersen').value || 0;
+
+        if (!idSupplier || !hargaBeli) {
+            return showToast("Pilih supplier dan isi harga beli.", "error");
+        }
+
+        showToast("Menambahkan supplier...", "info");
+        BackendAPI.call('tambahBarangSupplier', [{
+            id_barang: idBarang,
+            id_supplier: idSupplier,
+            harga_beli: hargaBeli,
+            diskon_persen: diskonPersen
+        }]).then(() => {
+            showToast("Supplier berhasil ditambahkan", "success");
+            document.getElementById('formStkHargaBeli').value = '';
+            document.getElementById('formStkDiskonPersen').value = '';
+            loadStockBarangSupplier(idBarang);
+            if (typeof loadMasterBarang === 'function') loadMasterBarang();
+        }).catch(err => showToast(err.message, "error"));
+    }
+
+    function hapusTautanStockSupplier(idBarangSupplier) {
+        showConfirmModal("Hapus supplier ini dari barang?", function() {
+            showToast("Menghapus...", "info");
+            BackendAPI.call('hapusBarangSupplier', [idBarangSupplier]).then(() => {
+                showToast("Supplier dihapus dari barang", "success");
+                const idBarang = document.getElementById('editStockId').value;
+                loadStockBarangSupplier(idBarang);
+                if (typeof loadMasterBarang === 'function') loadMasterBarang();
+            }).catch(err => showToast(err.message, "error"));
+        }, "Hapus Supplier");
+    }
+
+    function simpanEditStock() {
+        const idBarang = document.getElementById('editStockId').value;
+        const b = masterStockList.find(x => x.id_barang === idBarang);
+        if (!b) return;
+
+        const bc1 = document.getElementById('editStockBarcode1').value.trim();
+        const bc2 = document.getElementById('editStockBarcode2').value.trim();
+
+        // Data untuk Master Barang (nama, barcode)
+        const dataBarang = {
+            nama_barang: document.getElementById('editStockNama').value,
+            barcode1: bc1,
+            barcode2: bc2,
+            kategori: b.kategori || "",
+            merk: b.merk || ""
+        };
+
+        // Data untuk Stok (disimpan di Barang_Supplier is_utama)
+        const dataStok = {
+            stok_saat_ini: Number(document.getElementById('editStockJumlahBox').value) || b.stok_saat_ini,
+            isi_per_box: 1,
+            status: document.getElementById('editStockStatus').value || b.status_stok
+        };
+
+        if (!dataBarang.nama_barang) return showToast("Nama barang wajib diisi", "error");
+
+        const btn = document.getElementById('btnSimpanEditStock');
+        btn.disabled = true;
+        btn.innerHTML = "Menyimpan...";
+
+        // Dua panggilan parallel: update barang + update stok di BS
+        Promise.all([
+            BackendAPI.call('updateMasterBarang', [idBarang, dataBarang]),
+            BackendAPI.call('updateStokBarang', [idBarang, dataStok])
+        ]).then(() => {
+            showToast("Data barang berhasil diupdate", "success");
+            tutupModalEditStock();
+            initStockView(); // refresh table
+        }).catch(err => {
+            showToast(err.message, "error");
+        }).finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = "Simpan";
+        });
+    }
+
+    function hapusBarangStok(idBarang) {
+        showConfirmModal("Peringatan: Ini akan menghapus seluruh data stok, harga, dan riwayat gudang untuk barang ini secara permanen (kecuali Master Barang). Lanjutkan?", function() {
+            showToast("Menghapus data stok...", "info");
+            BackendAPI.call('hapusTotalKecualiMaster', [idBarang]).then(() => {
+                showToast("Data stok berhasil dihapus", "success");
+                masterStockList = masterStockList.filter(x => x.id_barang !== idBarang);
+                renderStockTable(masterStockList);
+                if (typeof loadMasterBarang === 'function') loadMasterBarang();
+            }).catch(err => showToast(err.message, "error"));
+        }, "Hapus Seluruh Data Stok");
+    }
+
+    function toggleStatusBarang(idBarang, currentStatus) {
+        const statusBaru = currentStatus === 'Aktif' ? 'Nonaktif' : 'Aktif';
+        showConfirmModal(`Ubah status barang ini menjadi ${statusBaru}?`, function() {
+            showToast('Menyimpan status...');
+            BackendAPI.call('updateStatusBarang', [idBarang, statusBaru])
+                .then(() => {
+                    showToast(`Status berhasil diubah menjadi ${statusBaru}`, 'success');
+                    initStockView(); // Refresh table
+                })
+                .catch(err => showToast(err.message, 'error'));
+        }, "Ubah Status Barang");
+    }
+
+    function openStockModal() {
+        const populateAwal = () => {
+            const select = document.getElementById('stkIdSupplier');
+            const activeSuppliers = masterSupplierDataStock.filter(s => s.status_supplier === 'Aktif');
+            select.innerHTML = '<option value="">-- Lewati / Tidak Ada --</option>' +
+                activeSuppliers.map(s => `<option value="${s.id_supplier}">${s.nama_supplier}</option>`).join('');
+        };
+        if (masterSupplierDataStock.length === 0) {
+            BackendAPI.call('getSemuaSupplier').then(res => {
+                masterSupplierDataStock = res;
+                populateAwal();
+            });
+        } else {
+            populateAwal();
+        }
+
+        document.getElementById('modalStockIn').classList.add('active');
+        setTimeout(() => document.getElementById('scanStock').focus(), 100);
+    }
+
+    function closeStockModal() {
+        document.getElementById('modalStockIn').classList.remove('active');
+        document.getElementById('scanStock').value = '';
+        document.getElementById('stkIdBarang').value = '';
+        document.getElementById('stkNamaBarang').value = '';
+        document.getElementById('stkQtyBox').value = '';
+        document.getElementById('stkHargaBeli').value = '';
+        if (document.getElementById('stkDiskonPersen')) document.getElementById('stkDiskonPersen').value = '';
+        if (document.getElementById('stkSatuanPcs')) document.getElementById('stkSatuanPcs').value = '1';
+        const sup = document.getElementById('stkIdSupplier');
+        if (sup) sup.value = '';
+    }
+
+    function handleScanStock(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            lookupStockBarcode();
+        }
+    }
+
+    function lookupStockBarcode() {
+        const barcode = document.getElementById('scanStock').value.trim();
+        if (!barcode) return;
+
+        showToast("Mencari barang...");
+        BackendAPI.call('scanBarcodeStock', [barcode])
+            .then(b => {
+                document.getElementById('stkIdBarang').value = b.id_barang;
+                document.getElementById('stkNamaBarang').value = b.nama_barang;
+                document.getElementById('stkQtyBox').focus();
+                showToast("Barang ditemukan", "success");
+            })
+            .catch(err => showToast(err.message, "error"));
+    }
+
+    function simpanBarangMasuk() {
+        const idBarang = document.getElementById('stkIdBarang').value;
+        const idSupplier = document.getElementById('stkIdSupplier').value;
+        const hargaBeli = Number(document.getElementById('stkHargaBeli').value) || 0;
+        const diskonPersen = Number(document.getElementById('stkDiskonPersen') ? document.getElementById('stkDiskonPersen').value : 0) || 0;
+        const qtyBox = Number(document.getElementById('stkQtyBox').value) || 0;
+        const isiPerBox = Number(document.getElementById('stkSatuanPcs').value) || 0;
+
+        if (!idBarang) {
+            return showToast("Silakan scan barang terlebih dahulu!", "error");
+        }
+        if (!idSupplier) {
+            return showToast("Pilih supplier saat restock barang.", "error");
+        }
+        if (qtyBox === 0) {
+            return showToast("Kuantitas box tidak boleh 0.", "error");
+        }
+        if (isiPerBox === 0) {
+            return showToast("Satuan PCS (Isi per box) tidak boleh 0.", "error");
+        }
+
+        const btn = document.getElementById('btnSimpanStok');
+        btn.disabled = true;
+        btn.innerHTML = "Menyimpan...";
+
+        const tanggal = new Date().toISOString();
+
+        BackendAPI.call('inputBarangMasuk', [idBarang, idSupplier, qtyBox, isiPerBox, hargaBeli, tanggal, diskonPersen, ""])
+            .then(() => {
+                showToast('Setup stok barang berhasil disimpan', 'success');
+                closeStockModal();
+                initStockView(); // Refresh table
+            })
+            .catch(err => showToast(err.message, 'error'))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = "Simpan";
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Observer to load data when stock view becomes active
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 'view-stock' && mutation.target.classList.contains('active')) {
+                    initStockView();
+                }
+            });
+        });
+        observer.observe(document.getElementById('view-stock'), { attributes: true, attributeFilter: ['class'] });
+    });
+</script>

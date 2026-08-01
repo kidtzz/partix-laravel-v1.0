@@ -1,0 +1,533 @@
+<style>
+    /* Premium Bento Grid Variables */
+    :root {
+        --bento-gap: 24px;
+        --card-radius: 20px;
+    }
+
+    .bento-layout {
+        display: flex;
+        flex-direction: column;
+        gap: var(--bento-gap);
+        margin-bottom: 40px;
+    }
+
+    .bento-row-split {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--bento-gap);
+    }
+
+    .bento-row-chart {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--bento-gap);
+    }
+
+    @media (max-width: 1024px) {
+        .bento-row-split, .bento-row-chart, .bento-row-split-3 {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        :root {
+            --bento-gap: 16px;
+            --card-radius: 16px;
+        }
+        .dash-card {
+            padding: 16px;
+        }
+        .dash-value {
+            font-size: 18px !important;
+        }
+        .bento-panel {
+            padding: 16px;
+        }
+        .dash-icon-box {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+    }
+
+    .dash-card {
+        border-radius: var(--card-radius);
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .dash-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+        border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .dash-icon-box {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .dash-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
+        opacity: 0.8;
+    }
+
+    .dash-value {
+        font-size: clamp(18px, 2.5vw, 24px);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+        word-break: break-word;
+    }
+
+    .bento-panel {
+        background: #ffffff;
+        border-radius: var(--card-radius);
+        padding: 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-width: 0;
+    }
+
+    .bento-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .bento-panel-title {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+
+<div id="view-dashboard" class="view-section">
+    <x-view-header title="Dashboard & Laporan" icon="">
+        <div style="color: var(--text-muted); margin-top: 4px; grid-column: 1 / -1;">Ringkasan Kondisi Toko secara Real-time</div>
+    </x-view-header>
+
+    <div class="bento-layout">
+        <!-- ROW 1: Hero Stats -->
+        <div class="bento-row-split-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--bento-gap); margin-bottom: var(--bento-gap);">
+            <div class="dash-card" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div class="dash-title" style="color: #556270;">Total Stok Barang</div>
+                        <div id="dashTotalStock" class="dash-value" style="color: #2c3e50;">...</div>
+                    </div>
+                    <div class="dash-icon-box" style="background: #ffffff; color: #556270;">
+                        <i class='bx bx-box'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div class="dash-title" style="color: var(--success-color);">Penjualan Hari Ini</div>
+                        <div id="dashTotalSales" class="dash-value" style="color: #166534;">...</div>
+                    </div>
+                    <div class="dash-icon-box" style="background: #ffffff; color: var(--success-color);">
+                        <i class='bx bx-cart'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div class="dash-title" style="color: var(--primary-color); display: flex; align-items: center; gap: 8px;">
+                            <span id="dashRevenueTitle">Pendapatan Hari Ini</span>
+                            <select id="filterPendapatan" style="padding: 2px 4px; font-size: 9px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: var(--primary-color); border-radius: 4px; cursor: pointer; outline: none;" onchange="updatePendapatanView()">
+                                <option value="harian" selected>Harian</option>
+                                <option value="mingguan">Mingguan</option>
+                                <option value="bulanan">Bulanan</option>
+                                <option value="tahunan">Tahunan</option>
+                            </select>
+                        </div>
+                        <div id="dashTotalRevenue" class="dash-value" style="color: #1e3a8a;">...</div>
+                    </div>
+                    <div class="dash-icon-box" style="background: #ffffff; color: var(--primary-color);">
+                        <i class='bx bx-wallet-alt'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Split (Rincian Pendapatan | Potongan | Refund) -->
+        <div class="bento-row-split-3" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--bento-gap); margin-bottom: var(--bento-gap);">
+            <!-- Left: Rincian Pendapatan -->
+            <div class="bento-panel">
+                <div class="bento-panel-header">
+                    <h3 class="bento-panel-title">
+                        <i class='bx bx-pie-chart-alt-2' style="color: var(--primary-color);"></i>
+                        <span id="dashRincianTitle">Rincian Pendapatan Hari Ini</span>
+                    </h3>
+                    <select id="filterRincian" class="input-control" style="width: auto; padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: var(--primary-color); cursor: pointer;" onchange="updateRincianView()">
+                        <option value="harian" selected>Harian</option>
+                        <option value="mingguan">Mingguan</option>
+                        <option value="bulanan">Bulanan</option>
+                        <option value="tahunan">Tahunan</option>
+                    </select>
+                </div>
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; flex: 1;">
+                    <div class="dash-card" style="background: #f8fafc; border: none; box-shadow: none; padding: 20px;">
+                        <div class="dash-title" style="color: #64748b; font-size: 10px;">Tunai (Cash)</div>
+                        <div id="dashCashHariIni" class="dash-value" style="color: #0f172a; font-size: 14px !important;">...</div>
+                    </div>
+                    <div class="dash-card" style="background: #f8fafc; border: none; box-shadow: none; padding: 20px;">
+                        <div class="dash-title" style="color: #64748b; font-size: 10px;">Transfer Bank</div>
+                        <div id="dashTransferHariIni" class="dash-value" style="color: #0f172a; font-size: 14px !important;">...</div>
+                    </div>
+                    <div class="dash-card" style="background: #f8fafc; border: none; box-shadow: none; padding: 20px;">
+                        <div class="dash-title" style="color: #64748b; font-size: 10px;">QRIS / E-Wallet</div>
+                        <div id="dashQRISHariIni" class="dash-value" style="color: #0f172a; font-size: 14px !important;">...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Potongan Penjualan -->
+            <div class="bento-panel" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: #fecdd3;">
+                <div class="bento-panel-header">
+                    <h3 class="bento-panel-title" style="color: #e11d48;">
+                        <i class='bx bx-cut'></i> Potongan Kasir
+                    </h3>
+                    <select id="filterPotongan" class="input-control" style="width: auto; padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: #be123c;" onchange="updatePotonganView()">
+                        <option value="harian">Harian</option>
+                        <option value="mingguan">Mingguan</option>
+                        <option value="bulanan" selected>Bulanan</option>
+                        <option value="tahunan">Tahunan</option>
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div id="dashPotonganTitle" class="dash-title" style="color: #f43f5e;">Potongan Bulan Ini</div>
+                    <div id="dashPotonganValue" class="dash-value" style="color: #881337;">...</div>
+                </div>
+            </div>
+
+            <!-- Right 2: Refund / Retur -->
+            <div class="bento-panel" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fcd34d;">
+                <div class="bento-panel-header">
+                    <h3 class="bento-panel-title" style="color: #d97706;">
+                        <i class='bx bx-revision'></i> Retur & Refund
+                    </h3>
+                    <select id="filterRefund" class="input-control" style="width: auto; padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: #d97706; cursor: pointer;" onchange="updateRefundView()">
+                        <option value="harian" selected>Harian</option>
+                        <option value="mingguan">Mingguan</option>
+                        <option value="bulanan">Bulanan</option>
+                        <option value="tahunan">Tahunan</option>
+                    </select>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div id="dashRefundTitle" class="dash-title" style="color: #d97706;">Total Refund Hari Ini</div>
+                    <div id="dashRefundHariIni" class="dash-value" style="color: #92400e;">...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 3: Split (Grafik 65% | Low Stock 35%) -->
+        <div class="bento-row-chart">
+            <!-- Left: Chart -->
+            <div class="bento-panel">
+                <div class="bento-panel-header">
+                    <h3 class="bento-panel-title">
+                        <i class='bx bx-line-chart' style="color: var(--primary-color);"></i> Grafik Penjualan (7 Hari)
+                    </h3>
+                </div>
+                <div style="min-height: 250px; height: 300px; width: 100%; position: relative;">
+                    <canvas id="salesGrowthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: Low Stock -->
+            <div class="bento-panel">
+                <div class="bento-panel-header">
+                    <h3 class="bento-panel-title" style="color: var(--danger-color);">
+                        <i class='bx bx-error-circle'></i> Stok Menipis
+                    </h3>
+                </div>
+                <div style="flex: 1; max-height: 300px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <x-table :headers="['ID Barang', 'Nama Barang', 'Sisa Stok', 'Batas Minimum', 'Satuan']" style="margin-bottom: 0;">
+                        <tbody id="dashLowStockTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center;">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </x-table>
+                </div>
+            </div>
+</div>
+</div>
+</div>
+
+<script>
+    function initDashboardView() {
+        if (!AppState.user || AppState.user.role !== "Admin") {
+            // Tolak akses jika bukan Admin
+            showToast("Akses ditolak. Hanya Admin yang dapat melihat Dashboard.", "error");
+            switchView('penjualan');
+            return;
+        }
+        loadDashboardData();
+    }
+
+    function loadDashboardData() {
+        document.getElementById('dashTotalStock').textContent = "...";
+        document.getElementById('dashTotalSales').textContent = "...";
+        document.getElementById('dashTotalRevenue').textContent = "...";
+        document.getElementById('dashLowStockTableBody').innerHTML = `<tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>`;
+
+        BackendAPI.call('getDashboardStats').then(stats => {
+            document.getElementById('dashTotalStock').textContent = stats.totalStockBarang.toLocaleString('id-ID');
+            document.getElementById('dashTotalSales').textContent = (stats.totalPenjualanHariIni || 0).toLocaleString('id-ID') + ' Transaksi';
+            // Simpan stats untuk dipakai filter
+            window.currentDashboardStats = stats;
+            
+            updatePendapatanView();
+            updateRincianView();
+            updatePotonganView();
+            updateRefundView();
+
+            const tbody = document.getElementById('dashLowStockTableBody');
+            if (stats.notifikasiStockMinimum.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--success-color);">Semua stok barang aman.</td></tr>`;
+            } else {
+                tbody.innerHTML = stats.notifikasiStockMinimum.map(b => `
+                    <tr>
+                        <td style="font-weight: 600;">${b.id_barang}</td>
+                        <td>${b.nama_barang}</td>
+                        <td><span class="badge badge-secondary" style="background: rgba(231, 76, 60, 0.1); color: var(--danger-color);">${b.stok_saat_ini}</span></td>
+                        <td>${b.minimum_stock}</td>
+                        <td>${b.satuan}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Render Chart
+            renderSalesChart(stats.dailySales);
+        }).catch(err => {
+            showToast("Gagal memuat Dashboard: " + err.message, "error");
+            document.getElementById('dashLowStockTableBody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger-color);">Error: ${err.message}</td></tr>`;
+        });
+    }
+
+    let salesChartInstance = null;
+    function renderSalesChart(dailySales) {
+        const ctx = document.getElementById('salesGrowthChart').getContext('2d');
+        
+        // Generate last 7 days dates for X axis
+        const labels = [];
+        const dataPoints = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toLocaleString('en-CA', { timeZone: 'Asia/Jakarta' }).split(',')[0].trim();
+            labels.push(dateStr);
+            dataPoints.push((dailySales && dailySales[dateStr]) ? dailySales[dateStr] : 0);
+        }
+
+        if (salesChartInstance) {
+            salesChartInstance.destroy();
+        }
+
+        salesChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pendapatan (Rp)',
+                    data: dataPoints,
+                    borderColor: '#4F46E5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4F46E5',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#4F46E5',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed.y !== null) {
+                                    label += 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + value.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 'view-dashboard' && mutation.target.classList.contains('active')) {
+                    initDashboardView();
+                }
+            });
+        });
+        const view = document.getElementById('view-dashboard');
+        if (view) {
+            observer.observe(view, { attributes: true, attributeFilter: ['class'] });
+            // Cek langsung (berjaga-jaga jika class 'active' sudah di-set sebelum observer attach)
+            setTimeout(() => {
+                if (view.classList.contains('active')) {
+                    initDashboardView();
+                }
+            }, 100);
+        }
+    });
+
+    function updatePotonganView() {
+        if (!window.currentDashboardStats) return;
+        const val = document.getElementById('filterPotongan').value;
+        const valueEl = document.getElementById('dashPotonganValue');
+        const titleEl = document.getElementById('dashPotonganTitle');
+        const stats = window.currentDashboardStats;
+        
+        if (val === 'harian') {
+            titleEl.textContent = 'Potongan Hari Ini';
+            valueEl.textContent = "Rp " + (stats.totalPotonganHariIni || 0).toLocaleString('id-ID');
+        } else if (val === 'mingguan') {
+            titleEl.textContent = 'Potongan Minggu Ini';
+            valueEl.textContent = "Rp " + (stats.totalPotonganMingguIni || 0).toLocaleString('id-ID');
+        } else if (val === 'bulanan') {
+            titleEl.textContent = 'Potongan Bulan Ini';
+            valueEl.textContent = "Rp " + (stats.totalPotonganBulanIni || 0).toLocaleString('id-ID');
+        } else if (val === 'tahunan') {
+            titleEl.textContent = 'Potongan Tahun Ini';
+            valueEl.textContent = "Rp " + (stats.totalPotonganTahunIni || 0).toLocaleString('id-ID');
+        }
+    }
+
+    function updatePendapatanView() {
+        if (!window.currentDashboardStats) return;
+        const val = document.getElementById('filterPendapatan').value;
+        const valueEl = document.getElementById('dashTotalRevenue');
+        const titleEl = document.getElementById('dashRevenueTitle');
+        const stats = window.currentDashboardStats;
+        
+        if (val === 'harian') {
+            titleEl.textContent = 'Pendapatan Hari Ini';
+            valueEl.textContent = formatRupiah(stats.totalPendapatanHariIni || 0);
+        } else if (val === 'mingguan') {
+            titleEl.textContent = 'Pendapatan Minggu Ini';
+            valueEl.textContent = formatRupiah(stats.totalPendapatanMingguIni || 0);
+        } else if (val === 'bulanan') {
+            titleEl.textContent = 'Pendapatan Bulan Ini';
+            valueEl.textContent = formatRupiah(stats.totalPendapatanBulanIni || 0);
+        } else if (val === 'tahunan') {
+            titleEl.textContent = 'Pendapatan Tahun Ini';
+            valueEl.textContent = formatRupiah(stats.totalPendapatanTahunIni || 0);
+        }
+    }
+
+    function updateRincianView() {
+        if (!window.currentDashboardStats) return;
+        const val = document.getElementById('filterRincian').value;
+        const titleEl = document.getElementById('dashRincianTitle');
+        const cashEl = document.getElementById('dashCashHariIni');
+        const transferEl = document.getElementById('dashTransferHariIni');
+        const qrisEl = document.getElementById('dashQRISHariIni');
+        const stats = window.currentDashboardStats;
+        
+        if (val === 'harian') {
+            titleEl.textContent = 'Rincian Pendapatan Hari Ini';
+            cashEl.textContent = formatRupiah(stats.pendapatanCashHariIni || 0);
+            transferEl.textContent = formatRupiah(stats.pendapatanTransferHariIni || 0);
+            qrisEl.textContent = formatRupiah(stats.pendapatanQRISHariIni || 0);
+        } else if (val === 'mingguan') {
+            titleEl.textContent = 'Rincian Pendapatan Minggu Ini';
+            cashEl.textContent = formatRupiah(stats.pendapatanCashMingguIni || 0);
+            transferEl.textContent = formatRupiah(stats.pendapatanTransferMingguIni || 0);
+            qrisEl.textContent = formatRupiah(stats.pendapatanQRISMingguIni || 0);
+        } else if (val === 'bulanan') {
+            titleEl.textContent = 'Rincian Pendapatan Bulan Ini';
+            cashEl.textContent = formatRupiah(stats.pendapatanCashBulanIni || 0);
+            transferEl.textContent = formatRupiah(stats.pendapatanTransferBulanIni || 0);
+            qrisEl.textContent = formatRupiah(stats.pendapatanQRISBulanIni || 0);
+        } else if (val === 'tahunan') {
+            titleEl.textContent = 'Rincian Pendapatan Tahun Ini';
+            cashEl.textContent = formatRupiah(stats.pendapatanCashTahunIni || 0);
+            transferEl.textContent = formatRupiah(stats.pendapatanTransferTahunIni || 0);
+            qrisEl.textContent = formatRupiah(stats.pendapatanQRISTahunIni || 0);
+        }
+    }
+
+    function updateRefundView() {
+        if (!window.currentDashboardStats) return;
+        const val = document.getElementById('filterRefund').value;
+        const valueEl = document.getElementById('dashRefundHariIni');
+        const titleEl = document.getElementById('dashRefundTitle');
+        const stats = window.currentDashboardStats;
+        
+        if (val === 'harian') {
+            titleEl.textContent = 'Total Refund Hari Ini';
+            valueEl.textContent = formatRupiah(stats.totalRefundHariIni || 0);
+        } else if (val === 'mingguan') {
+            titleEl.textContent = 'Total Refund Minggu Ini';
+            valueEl.textContent = formatRupiah(stats.totalRefundMingguIni || 0);
+        } else if (val === 'bulanan') {
+            titleEl.textContent = 'Total Refund Bulan Ini';
+            valueEl.textContent = formatRupiah(stats.totalRefundBulanIni || 0);
+        } else if (val === 'tahunan') {
+            titleEl.textContent = 'Total Refund Tahun Ini';
+            valueEl.textContent = formatRupiah(stats.totalRefundTahunIni || 0);
+        }
+    }
+</script>
