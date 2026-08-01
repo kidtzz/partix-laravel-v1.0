@@ -181,7 +181,10 @@
             const statusBadge = statusVal === "Aktif" ? "badge-success" : "badge-secondary";
             const satuan = b.satuan || 'PCS';
             const isiPerBox = Number(b.isi_per_box) || 1;
-            const barcodeStr = [b.barcode1, b.barcode2].filter(Boolean).join(', ');
+            const barcodesHtml = [b.barcode1, b.barcode2]
+                .filter(Boolean)
+                .map(bc => `<span style="font-size: 11px; color: var(--text-muted);">${bc}</span>`)
+                .join('');
 
             let utamaSup = null;
             if (b.suppliers && b.suppliers.length > 0) {
@@ -202,7 +205,7 @@
                 <td>
                     <div style="display:flex; flex-direction:column; font-weight: 500; word-break: break-all;">
                         <span>${b.id_barang}</span>
-                        <span style="font-size: 11px; color: var(--text-muted);">${barcodeStr || '-'}</span>
+                        ${barcodesHtml || `<span style="font-size: 11px; color: var(--text-muted);">-</span>`}
                     </div>
                 </td>
                 <td>

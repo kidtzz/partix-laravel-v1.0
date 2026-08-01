@@ -97,7 +97,18 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
             }
-            .harga-sep-h, .harga-label-kiri, .harga-desktop-only { display: none !important; }
+            .harga-sep-h, .harga-label-kiri { display: none !important; }
+            .harga-desktop-only { display: none !important; }
+            
+            .harga-settings-row.stok-row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                margin-top: 12px;
+            }
+            .harga-stok-chip { width: 100%; justify-content: space-between; padding: 12px 14px; }
+            .harga-stok-chip .mobile-only { display: inline-block !important; }
             
             .harga-btn-group {
                 display: flex;
@@ -109,16 +120,6 @@
                 .harga-btn-group { flex-direction: row; }
             }
             .harga-btn-group button { flex: 1; }
-            .harga-stok-group {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 12px 14px;
-                border-radius: 10px;
-                border: 1px solid rgba(245,158,11,0.25);
-                background: rgba(245,158,11,0.06);
-                justify-content: space-between;
-            }
         }
     </style>
 
@@ -200,9 +201,10 @@
             </div>
 
             <!-- Chip Stok Minimum -->
-            <div class="harga-chip harga-stok-chip harga-desktop-only" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.25);">
+            <div class="harga-chip harga-stok-chip" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.25);">
+                <span class="harga-chip-label mobile-only" style="color:#f59e0b; font-weight:700;"><i class='bx bx-layer'></i> Min Stok</span>
                 <input type="number" id="settingMinimumStok" value="5" min="0"
-                    style="width:100px;color:#f59e0b;font-size:18px;font-weight:800;text-align:center;border:none;background:transparent;outline:none;padding:0 2px;">
+                    style="width:80px;color:#f59e0b;font-size:18px;font-weight:800;text-align:center;border:none;background:transparent;outline:none;padding:0 2px;">
                 <span class="harga-chip-pct" style="color:#f59e0b;">PCS</span>
             </div>
             
@@ -216,17 +218,7 @@
                 <i class='bx bx-save'></i> Simpan Stok
             </button>
 
-            <!-- Mobile: Stok group + tombol gabung -->
-            <div class="harga-stok-group mobile-only">
-                <div style="display:flex;align-items:center;gap:6px;">
-                    <i class='bx bx-layer' style="color:#f59e0b;font-size:15px;"></i>
-                    <span style="font-size:12px;font-weight:700;color:var(--text-muted);">Min Stok</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:4px;">
-                    <span style="font-size:16px;font-weight:800;color:#f59e0b;" id="mobileStokDisplay">5</span>
-                    <span style="font-size:12px;color:#f59e0b;font-weight:600;">PCS</span>
-                </div>
-            </div>
+            <!-- Mobile: tombol gabung -->
             <div class="harga-btn-group mobile-only">
                 <button class="btn btn-primary" onclick="simpanPengaturanDiskon()"
                     style="font-size:13px;padding:9px 0;justify-content:center;">

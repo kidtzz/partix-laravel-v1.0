@@ -60,6 +60,86 @@
         --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* THEME: PAGI (Morning - Bright Green & Yellow) */
+    :root[data-theme="pagi"] {
+        --primary-color: #84CC16;
+        --primary-hover: #65A30D;
+        --primary-light: rgba(132, 204, 22, 0.1);
+        --secondary-color: #F59E0B;
+        --secondary-hover: #D97706;
+        --bg-color: #FEFCE8;
+        --surface-color: rgba(255, 255, 255, 0.9);
+        --surface-solid: #FFFFFF;
+        --text-main: #3F6212;
+        --text-muted: #4D7C0F;
+        --border-color: rgba(217, 249, 157, 0.6);
+        --border-solid: #FEF08A;
+    }
+
+    /* THEME: SIANG (Noon - Sky Blue & Bright) */
+    :root[data-theme="siang"] {
+        --primary-color: #0EA5E9;
+        --primary-hover: #0284C7;
+        --primary-light: rgba(14, 165, 233, 0.1);
+        --secondary-color: #F59E0B;
+        --secondary-hover: #D97706;
+        --bg-color: #F0F9FF;
+        --surface-color: rgba(255, 255, 255, 0.9);
+        --surface-solid: #FFFFFF;
+        --text-main: #0C4A6E;
+        --text-muted: #0369A1;
+        --border-color: rgba(186, 230, 253, 0.6);
+        --border-solid: #E0F2FE;
+    }
+
+    /* THEME: SORE (Afternoon - Warm Orange & Red) */
+    :root[data-theme="sore"] {
+        --primary-color: #F97316;
+        --primary-hover: #EA580C;
+        --primary-light: rgba(249, 115, 22, 0.1);
+        --secondary-color: #EF4444;
+        --secondary-hover: #DC2626;
+        --bg-color: #FFF7ED;
+        --surface-color: rgba(255, 255, 255, 0.9);
+        --surface-solid: #FFFFFF;
+        --text-main: #7C2D12;
+        --text-muted: #9A3412;
+        --border-color: rgba(255, 237, 213, 0.6);
+        --border-solid: #FFEDD5;
+    }
+
+    /* THEME: MALAM (Night / Dark Mode) */
+    :root[data-theme="malam"] {
+        --primary-color: #6366F1;
+        --primary-hover: #818CF8;
+        --primary-light: rgba(99, 102, 241, 0.15);
+        --secondary-color: #10B981;
+        --bg-color: #0F172A;
+        --surface-color: rgba(30, 41, 59, 0.85);
+        --surface-solid: #1E293B;
+        --text-main: #F8FAFC;
+        --text-muted: #94A3B8;
+        --text-light: #64748B;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --border-solid: #334155;
+    }
+
+    /* THEME: LUCU (Playful / Cute Pastel) */
+    :root[data-theme="lucu"] {
+        --primary-color: #EC4899;
+        --primary-hover: #DB2777;
+        --primary-light: rgba(236, 72, 153, 0.1);
+        --secondary-color: #8B5CF6;
+        --secondary-hover: #7C3AED;
+        --bg-color: #FDF2F8;
+        --surface-color: rgba(255, 255, 255, 0.9);
+        --surface-solid: #FFFFFF;
+        --text-main: #831843;
+        --text-muted: #9D174D;
+        --border-color: rgba(252, 231, 243, 0.8);
+        --border-solid: #FBCFE8;
+    }
+
     /* =========================================
        Base Reset & Touch Optimization
        ========================================= */

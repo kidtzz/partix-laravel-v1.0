@@ -223,7 +223,7 @@
             <div class="bento-panel" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: #fecdd3;">
                 <div class="bento-panel-header">
                     <h3 class="bento-panel-title" style="color: #e11d48;">
-                        <i class='bx bx-cut'></i> Potongan Kasir
+                        <i class='bx bx-cut'></i> Potongan Penjualan
                     </h3>
                     <select id="filterPotongan" class="input-control" style="width: auto; padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: #be123c;" onchange="updatePotonganView()">
                         <option value="harian">Harian</option>
@@ -233,7 +233,7 @@
                     </select>
                 </div>
                 <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <div id="dashPotonganTitle" class="dash-title" style="color: #f43f5e;">Potongan Bulan Ini</div>
+                    <div id="dashPotonganTitle" class="dash-title" style="color: #f43f5e;">Potongan Penjualan Bulan Ini</div>
                     <div id="dashPotonganValue" class="dash-value" style="color: #881337;">...</div>
                 </div>
             </div>
@@ -441,16 +441,16 @@
         const stats = window.currentDashboardStats;
         
         if (val === 'harian') {
-            titleEl.textContent = 'Potongan Hari Ini';
+            titleEl.textContent = 'Potongan Penjualan Hari Ini';
             valueEl.textContent = "Rp " + (stats.totalPotonganHariIni || 0).toLocaleString('id-ID');
         } else if (val === 'mingguan') {
-            titleEl.textContent = 'Potongan Minggu Ini';
+            titleEl.textContent = 'Potongan Penjualan Minggu Ini';
             valueEl.textContent = "Rp " + (stats.totalPotonganMingguIni || 0).toLocaleString('id-ID');
         } else if (val === 'bulanan') {
-            titleEl.textContent = 'Potongan Bulan Ini';
+            titleEl.textContent = 'Potongan Penjualan Bulan Ini';
             valueEl.textContent = "Rp " + (stats.totalPotonganBulanIni || 0).toLocaleString('id-ID');
         } else if (val === 'tahunan') {
-            titleEl.textContent = 'Potongan Tahun Ini';
+            titleEl.textContent = 'Potongan Penjualan Tahun Ini';
             valueEl.textContent = "Rp " + (stats.totalPotonganTahunIni || 0).toLocaleString('id-ID');
         }
     }

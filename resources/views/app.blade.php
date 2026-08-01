@@ -15,6 +15,54 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Include CSS -->
     @include('partials.css')
+    <style>
+        .theme-option:hover {
+            background-color: var(--primary-light) !important;
+            color: var(--primary-color);
+        }
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s, transform 0.2s;
+        }
+        .btn-icon:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        @media (max-width: 768px) {
+            .mobile-hidden { display: none !important; }
+        }
+        .hidden { display: none !important; }
+    </style>
+    <script>
+        // Apply theme immediately to prevent FOUC
+        const savedTheme = localStorage.getItem('partix-theme');
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+        function setTheme(themeName) {
+            if (themeName) {
+                document.documentElement.setAttribute('data-theme', themeName);
+                localStorage.setItem('partix-theme', themeName);
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.removeItem('partix-theme');
+            }
+            document.getElementById('themeDropdown').classList.add('hidden');
+        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('themeDropdown');
+            const toggleBtn = document.getElementById('btnThemeToggle');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                if (!dropdown.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        });
+    </script>
 </head>
 
 <body>
@@ -140,9 +188,27 @@
                     <i class='bx bx-menu'></i>
                 </button>
                 <div class="date-time" id="currentDateTime">--/--/---- --:--</div>
-                <div class="status-indicator">
-                    <span class="status-dot online"></span>
-                    <span>Terhubung ke System</span>
+                
+                <div style="display:flex; align-items:center; gap: 12px; margin-left: auto;">
+                    <!-- Theme Switcher -->
+                    <div style="position: relative;">
+                        <button class="btn-icon" id="btnThemeToggle" onclick="document.getElementById('themeDropdown').classList.toggle('hidden')" style="border-radius: 50%; padding: 8px; font-size: 18px; color: var(--primary-color);">
+                            <i class='bx bxs-palette'></i>
+                        </button>
+                        <div id="themeDropdown" class="glass-card hidden" style="position: absolute; right: 0; top: 100%; margin-top: 8px; width: 140px; display: flex; flex-direction: column; padding: 6px; z-index: 1000; box-shadow: var(--shadow-lg);">
+                            <button class="theme-option" onclick="setTheme('')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600;"><i class='bx bx-laptop'></i> Default</button>
+                            <button class="theme-option" onclick="setTheme('pagi')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #65A30D;"><i class='bx bx-coffee'></i> Pagi</button>
+                            <button class="theme-option" onclick="setTheme('siang')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #0284C7;"><i class='bx bx-sun'></i> Siang</button>
+                            <button class="theme-option" onclick="setTheme('sore')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #EA580C;"><i class='bx bx-cloud'></i> Sore</button>
+                            <button class="theme-option" onclick="setTheme('malam')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #818CF8;"><i class='bx bx-moon'></i> Malam</button>
+                            <button class="theme-option" onclick="setTheme('lucu')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #DB2777;"><i class='bx bx-heart'></i> Lucu</button>
+                        </div>
+                    </div>
+                    
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span class="mobile-hidden" style="white-space: nowrap;">Terhubung ke System</span>
+                    </div>
                 </div>
             </header>
 
