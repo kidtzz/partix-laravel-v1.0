@@ -6,14 +6,12 @@
         </button>
     </x-view-header>
 
-    <x-glass-card padding="24px" display="block">
-        <div style="overflow-x: auto;">
-            <x-table :headers="['No Return', 'Tanggal', 'Invoice Asal', 'Kasir', 'Jenis Penyelesaian', 'Total Refund/Selisih', 'Aksi']">
-                <tbody id="tbodyReturnList">
-                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
-                </tbody>
-            </x-table>
-        </div>
+    <x-glass-card padding="24px" display="flex" flex="true">
+        <x-table :headers="['No Return', 'Tanggal', 'Invoice Asal', 'Kasir', 'Jenis Penyelesaian', 'Total Refund/Selisih', 'Aksi']">
+            <tbody id="tbodyReturnList">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
+            </tbody>
+        </x-table>
     </x-glass-card>
 
     </section>
@@ -145,37 +143,16 @@
         </div>
     </x-view-header>
 
-    <!-- Tabs Navigation -->
-    <div class="flex gap-4 mb-4" style="border-bottom: 1px solid var(--border-color);">
-        <button id="tabKarantina" class="tab-btn active" onclick="switchReturTab('karantina')" style="padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--primary-color); border-bottom: 2px solid var(--primary-color); cursor:pointer;">
-            Daftar Barang Karantina
-        </button>
-        <button id="tabHistoriRetur" class="tab-btn" onclick="switchReturTab('histori')" style="padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--text-muted); cursor:pointer;">
-            Histori Retur Supplier
-        </button>
-    </div>
-
     <!-- Tab 1: Karantina -->
-    <x-glass-card id="contentKarantina" padding="24px" display="block">
-        <div style="overflow-x: auto;">
-            <x-table :headers="['ID Karantina', 'Tanggal Karantina', 'Nama Barang', 'Qty Rusak', 'Alasan / Keterangan', 'Aksi']">
-                <tbody id="tbodyBarangReturn">
-                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
-                </tbody>
-            </x-table>
-        </div>
+    <x-glass-card id="contentKarantina" padding="24px" display="flex" flex="true">
+        <x-table :headers="['ID Karantina', 'Tanggal Karantina', 'Nama Barang', 'Qty Rusak', 'Alasan / Keterangan', 'Aksi']">
+            <tbody id="tbodyBarangReturn">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
+            </tbody>
+        </x-table>
     </x-glass-card>
 
-    <!-- Tab 2: Histori Retur -->
-    <x-glass-card id="contentHistoriRetur" padding="24px" display="none">
-        <div style="overflow-x: auto;">
-            <x-table :headers="['Tanggal Retur', 'ID Retur', 'Supplier Tujuan', 'Barang Diretur', 'Qty', 'Harga Beli', 'No Invoice Supplier', 'User']">
-                <tbody id="tbodyHistoriRetur">
-                    <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Memuat histori...</td></tr>
-                </tbody>
-            </x-table>
-        </div>
-    </x-glass-card>
+    
 
     <!-- Modal Detail Return (Cetak) -->
     <x-modal id="modalDetailReturn" title="Detail Retur (Struk)" maxWidth="500px">
@@ -219,7 +196,26 @@
         </x-slot>
     </x-modal>
 
-    </section>
+    
+</section>
+
+<section id="view-histori-retur-supplier" class="view-section">
+    <x-view-header title="Histori Retur Supplier" icon="bx bx-history">
+        <div class="flex gap-2">
+            <button class="btn btn-outline" onclick="loadHistoriReturSupplier()">
+                <i class='bx bx-refresh'></i> Refresh
+            </button>
+        </div>
+    </x-view-header>
+    
+    <x-glass-card id="contentHistoriRetur" padding="24px" display="flex" flex="true">
+        <x-table :headers="['Tanggal Retur', 'ID Retur', 'Supplier Tujuan', 'Barang Diretur', 'Qty', 'Harga Beli', 'No Invoice Supplier', 'User']">
+            <tbody id="tbodyHistoriRetur">
+                <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Memuat histori...</td></tr>
+            </tbody>
+        </x-table>
+    </x-glass-card>
+</section>
 
 <script src="/js/modules/return.js?v={{ time() }}"></script>
 

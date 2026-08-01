@@ -78,6 +78,13 @@
         // Re-apply role restrictions after changing active styles
         if (AppState.user) applyRoleRestrictions(AppState.user.role);
         
+        if (target === 'histori-retur-supplier' && typeof loadHistoriReturSupplier === 'function') {
+            loadHistoriReturSupplier();
+        }
+        if (target === 'return-supplier' && typeof loadListBarangReturn === 'function') {
+            loadListBarangReturn();
+        }
+        
         // Close mobile menu if open
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -100,9 +107,13 @@
         navItems.forEach(item => {
             const target = item.dataset.target;
             if (role === 'Kasir') {
-                if (target === 'stock' || target === 'dashboard' || target.startsWith('admin')) item.style.display = 'none';
+                const kasirAllowed = ['penjualan', 'histori-transaksi', 'return', 'return-list'];
+                if (!kasirAllowed.includes(target)) {
+                    item.style.display = 'none';
+                }
             } else if (role === 'Restocker') {
-                if (target === 'penjualan' || target === 'dashboard' || target === 'histori-transaksi' || target === 'admin-harga' || target === 'admin-user' || target === 'admin-log') {
+                const restockerAllowed = ['stock', 'admin-barang', 'admin-supplier', 'return-supplier', 'histori-retur-supplier'];
+                if (!restockerAllowed.includes(target)) {
                     item.style.display = 'none';
                 }
             }
@@ -120,6 +131,28 @@
             }
             header.style.display = hasVisibleItem ? 'block' : 'none';
         });
+
+        // Khusus Restocker: Pindahkan menu Retur ke bawah Inventory
+        if (role === 'Restocker') {
+            const navLinks = document.querySelector('.nav-links');
+            const headers = Array.from(document.querySelectorAll('.nav-header'));
+            const returHeader = headers.find(h => h.textContent.trim() === 'Retur');
+            const adminHeader = headers.find(h => h.textContent.trim() === 'Admin');
+            
+            if (returHeader && adminHeader && navLinks) {
+                const returNodes = [returHeader];
+                let next = returHeader.nextElementSibling;
+                while (next && !next.classList.contains('nav-header')) {
+                    returNodes.push(next);
+                    next = next.nextElementSibling;
+                }
+                
+                // Pindahkan tepat sebelum header Admin (sehingga berada di bawah Inventory)
+                returNodes.forEach(node => {
+                    navLinks.insertBefore(node, adminHeader);
+                });
+            }
+        }
     }
 
     // ==========================================
@@ -189,8 +222,8 @@
         const lastView = localStorage.getItem('partix_last_view');
         if (lastView) {
             // Validasi apakah role boleh akses lastView
-            if (AppState.user.role === 'Kasir' && ['penjualan', 'return'].includes(lastView)) targetView = lastView;
-            if (AppState.user.role === 'Restocker' && ['stock'].includes(lastView)) targetView = lastView;
+            if (AppState.user.role === 'Kasir' && ['penjualan', 'histori-transaksi', 'return', 'return-list'].includes(lastView)) targetView = lastView;
+            if (AppState.user.role === 'Restocker' && ['stock', 'admin-barang', 'admin-supplier', 'return-supplier', 'histori-retur-supplier'].includes(lastView)) targetView = lastView;
             if (AppState.user.role === 'Admin') targetView = lastView;
         }
         
@@ -425,7 +458,7 @@
     /**
     * Make a table sortable by clicking its header cells.
     * @param {string} tbodyId - ID of the <tbody> element.
-    * @param {number} defaultCol - Zero‑based index of the column to sort initially.
+    * @param {number} defaultCol - Zeroâ€‘based index of the column to sort initially.
     * @param {boolean} defaultDesc - If true, initial sort is descending.
     */
     function makeTbodySortable(tbodyId, defaultCol = 0, defaultDesc = true) {
@@ -479,7 +512,7 @@
                 });
                 th.dataset.order = newDesc ? 'desc' : 'asc';
                 const activeIcon = th.querySelector('.sorting-icon');
-                if (activeIcon) activeIcon.textContent = newDesc ? '▼' : '▲';
+                if (activeIcon) activeIcon.textContent = newDesc ? 'â–¼' : 'â–²';
             });
         });
 

@@ -548,25 +548,7 @@ let currentInvoice = null;
     })();
 
 // Tab switching
-        function switchReturTab(tab) {
-            document.getElementById('tabKarantina').style = "padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--text-muted); cursor:pointer;";
-            document.getElementById('tabHistoriRetur').style = "padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--text-muted); cursor:pointer;";
-            
-            document.getElementById('contentKarantina').style.display = 'none';
-            document.getElementById('contentHistoriRetur').style.display = 'none';
-            
-            if (tab === 'karantina') {
-                document.getElementById('tabKarantina').style = "padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--primary-color); border-bottom: 2px solid var(--primary-color); cursor:pointer;";
-                document.getElementById('contentKarantina').style.display = 'block';
-                loadListBarangReturn();
-            } else {
-                document.getElementById('tabHistoriRetur').style = "padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--primary-color); border-bottom: 2px solid var(--primary-color); cursor:pointer;";
-                document.getElementById('contentHistoriRetur').style.display = 'block';
-                loadHistoriReturSupplier();
-            }
-        }
-
-        // Load Tab 1
+                // Load Tab 1
         function loadListBarangReturn() {
             const tbody = document.getElementById('tbodyBarangReturn');
             if (!tbody) return;
@@ -693,7 +675,7 @@ let currentInvoice = null;
 
         // Init default jika user ada di tab return
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => switchReturTab('karantina'), 500);
+            
 
             // Observasi saat tab Return aktif agar otomatis refresh
             const observer = new MutationObserver((mutations) => {
@@ -723,7 +705,7 @@ let currentInvoice = null;
             const navItem = document.querySelector('li[data-target="return-supplier"]');
             if (navItem) {
                 navItem.addEventListener('click', () => {
-                    setTimeout(() => switchReturTab('karantina'), 100);
+                    
                 });
             }
         });

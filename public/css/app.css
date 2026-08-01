@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 /* =========================================
        PARTIX POS & Inventory System
        Responsive Design System & CSS Theme (12px Base)
@@ -137,6 +138,222 @@
         --text-muted: #9D174D;
         --border-color: rgba(252, 231, 243, 0.8);
         --border-solid: #FBCFE8;
+    }
+
+    /* THEME: PREMIUM (Dark Glassmorphism) */
+    :root[data-theme="premium"] {
+        --primary-color: #06B6D4; /* Cyan */
+        --primary-hover: #0891B2;
+        --primary-light: rgba(6, 182, 212, 0.15);
+        --secondary-color: #8B5CF6; /* Purple */
+        --secondary-hover: #7C3AED;
+        --bg-color: #0F172A; /* Fallback dark */
+        --surface-color: rgba(15, 23, 42, 0.55); /* High transparency for glass */
+        --surface-solid: #1E293B;
+        --text-main: #F8FAFC;
+        --text-muted: #94A3B8;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --border-solid: #334155;
+    }
+
+    html[data-theme="premium"] body {
+        background: #0F172A url('/images/premium_bg.png') center/cover no-repeat fixed !important;
+    }
+
+    html[data-theme="premium"] .glass-card,
+    html[data-theme="premium"] .sidebar,
+    html[data-theme="premium"] .topbar {
+        background: var(--surface-color) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+    }
+    
+    html[data-theme="premium"] .glass-card:hover {
+        background: rgba(15, 23, 42, 0.65) !important;
+    }
+
+    html[data-theme="premium"] .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), #3B82F6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3) !important;
+        color: #FFFFFF !important;
+    }
+    
+    html[data-theme="premium"] .btn-primary:hover {
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5) !important;
+        transform: translateY(-1px);
+    }
+
+    /* Comprehensive Premium Theme Overrides */
+    html[data-theme="premium"] body {
+        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    }
+    
+    html[data-theme="premium"] .table-container,
+    html[data-theme="premium"] .modal-content,
+    html[data-theme="premium"] .toast,
+    html[data-theme="premium"] .input-control:focus,
+    html[data-theme="premium"] .search-bar input:focus {
+        background: var(--surface-color) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    html[data-theme="premium"] .input-control {
+        background: rgba(15, 23, 42, 0.4) !important;
+        color: var(--text-main) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    html[data-theme="premium"] .btn-secondary {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: var(--text-main) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    html[data-theme="premium"] .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    html[data-theme="premium"] .nav-item:hover,
+    html[data-theme="premium"] tr:hover,
+    html[data-theme="premium"] .mobile-menu-toggle:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    html[data-theme="premium"] .mobile-cart-toggle-btn .cart-badge-count {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    /* Dashboard & Cart Customizations for Premium Theme */
+    html[data-theme="premium"] .dash-card,
+    html[data-theme="premium"] .bento-panel,
+    html[data-theme="premium"] .pos-cart {
+        background: var(--surface-color) !important;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    html[data-theme="premium"] .dash-icon-box {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+    }
+
+    html[data-theme="premium"] .dash-title,
+    html[data-theme="premium"] .dash-value,
+    html[data-theme="premium"] .bento-panel-title {
+        color: var(--text-main) !important;
+    }
+
+    html[data-theme="premium"] th {
+        background: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: var(--text-main) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    html[data-theme="premium"] .user-profile {
+        background: rgba(15, 23, 42, 0.45) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    html[data-theme="premium"] .avatar {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    html[data-theme="premium"] .status-indicator {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+        backdrop-filter: blur(4px);
+    }
+    
+    html[data-theme="premium"] .cart-item,
+    html[data-theme="premium"] .cart-summary {
+        background: rgba(15, 23, 42, 0.4) !important;
+        backdrop-filter: blur(8px);
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+    }
+    
+    html[data-theme="premium"] .qty-btn {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    html[data-theme="premium"] .btn-outline {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+        border: 1px solid var(--primary-color) !important;
+    }
+    
+    html[data-theme="premium"] .btn-outline:hover {
+        background: rgba(6, 182, 212, 0.1) !important;
+    }
+
+    /* Fix inline hardcoded backgrounds specifically in Return / Dashboard / Invoice Modals */
+    html[data-theme="premium"] div[style*="background: #F8FAFC"],
+    html[data-theme="premium"] div[style*="background: #fff"],
+    html[data-theme="premium"] div[style*="background: white"],
+    html[data-theme="premium"] div[style*="background: #F1F5F9"],
+    html[data-theme="premium"] thead[style*="background:#f1f5f9"],
+    html[data-theme="premium"] span[style*="background: #f1f5f9"] {
+        background: rgba(15, 23, 42, 0.5) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        color: var(--text-main) !important;
+    }
+
+    html[data-theme="premium"] .modal-body thead {
+        background: rgba(15, 23, 42, 0.6) !important;
+    }
+
+    html[data-theme="premium"] td span[style*="background"] {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: var(--text-main) !important;
+    }
+
+    /* Modal specific overrides for Premium Theme */
+    html[data-theme="premium"] .modal-header {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    html[data-theme="premium"] .modal-close:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: var(--text-main) !important;
+    }
+
+    html[data-theme="premium"] .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: transparent !important;
+    }
+    
+    html[data-theme="premium"] #themeDropdown {
+        background: rgba(15, 23, 42, 0.9) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    html[data-theme="premium"] .theme-option {
+        color: var(--text-main);
+    }
+    
+    html[data-theme="premium"] td span[style*="--danger-color"] {
+        color: var(--danger-color) !important;
+        background: rgba(225, 29, 72, 0.15) !important;
+        border-color: rgba(225, 29, 72, 0.3) !important;
     }
 
     /* =========================================
@@ -900,14 +1117,14 @@
     .mb-4 { margin-bottom: 16px; }
     .w-full { width: 100%; }
 
-    /* Login Screen Overlay */
+    /* Login Screen Overlay (Simple & Compact) */
     #loginScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: inherit;
+        background: var(--bg-body); /* Plain background */
         z-index: 9999;
         display: flex;
         align-items: center;
@@ -922,36 +1139,83 @@
 
     .login-card {
         width: 100%;
-        max-width: 380px;
-        padding: 32px 24px;
+        max-width: 340px; /* very compact width */
+        padding: 24px 20px; /* tight padding */
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px; /* tight gap */
         text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* very subtle, simple shadow */
+        border: 1px solid var(--border-color);
+        border-radius: 8px; /* small radius */
+        background: var(--bg-surface);
     }
 
     .login-logo {
-        font-size: 28px;
+        font-size: 22px; /* smaller font */
         font-weight: 800;
         color: var(--primary-color);
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        margin-bottom: 4px;
+        gap: 6px;
+        margin-bottom: 0px;
     }
 
     .login-logo i {
-        font-size: 32px;
-        background: linear-gradient(135deg, var(--primary-color), #818CF8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 26px; /* smaller icon */
+        color: var(--primary-color); /* simple solid color, no gradient */
     }
 
     .login-subtitle {
         color: var(--text-muted);
-        font-size: var(--text-base);
-        margin-bottom: 8px;
+        font-size: 12px; /* very small font */
+        margin-bottom: 4px;
+    }
+
+    /* Minimal Login Form Elements */
+    .login-card .input-group {
+        margin-bottom: 0;
+        text-align: left;
+    }
+    
+    .login-card label {
+        font-size: 12px; /* smaller font */
+        font-weight: 600;
+        margin-bottom: 4px; /* tight margin */
+        display: block;
+        color: var(--text-main);
+    }
+
+    .login-card .input-control {
+        padding: 8px 12px; /* tight padding */
+        border-radius: 6px; /* small radius */
+        background: var(--bg-body);
+        border: 1px solid var(--border-color);
+        transition: border-color 0.15s ease;
+        font-size: 13px; /* smaller font */
+    }
+
+    .login-card .input-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: none; /* simple, no glow */
+        outline: 1px solid var(--primary-color);
+        background: var(--bg-surface);
+    }
+    
+    .login-card .btn-primary {
+        padding: 10px; /* tight padding */
+        font-weight: 600;
+        font-size: 13px; /* smaller font */
+        border-radius: 6px; /* small radius */
+        margin-top: 8px; /* tight margin */
+        transition: opacity 0.15s ease;
+    }
+
+    .login-card .btn-primary:hover {
+        transform: none; /* absolutely simple, no jumping */
+        box-shadow: none; /* no extra hover shadow */
+        opacity: 0.9;
     }
 
     /* Mobile Menu Controls */

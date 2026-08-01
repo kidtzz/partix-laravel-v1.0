@@ -134,6 +134,10 @@
                     <i class='bx bx-archive-out'></i>
                     <span>Barang Retur</span>
                 </li>
+                <li class="nav-item" data-target="histori-retur-supplier">
+                    <i class='bx bx-history'></i>
+                    <span>Histori Retur Supplier</span>
+                </li>
 
                 <li class="nav-header">Inventory</li>
                 <li class="nav-item" data-target="stock">
@@ -202,6 +206,7 @@
                             <button class="theme-option" onclick="setTheme('sore')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #EA580C;"><i class='bx bx-cloud'></i> Sore</button>
                             <button class="theme-option" onclick="setTheme('malam')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #818CF8;"><i class='bx bx-moon'></i> Malam</button>
                             <button class="theme-option" onclick="setTheme('lucu')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #DB2777;"><i class='bx bx-heart'></i> Lucu</button>
+                            <button class="theme-option" onclick="setTheme('premium')" style="display:flex; align-items:center; gap:8px; text-align:left; padding: 10px; border:none; background:transparent; cursor:pointer; border-radius:6px; font-weight:600; color: #06B6D4;"><i class='bx bx-diamond'></i> Premium</button>
                         </div>
                     </div>
                     

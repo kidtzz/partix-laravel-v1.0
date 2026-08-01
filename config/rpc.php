@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 return [
     'routes' => [
@@ -30,31 +30,31 @@ return [
         'getDashboardStats' => [\App\Services\DashboardService::class, 'getDashboardStats', ['Admin']],
         'getSemuaSupplier' => [\App\Services\SupplierService::class, 'getSemuaSupplier', ['Restocker', 'Admin']],
         'getSuppliers' => [\App\Services\SupplierService::class, 'getSemuaSupplier', ['Restocker', 'Admin']], // alias
-        'tambahSupplier' => [\App\Services\SupplierService::class, 'tambahSupplier', ['Admin']],
-        'updateSupplier' => [\App\Services\SupplierService::class, 'updateSupplier', ['Admin']],
-        'hapusSupplier' => [\App\Services\SupplierService::class, 'hapusSupplier', ['Admin']],
+        'tambahSupplier' => [\App\Services\SupplierService::class, 'tambahSupplier', ['Restocker', 'Admin']],
+        'updateSupplier' => [\App\Services\SupplierService::class, 'updateSupplier', ['Restocker', 'Admin']],
+        'hapusSupplier' => [\App\Services\SupplierService::class, 'hapusSupplier', ['Restocker', 'Admin']],
         
-        'getPengaturanDiskon' => [\App\Services\BarangService::class, 'getPengaturanDiskon', ['Admin']],
+        'getPengaturanDiskon' => [\App\Services\BarangService::class, 'getPengaturanDiskon', ['Kasir', 'Restocker', 'Admin']],
         'updatePengaturanDiskon' => [\App\Services\BarangService::class, 'updatePengaturanDiskon', ['Admin']],
         
         'getHargaMasterList' => [\App\Services\BarangService::class, 'getHargaMasterList', ['Admin']],
-        'getSemuaBarangAdmin' => [\App\Services\BarangService::class, 'getSemuaBarangAdmin', ['Admin']],
-        'tambahMasterBarang' => [\App\Services\BarangService::class, 'tambahMasterBarang', ['Admin']],
-        'updateMasterBarang' => [\App\Services\BarangService::class, 'updateMasterBarang', ['Admin']],
-        'ubahStatusBarang' => [\App\Services\BarangService::class, 'ubahStatusBarang', ['Admin']],
-        'updateStatusBarang' => [\App\Services\BarangService::class, 'updateStatusBarang', ['Admin']],
-        'hapusMasterBarang' => [\App\Services\BarangService::class, 'hapusMasterBarang', ['Admin']],
+        'getSemuaBarangAdmin' => [\App\Services\BarangService::class, 'getSemuaBarangAdmin', ['Restocker', 'Admin']],
+        'tambahMasterBarang' => [\App\Services\BarangService::class, 'tambahMasterBarang', ['Restocker', 'Admin']],
+        'updateMasterBarang' => [\App\Services\BarangService::class, 'updateMasterBarang', ['Restocker', 'Admin']],
+        'ubahStatusBarang' => [\App\Services\BarangService::class, 'ubahStatusBarang', ['Restocker', 'Admin']],
+        'updateStatusBarang' => [\App\Services\BarangService::class, 'updateStatusBarang', ['Restocker', 'Admin']],
+        'hapusMasterBarang' => [\App\Services\BarangService::class, 'hapusMasterBarang', ['Restocker', 'Admin']],
         'hapusTotalKecualiMaster' => [\App\Services\BarangService::class, 'hapusTotalKecualiMaster', ['Admin']],
-        'getBarangSupplier' => [\App\Services\BarangService::class, 'getBarangSupplier', ['Admin']],
-        'tambahBarangSupplier' => [\App\Services\BarangService::class, 'tambahBarangSupplier', ['Admin']],
-        'updateBarangSupplier' => [\App\Services\BarangService::class, 'updateBarangSupplier', ['Admin']],
-        'hapusBarangSupplier' => [\App\Services\BarangService::class, 'hapusBarangSupplier', ['Admin']],
+        'getBarangSupplier' => [\App\Services\BarangService::class, 'getBarangSupplier', ['Restocker', 'Admin']],
+        'tambahBarangSupplier' => [\App\Services\BarangService::class, 'tambahBarangSupplier', ['Restocker', 'Admin']],
+        'updateBarangSupplier' => [\App\Services\BarangService::class, 'updateBarangSupplier', ['Restocker', 'Admin']],
+        'hapusBarangSupplier' => [\App\Services\BarangService::class, 'hapusBarangSupplier', ['Restocker', 'Admin']],
         'updateHargaJual' => [\App\Services\BarangService::class, 'updateHargaJual', ['Admin']],
         
         // Log & Audit (Admin)
         'getLogActivityAdmin' => [\App\Services\LogService::class, 'getLogActivityAdmin', ['Admin']],
         'getSystemLogs' => [\App\Services\LogService::class, 'getSystemLogs', ['Admin']],
-        'logSystemEvent' => [\App\Services\LogService::class, 'logSystemEvent', ['Admin']],
+        'logSystemEvent' => [\App\Services\LogService::class, 'logSystemEvent', ['Kasir', 'Restocker', 'Admin']],
         
         // User Management (Admin)
         'getSemuaUser' => [\App\Services\UserService::class, 'getSemuaUser', ['Admin']],

@@ -34,9 +34,9 @@
             <div class="dash-card" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div>
-                        <div class="dash-title" style="color: var(--primary-color); display: flex; align-items: center; gap: 8px;">
+                        <div class="dash-title" style="color: var(--primary-color); display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
                             <span id="dashRevenueTitle">Pendapatan Hari Ini</span>
-                            <select id="filterPendapatan" style="padding: 2px 4px; font-size: 9px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: var(--primary-color); border-radius: 4px; cursor: pointer; outline: none;" onchange="updatePendapatanView()">
+                            <select id="filterPendapatan" class="input-control" style="width: auto; padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.7); border: none; font-weight: 600; color: var(--primary-color); cursor: pointer;" onchange="updatePendapatanView()">
                                 <option value="harian" selected>Harian</option>
                                 <option value="mingguan">Mingguan</option>
                                 <option value="bulanan">Bulanan</option>
