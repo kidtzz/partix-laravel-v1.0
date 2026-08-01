@@ -1,0 +1,118 @@
+/* ─── Settings bar responsive ─── */
+        .harga-settings-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .harga-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            transition: box-shadow 0.2s;
+        }
+        .harga-chip:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        .harga-chip-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+        .harga-chip input {
+            width: 42px;
+            padding: 0 2px;
+            font-size: 16px;
+            font-weight: 800;
+            text-align: center;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+        .harga-chip-pct {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .harga-sep-dot {
+            color: var(--border-color);
+            font-size: 20px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .harga-sep-h {
+            height: 1px;
+            width: 100%;
+            background: var(--border-color);
+            margin: 14px 0;
+        }
+        .mobile-only {
+            display: none;
+        }
+
+        /* Tablet & Laptop (max-width: 1100px) */
+        @media (max-width: 1100px) {
+            .harga-settings-row.diskon-row {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 10px;
+            }
+            .harga-sep-dot { display: none !important; }
+            .harga-chip { justify-content: space-between; padding: 10px 14px; }
+            .harga-label-kiri { 
+                grid-column: 1 / -1; 
+                border-right: none !important; 
+                margin-bottom: 2px;
+            }
+            .harga-settings-row.diskon-row .harga-desktop-only { 
+                grid-column: 1 / -1; 
+                justify-content: center; 
+                margin-top: 6px;
+            }
+            
+            .harga-settings-row.stok-row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .harga-settings-row.stok-row .harga-desktop-only { 
+                width: 100%; 
+                justify-content: center; 
+                margin-left: 0 !important;
+                text-align: center;
+            }
+            .harga-stok-chip { width: 100%; justify-content: space-between; }
+        }
+
+        /* Mobile (max-width: 768px) */
+        @media (max-width: 768px) {
+            .harga-settings-row.diskon-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .harga-sep-h, .harga-label-kiri { display: none !important; }
+            .harga-desktop-only { display: none !important; }
+            
+            .harga-settings-row.stok-row {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                margin-top: 12px;
+            }
+            .harga-stok-chip { width: 100%; justify-content: space-between; padding: 12px 14px; }
+            .harga-stok-chip .mobile-only { display: inline-block !important; }
+            
+            .harga-btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 8px;
+            }
+            @media (min-width: 480px) {
+                .harga-btn-group { flex-direction: row; }
+            }
+            .harga-btn-group button { flex: 1; }
+        }
