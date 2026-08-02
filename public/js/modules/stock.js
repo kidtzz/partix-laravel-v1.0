@@ -58,6 +58,13 @@ let masterStockList = [];
 
             const tglMasukStr = b.tanggal_masuk ? new Date(b.tanggal_masuk).toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-';
 
+            const isPremium = document.documentElement.getAttribute('data-theme') === 'premium';
+            const trBg = isPremium ? 'transparent' : '#fafbfc';
+            const detailContentClass = isPremium ? 'class="glass-card"' : '';
+            const detailContentStyle = isPremium 
+                ? 'border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: var(--shadow-sm);'
+                : 'border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02);';
+
             return `
             <tr id="row-stock-${b.id_barang}" onclick="toggleDetailSupplierStock('${b.id_barang}')" style="cursor:pointer; border-bottom: 1px solid var(--border-color);">
                 <td>
@@ -94,12 +101,12 @@ let masterStockList = [];
                     <button class="btn btn-secondary btn-sm" onclick="bukaHistoriBarang('${b.id_barang}', '${b.nama_barang}')" title="Histori"><i class='bx bx-history'></i></button>
                 </td>
             </tr>
-            <tr id="detail-stock-${b.id_barang}" style="display:none; background: #fafbfc; border-top: none;">
+            <tr id="detail-stock-${b.id_barang}" style="display:none; background: ${trBg}; border-top: none;">
                 <td colspan="11" style="padding: 0;">
                     <div id="detail-wrapper-stock-${b.id_barang}" style="display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-in-out;">
                         <div style="overflow: hidden;">
                             <div style="padding: 16px 24px;">
-                                <div id="detail-content-stock-${b.id_barang}" style="border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; padding: 16px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                                <div id="detail-content-stock-${b.id_barang}" ${detailContentClass} style="${detailContentStyle}">
                                     <div style="text-align:center; color:var(--text-muted); font-size: 12px;"><i class='bx bx-loader-alt bx-spin'></i> Memuat detail supplier...</div>
                                 </div>
                             </div>
@@ -158,9 +165,11 @@ let masterStockList = [];
             return;
         }
 
+        const isPremium = document.documentElement.getAttribute('data-theme') === 'premium';
+        
         let html = `<h4 style="margin-top:0; margin-bottom:12px; font-size: 12px; color:var(--text-main); display:flex; align-items:center; gap:6px;"><i class='bx bx-buildings'></i> Daftar Harga dari Supplier</h4>`;
         html += `<table class="table" style="margin:0; background: transparent; box-shadow: none;">
-                    <thead style="background: rgba(0,0,0,0.02);">
+                    <thead style="background: ${isPremium ? 'transparent' : 'rgba(0,0,0,0.02)'};">
                         <tr>
                             <th style="padding: 8px 12px;">Nama Supplier</th>
                             <th style="padding: 8px 12px;">Harga Beli</th>
@@ -169,14 +178,15 @@ let masterStockList = [];
                     </thead>
                     <tbody>`;
         suppliers.forEach(s => {
+            const tdBorder = isPremium ? 'border-bottom: 1px solid rgba(255,255,255,0.1);' : 'border-bottom: 1px solid #eee;';
             html += `<tr>
-                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee;">
-                            <div style="font-weight:600; font-size: 12px; margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+                        <td style="padding: 8px 12px; ${tdBorder}">
+                            <div style="font-weight:600; font-size: 12px; margin-bottom:4px; display:flex; align-items:center; gap:8px; color: var(--text-main);">
                                 ${s.nama_supplier}
                             </div>
                         </td>
-                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee; font-weight:600;">Rp ${Number(s.harga_beli).toLocaleString('id-ID')}</td>
-                        <td style="padding: 8px 12px; border-bottom: 1px solid #eee;">${s.diskon_persen ? s.diskon_persen + '%' : '-'}</td>
+                        <td style="padding: 8px 12px; ${tdBorder} font-weight:600; color: var(--text-main);">Rp ${Number(s.harga_beli).toLocaleString('id-ID')}</td>
+                        <td style="padding: 8px 12px; ${tdBorder} color: var(--text-muted);">${s.diskon_persen ? s.diskon_persen + '%' : '-'}</td>
                      </tr>`;
         });
         html += `</tbody></table>`;

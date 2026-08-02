@@ -33,8 +33,7 @@
     </x-input-group>
 
     <x-input-group label="Nama Barang (Auto-fill)">
-        <input type="text" class="input-control" id="stkNamaBarang" value="" disabled
-            style="background:#F3F4F6;">
+        <input type="text" class="input-control" id="stkNamaBarang" value="" disabled>
         <input type="hidden" id="stkIdBarang">
     </x-input-group>
 
@@ -102,7 +101,7 @@
             Supplier & Harga Beli</h4>
     </div>
 
-    <x-glass-card padding="16px" display="block" style="margin-bottom: 20px; background: rgba(0,0,0,0.02);">
+    <x-glass-card padding="16px" display="block" style="margin-bottom: 20px;">
         <div class="grid" style="grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; align-items: end;">
             <x-input-group label="Supplier" marginBottom="0">
                 <select class="input-control" id="formStkSupplierSelect"></select>

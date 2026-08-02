@@ -84,6 +84,9 @@
         if (target === 'return-supplier' && typeof loadListBarangReturn === 'function') {
             loadListBarangReturn();
         }
+        if (target === 'return-list' && typeof loadHistoriReturLengkap === 'function') {
+            loadHistoriReturLengkap();
+        }
         
         // Close mobile menu if open
         const sidebar = document.querySelector('.sidebar');
@@ -103,6 +106,12 @@
 
     // --- Role-Based UX (Section 10) ---
     function applyRoleRestrictions(role) {
+        if (role === 'Kasir') {
+            document.body.classList.add('role-kasir');
+        } else {
+            document.body.classList.remove('role-kasir');
+        }
+        
         const navItems = document.querySelectorAll('.nav-item');
         navItems.forEach(item => {
             const target = item.dataset.target;
@@ -540,3 +549,25 @@ function initAdminTableSorting() {
 document.addEventListener('DOMContentLoaded', () => {
     initAdminTableSorting();
 });
+
+
+// --- Kasir UI Patches ---
+document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("kasirDropdown");
+    const hamburger = document.querySelector(".kasir-hamburger");
+    if (dropdown && dropdown.classList.contains("active")) {
+        if (!dropdown.contains(e.target) && hamburger && !hamburger.contains(e.target)) {
+            dropdown.classList.remove("active");
+        }
+    }
+});
+
+const originalNavigateToKasir = navigateTo;
+navigateTo = function(target) {
+    originalNavigateToKasir(target);
+    const kasirSearch = document.getElementById("globalKasirSearch");
+    if (kasirSearch) {
+        kasirSearch.style.visibility = (target === "penjualan") ? "visible" : "hidden";
+    }
+};
+

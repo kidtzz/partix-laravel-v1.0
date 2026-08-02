@@ -217,6 +217,42 @@
                 </div>
             </header>
 
+            <!-- Kasir Topbar -->
+            <div class="kasir-topbar role-kasir-only">
+                <div class="kasir-topbar-left">
+                    <div style="position: relative;">
+                        <button class="kasir-hamburger" onclick="document.getElementById('kasirDropdown').classList.toggle('active'); event.stopPropagation();"><i class="bx bx-menu"></i></button>
+                        <div id="kasirDropdown" class="kasir-dropdown">
+                            <div class="kasir-dropdown-item" onclick="navigateTo('penjualan'); document.getElementById('kasirDropdown').classList.remove('active')"><i class='bx bx-cart'></i> Penjualan</div>
+                            <div class="kasir-dropdown-item" onclick="navigateTo('histori-transaksi'); document.getElementById('kasirDropdown').classList.remove('active')"><i class='bx bx-history'></i> Histori Penjualan</div>
+                            <div class="kasir-dropdown-item" onclick="navigateTo('return'); document.getElementById('kasirDropdown').classList.remove('active')"><i class='bx bx-revision'></i> Proses Retur</div>
+                            <div class="kasir-dropdown-item" onclick="navigateTo('return-list'); document.getElementById('kasirDropdown').classList.remove('active')"><i class='bx bx-list-ul'></i> Histori Retur</div>
+                        </div>
+                    </div>
+                    <div class="kasir-logo">PARTIX POS</div>
+                </div>
+                <div class="kasir-topbar-center">
+                    <div class="kasir-search-wrapper" id="globalKasirSearch">
+                        <i class="bx bx-barcode-reader"></i>
+                        <input type="text" id="kasirPosSearch" placeholder="Scan barcode atau cari nama barang...">
+                        <span class="shortcut-hint">F1</span>
+                    </div>
+                </div>
+                <div class="kasir-topbar-right">
+                    <div class="kasir-datetime" id="kasirRealtimeClock">
+                        --/--/----<br><strong>--:--:--</strong>
+                    </div>
+                    <div class="kasir-profile">
+                        <div class="profile-info">
+                            <strong>Kasir</strong>
+                            <span>Terminal 01</span>
+                        </div>
+                        <div class="profile-avatar"><i class="bx bx-user"></i></div>
+                    </div>
+                    <button class="btn-kasir-logout" onclick="logout()"><i class="bx bx-log-out-circle"></i></button>
+                </div>
+            </div>
+
             <!-- Views Container -->
             <div class="views-container">
                 <!-- Partials will be injected here. In SPA, we hide/show these containers. -->

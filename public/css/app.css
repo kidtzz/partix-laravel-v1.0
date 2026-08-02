@@ -1445,3 +1445,22 @@
             font-size: var(--text-sm);
         }
     }
+
+    /* Kasir Fullpage Mode */
+    @media (min-width: 769px) {
+        body.role-kasir .sidebar {
+            position: fixed;
+            transform: translateX(-100%);
+            box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
+            background: var(--surface-color);
+            z-index: 100;
+        }
+
+        body.role-kasir .sidebar.active {
+            transform: translateX(0);
+        }
+
+        body.role-kasir .mobile-menu-toggle {
+            display: flex !important;
+        }
+    }
