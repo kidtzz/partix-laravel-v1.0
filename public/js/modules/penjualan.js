@@ -496,9 +496,39 @@ function clearCartKasir() {
     }
 }
 
+function openModalBatal() {
+    if (posCart.length === 0) return;
+    const modal = document.getElementById('kasirBatalModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeModalBatal() {
+    const modal = document.getElementById('kasirBatalModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function executeBatalKasir() {
+    posCart = [];
+    renderCartKasir();
+    closeModalBatal();
+}
+
+function forceClearCartKasir() {
+    posCart = [];
+    renderCartKasir();
+}
+
 function renderCartKasir() {
     const container = document.getElementById("kasirCartItemsContainer");
     if (!container) return;
+    
+    // Toggle Action Buttons
+    const btnBatalTop = document.getElementById("btnBatalKasirTop");
+    const btnBatalBottom = document.getElementById("btnBatalKasirBottom");
+    const hasItems = posCart.length > 0;
+    
+    if (btnBatalTop) btnBatalTop.disabled = !hasItems;
+    if (btnBatalBottom) btnBatalBottom.disabled = !hasItems;
     
     const tipeHarga = document.getElementById("tipeHargaKasir")?.value || "Regular";
     

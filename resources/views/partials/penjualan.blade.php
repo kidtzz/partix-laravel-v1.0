@@ -129,7 +129,7 @@
             <div class="kasir-sidebar">
                 <div class="sidebar-header">
                     <h3><i class="bx bx-cart"></i> Ringkasan Keranjang</h3>
-                    <button class="btn-clear-cart" onclick="clearCartKasir()">Bersihkan</button>
+                    <button class="btn-clear-cart" id="btnBatalKasirTop" onclick="forceClearCartKasir()" disabled>Bersihkan</button>
                 </div>
 
                 <div class="kasir-cart-items" id="kasirCartItemsContainer">
@@ -193,8 +193,8 @@
                         BAYAR SEKARANG
                     </button>
                     <div style="display: flex; gap: 12px; margin-top: 12px;">
-                        <button class="btn-kasir-action btn-tahan" onclick="clearCartKasir()"><i class='bx bx-pause'></i> Tahan</button>
-                        <button class="btn-kasir-action btn-batal" onclick="clearCartKasir()"><i class='bx bx-x-circle'></i> Batal</button>
+                        <button class="btn-kasir-action btn-tahan" id="btnTahanKasir" onclick="alert('Fitur tahan transaksi akan segera hadir!')" disabled><i class='bx bx-pause'></i> Tahan</button>
+                        <button class="btn-kasir-action btn-batal" id="btnBatalKasirBottom" onclick="openModalBatal()" disabled><i class='bx bx-x-circle'></i> Batal</button>
                     </div>
                 </div>
             </div>
@@ -226,6 +226,24 @@
                 <div class="cash-modal-footer">
                     <button class="btn-cancel" onclick="closeCashModal()">Batal</button>
                     <button class="btn-confirm" onclick="submitKasirCheckout()">Konfirmasi & Cetak</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batal Popup Modal -->
+        <div class="kasir-cash-modal-overlay" id="kasirBatalModal">
+            <div class="kasir-cash-modal">
+                <div class="cash-modal-header">
+                    <h3>Konfirmasi Batal</h3>
+                    <button onclick="closeModalBatal()" class="close-btn"><i class="bx bx-x"></i></button>
+                </div>
+                <div class="cash-modal-body" style="padding: 24px; text-align: center;">
+                    <i class='bx bx-error-circle' style="font-size: 56px; color: #EF4444; margin-bottom: 12px;"></i>
+                    <p style="font-size: 15px; color: #4B5563;">Apakah Anda yakin ingin membatalkan transaksi ini dan mengosongkan keranjang?</p>
+                </div>
+                <div class="cash-modal-footer">
+                    <button class="btn-cancel" onclick="closeModalBatal()">Kembali</button>
+                    <button class="btn-confirm" style="background-color: #EF4444;" onclick="executeBatalKasir()">Ya, Batalkan</button>
                 </div>
             </div>
         </div>

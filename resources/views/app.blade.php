@@ -244,12 +244,12 @@
                     </div>
                     <div class="kasir-profile">
                         <div class="profile-info">
-                            <strong>Kasir</strong>
-                            <span>Terminal 01</span>
+                            <strong id="kasirDisplayUserName">Kasir</strong>
+                            <span id="kasirDisplayUserRole">Terminal 01</span>
                         </div>
                         <div class="profile-avatar"><i class="bx bx-user"></i></div>
                     </div>
-                    <button class="btn-kasir-logout" onclick="logout()"><i class="bx bx-log-out-circle"></i></button>
+                    <button class="btn-kasir-logout" onclick="handleLogout()" title="Logout"><i class="bx bx-log-out-circle"></i></button>
                 </div>
             </div>
 

@@ -222,6 +222,12 @@
         document.getElementById('displayUserName').textContent = AppState.user.name || AppState.user.username;
         document.getElementById('displayUserRole').textContent = AppState.user.role;
         
+        // Load Kasir User Info
+        const kasirNameEl = document.getElementById('kasirDisplayUserName');
+        if (kasirNameEl) kasirNameEl.textContent = AppState.user.name || AppState.user.username;
+        const kasirRoleEl = document.getElementById('kasirDisplayUserRole');
+        if (kasirRoleEl) kasirRoleEl.textContent = AppState.user.role;
+        
         // Apply Restrictions & Route
         let targetView = 'penjualan';
         if (AppState.user.role === 'Restocker') targetView = 'stock';
@@ -567,7 +573,7 @@ navigateTo = function(target) {
     originalNavigateToKasir(target);
     const kasirSearch = document.getElementById("globalKasirSearch");
     if (kasirSearch) {
-        kasirSearch.style.visibility = (target === "penjualan") ? "visible" : "hidden";
+        kasirSearch.parentElement.style.display = (target === "penjualan") ? "flex" : "none";
     }
 };
 

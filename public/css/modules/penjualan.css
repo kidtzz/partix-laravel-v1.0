@@ -1281,6 +1281,22 @@ body.role-kasir .sidebar-overlay {
     .kasir-topbar-right .profile-info {
         display: none;
     }
+    
+    .kasir-datetime {
+        display: none !important;
+    }
+
+    .kasir-topbar-right {
+        margin-left: auto !important;
+    }
+
+    .kasir-topbar-right, .kasir-topbar-left {
+        gap: 8px !important;
+    }
+
+    .kasir-logo {
+        font-size: 16px !important;
+    }
 
     .kasir-cash-modal {
         width: 90% !important;
@@ -1514,3 +1530,5 @@ body.role-kasir .search-bar input {
 .btn-kasir-action.btn-tahan i {
     color: #2563EB;
 }
+button:disabled { opacity: 0.5; cursor: not-allowed !important; }
+
