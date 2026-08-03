@@ -235,7 +235,6 @@
                     <div class="kasir-search-wrapper" id="globalKasirSearch">
                         <i class="bx bx-barcode-reader"></i>
                         <input type="text" id="kasirPosSearch" placeholder="Scan barcode atau cari nama barang...">
-                        <span class="shortcut-hint">F1</span>
                     </div>
                 </div>
                 <div class="kasir-topbar-right">
