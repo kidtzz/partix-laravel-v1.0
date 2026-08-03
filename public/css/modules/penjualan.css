@@ -1182,18 +1182,72 @@ body.role-kasir .sidebar-overlay {
 /* Stack vertically on very small screens, but maintain internal scrolling! */
 @media (max-width: 768px) {
 
-    html, body { overflow-x: hidden !important; overflow-y: auto !important; height: auto !important; }
-    body.role-kasir, 
-    body.role-kasir .main-content, 
-    body.role-kasir .views-container { overflow-x: hidden !important; overflow-y: auto !important; height: auto !important; min-height: 100vh !important; display: block !important; position: static !important; }
+    html,
+    body {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        height: auto !important;
+    }
 
-    body.role-kasir .view-section:not(.active) { display: none !important; }
-    body.role-kasir .view-section.active { position: static !important; height: auto !important; min-height: 100vh !important; overflow: auto !important; display: block !important; }
+    body.role-kasir,
+    body.role-kasir .main-content,
+    body.role-kasir .views-container {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        display: block !important;
+        position: static !important;
+    }
 
-    .kasir-pos-view { height: auto !important; min-height: 100vh !important; display: flex !important; flex-direction: column !important; overflow: auto !important; position: relative !important; }
-    .kasir-main { flex-direction: column !important; height: auto !important; overflow: auto !important; padding: 6px !important; gap: 8px !important; display: flex !important; }
-    .kasir-catalog { flex: none !important; min-height: 50vh !important; height: auto !important; overflow: visible !important; width: 100% !important; }
-    .kasir-sidebar { width: 100% !important; flex: none !important; min-height: 400px !important; height: auto !important; border: 1px solid #E5E7EB !important; overflow: visible !important; border-radius: 8px !important; margin-left: 0 !important; }
+    body.role-kasir .view-section:not(.active) {
+        display: none !important;
+    }
+
+    body.role-kasir .view-section.active {
+        position: static !important;
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow: auto !important;
+        display: block !important;
+    }
+
+    .kasir-pos-view {
+        height: auto !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: auto !important;
+        position: relative !important;
+    }
+
+    .kasir-main {
+        flex-direction: column !important;
+        height: auto !important;
+        overflow: auto !important;
+        padding: 6px !important;
+        gap: 8px !important;
+        display: flex !important;
+    }
+
+    .kasir-catalog {
+        flex: none !important;
+        min-height: 50vh !important;
+        height: auto !important;
+        overflow: visible !important;
+        width: 100% !important;
+    }
+
+    .kasir-sidebar {
+        width: 100% !important;
+        flex: none !important;
+        min-height: 400px !important;
+        height: auto !important;
+        border: 1px solid #E5E7EB !important;
+        overflow: visible !important;
+        border-radius: 8px !important;
+        margin-left: 0 !important;
+    }
 
     .kasir-cart-items {
         min-height: 250px;
@@ -1312,10 +1366,34 @@ body.role-kasir .sidebar-overlay {
 }
 
 /* KASIR SECONDARY VIEWS (HISTORY, RETUR) */
-body.role-kasir .views-container { background: #F3F6F9; padding: 20px 12px 32px 12px; }
-body.role-kasir .view-section { padding: 0 !important; }
-body.role-kasir .glass-card { padding: 12px !important; border-radius: 8px !important; border: 1px solid #E5E7EB !important; box-shadow: none !important; background: white !important; margin-top: 0 !important; margin-bottom: 8px; }
-body.role-kasir .view-header { padding: 12px 16px !important; margin-bottom: 8px !important; background: white !important; border-radius: 8px !important; border: 1px solid #E5E7EB !important; box-shadow: none !important; }
+body.role-kasir .views-container {
+    background: #F3F6F9;
+    padding: 20px 12px 32px 12px;
+}
+
+body.role-kasir .view-section {
+    padding: 0 !important;
+}
+
+body.role-kasir .glass-card {
+    padding: 12px !important;
+    border-radius: 8px !important;
+    border: 1px solid #E5E7EB !important;
+    box-shadow: none !important;
+    background: white !important;
+    margin-top: 0 !important;
+    margin-bottom: 8px;
+}
+
+body.role-kasir .view-header {
+    padding: 12px 16px !important;
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+    background: white !important;
+    border-radius: 8px !important;
+    border: 1px solid #E5E7EB !important;
+    box-shadow: none !important;
+}
 
 body.role-kasir .view-header h2 {
     font-size: 16px !important;
@@ -1368,15 +1446,38 @@ body.role-kasir .search-bar input {
     font-size: 13px !important;
 }
 
-  /* RESPONSIVE KASIR SECONDARY VIEWS */
-  @media (max-width: 768px) {
-      body.role-kasir .views-container { padding: 20px 12px 24px 12px !important; }
-      body.role-kasir .view-section { padding: 0 !important; }
-      body.role-kasir .view-header { padding: 12px 14px !important; margin-bottom: 8px !important; margin-top: 0 !important; }
-      body.role-kasir .view-header h2 { font-size: 14px !important; }
-      body.role-kasir .glass-card { padding: 12px !important; margin-bottom: 8px !important; margin-top: 0 !important; }
-      body.role-kasir th, body.role-kasir td { padding: 8px 10px !important; font-size: 12px !important; }
-  }
+/* RESPONSIVE KASIR SECONDARY VIEWS */
+@media (max-width: 768px) {
+    body.role-kasir .views-container {
+        padding: 10px 12px 24px 12px !important;
+    }
+
+    body.role-kasir .view-section {
+        padding: 0 !important;
+    }
+
+    body.role-kasir .view-header {
+        padding: 12px 14px !important;
+        margin-bottom: 8px !important;
+        margin-top: 0 !important;
+    }
+
+    body.role-kasir .view-header h2 {
+        font-size: 14px !important;
+    }
+
+    body.role-kasir .glass-card {
+        padding: 12px !important;
+        margin-bottom: 8px !important;
+        margin-top: 0 !important;
+    }
+
+    body.role-kasir th,
+    body.role-kasir td {
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+    }
+}
 
 
 
