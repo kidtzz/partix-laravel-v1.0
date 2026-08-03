@@ -142,9 +142,12 @@
                     <div class="form-group">
                         <label><i class="bx bx-user"></i> Pilih Pelanggan</label>
                         <select class="kasir-input-gray" id="tipeHargaKasir" onchange="updateCartUIKasir()">
-                            <option value="Regular">Umum</option>
-                            <option value="Member">Member (-5%)</option>
-                            <option value="Bengkel">Bengkel (-15%)</option>
+                            <option value="Regular" selected>Reguler (Umum)</option>
+                            <option id="optHrgMemberKasir" value="Member">Member</option>
+                            <option id="optHrgLanggananKasir" value="Langganan">Langganan</option>
+                            <option id="optHrgBengkelKasir" value="Bengkel">Bengkel / Reseller</option>
+                            <option id="optHrgTemanKasir" value="Teman">Teman / Kenalan</option>
+                            <option id="optHrgGrosirKasir" value="Grosir">Grosir / VIP</option>
                         </select>
                     </div>
                     <div class="form-group mt-3">

@@ -14,16 +14,23 @@ function initPOS() {
     grid.innerHTML = `<div style="padding:20px; text-align:center; grid-column: 1 / -1;"><i class='bx bx-loader-alt bx-spin' style='font-size: 20px;'></i> Memuat Data Barang...</div>`;
 
     BackendAPI.call('getPengaturanDiskon').then(diskon => {
-        const optMem = document.getElementById('optHrgMember');
-        if (optMem) optMem.textContent = `Member (-${diskon.DISKON_MEMBER || 5}%)`;
-        const optLan = document.getElementById('optHrgLangganan');
-        if (optLan) optLan.textContent = `Langganan (-${diskon.DISKON_LANGGANAN || 10}%)`;
-        const optBeng = document.getElementById('optHrgBengkel');
-        if (optBeng) optBeng.textContent = `Bengkel / Reseller (-${diskon.DISKON_BENGKEL || 15}%)`;
-        const optTem = document.getElementById('optHrgTeman');
-        if (optTem) optTem.textContent = `Teman / Kenalan (-${diskon.DISKON_TEMAN || 20}%)`;
-        const optGro = document.getElementById('optHrgGrosir');
-        if (optGro) optGro.textContent = `Grosir / VIP (-${diskon.DISKON_GROSIR || 25}%)`;
+        const setDiskon = (id, label, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = `${label} (-${value}%)`;
+        };
+        // Form Utama
+        setDiskon('optHrgMember', 'Member', diskon.DISKON_MEMBER || 5);
+        setDiskon('optHrgLangganan', 'Langganan', diskon.DISKON_LANGGANAN || 10);
+        setDiskon('optHrgBengkel', 'Bengkel / Reseller', diskon.DISKON_BENGKEL || 15);
+        setDiskon('optHrgTeman', 'Teman / Kenalan', diskon.DISKON_TEMAN || 20);
+        setDiskon('optHrgGrosir', 'Grosir / VIP', diskon.DISKON_GROSIR || 25);
+        
+        // Form Kasir
+        setDiskon('optHrgMemberKasir', 'Member', diskon.DISKON_MEMBER || 5);
+        setDiskon('optHrgLanggananKasir', 'Langganan', diskon.DISKON_LANGGANAN || 10);
+        setDiskon('optHrgBengkelKasir', 'Bengkel / Reseller', diskon.DISKON_BENGKEL || 15);
+        setDiskon('optHrgTemanKasir', 'Teman / Kenalan', diskon.DISKON_TEMAN || 20);
+        setDiskon('optHrgGrosirKasir', 'Grosir / VIP', diskon.DISKON_GROSIR || 25);
     }).catch(e => { });
 
     BackendAPI.call('getBarangUntukPOS').then(data => {
@@ -279,21 +286,21 @@ function showCheckoutSuccessPopup(invoice, kembalianStr) {
     overlay.style.transition = 'opacity 0.3s ease';
 
     overlay.innerHTML = `
-                <div style="background: white; width: 100%; max-width: 420px; border-radius: 16px; padding: 32px 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s ease;" id="successModalContent">
-                    <div style="font-size: 64px; color: #10B981; margin-bottom: 16px; text-align: center;">
+                <div style="background: white; width: 90%; max-width: 340px; border-radius: 12px; padding: 24px 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); transform: scale(0.9); transition: transform 0.3s ease;" id="successModalContent">
+                    <div style="font-size: 48px; color: #10B981; margin-bottom: 12px; text-align: center;">
                         <i class='bx bxs-check-circle'></i>
                     </div>
-                    <h2 style="margin-bottom: 12px; font-weight: 700; color: #111827; font-size: 24px; text-align: center;">Pembayaran Berhasil!</h2>
+                    <h2 style="margin-bottom: 10px; font-weight: 700; color: #111827; font-size: 18px; text-align: center;">Pembayaran Berhasil!</h2>
                     
-                    <div style="background: #F9FAFB; border: 1px dashed #E5E7EB; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-                        <p style="color: #6B7280; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">No. Invoice</p>
-                        <strong style="color: #111827; font-size: 16px; display: block; margin-bottom: 16px; text-align: center;">${invoice}</strong>
+                    <div style="background: #F9FAFB; border: 1px dashed #E5E7EB; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                        <p style="color: #6B7280; font-size: 11px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">No. Invoice</p>
+                        <strong style="color: #111827; font-size: 14px; display: block; margin-bottom: 12px; text-align: center;">${invoice}</strong>
                         
-                        <p style="color: #6B7280; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Kembalian</p>
-                        <strong style="color: #10B981; font-size: 28px; font-weight: 800; display: block; text-align: center;">${kembalianStr}</strong>
+                        <p style="color: #6B7280; font-size: 11px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Kembalian</p>
+                        <strong style="color: #10B981; font-size: 24px; font-weight: 800; display: block; text-align: center;">${kembalianStr}</strong>
                     </div>
 
-                    <button class="btn btn-primary" id="btnCloseSuccessPopup" style="width: 100%; justify-content: center; padding: 14px; font-size: 16px; font-weight: 600; border-radius: 10px;">
+                    <button class="btn btn-primary" id="btnCloseSuccessPopup" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px;">
                         <i class='bx bx-check'></i> Selesai & Lanjut
                     </button>
                 </div>
@@ -447,10 +454,10 @@ function renderPOSGridKasir() {
     grid.innerHTML = filtered.map(b => {
         const isHabis = b.stok_saat_ini <= 0;
         const hargaAsli = b.harga["Regular"] || 0;
-        let hargaAktif = b.harga[tipeHarga] || 0;
+        let hargaAktif = hargaAsli;
         
-        // Coret harga regular jika tipeHarga bukan regular
-        const showCoret = tipeHarga !== "Regular" && hargaAktif < hargaAsli;
+        // Selalu tampilkan harga normal di card, diskon hanya muncul di keranjang
+        const showCoret = false;
         
         return `
         <div class="kasir-product-card">
@@ -478,7 +485,6 @@ function renderPOSGridKasir() {
 
 function updateCartUIKasir() {
     renderCartKasir();
-    renderPOSGridKasir(); // In case price changes
 }
 
 function clearCartKasir() {
