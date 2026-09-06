@@ -1,0 +1,45 @@
+name: Deploy Laravel to cPanel
+
+on:
+  push:
+    branches:
+      - main # Ubah ke 'master' jika branch utama Anda bernama master
+
+jobs:
+  web-deploy:
+    name: 🎉 Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    
+    - name: 🛠️ Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Sesuaikan dengan versi PHP cPanel Anda (contoh: 8.1, 8.2, 8.3)
+        
+    - name: 📦 Install Dependencies (Composer)
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+      
+    # Uncomment 3 baris di bawah ini jika proyek Anda butuh 'npm run build' (Vite/Mix)
+    # - name: 🏗️ Install Node & Build Assets
+    #   run: npm install && npm run build
+      
+    - name: 📂 Upload to cPanel via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        # Jika ingin deploy ke root domain utama, biarkan /public_html/
+        # Jika addon domain, ubah jadi /namadomain.com/
+        server-dir: /public_html/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .env*
+          README.md

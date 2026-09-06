@@ -16,9 +16,10 @@
 /public/build
 /public/hot
 /public/storage
+/public/index.php
 /storage/*.key
 /storage/pail
-/vendor
+# /vendor (Sengaja tidak di-ignore agar terpush ke GitHub)
 Homestead.json
 Homestead.yaml
 Thumbs.db
