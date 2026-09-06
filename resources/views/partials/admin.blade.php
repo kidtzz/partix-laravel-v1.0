@@ -243,7 +243,7 @@
     </x-view-header>
     
     <!-- Tabs Navigation -->
-    <div class="flex gap-4 mb-4" style="border-bottom: 1px solid var(--border-color);">
+    <div class="flex gap-4 mb-4" style="border-bottom: 1px solid var(--border-color); overflow-x: auto; white-space: nowrap; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
         <button id="tabLogTransaksi" class="tab-btn active" onclick="switchAdminLogTab('transaksi')" style="padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--primary-color); border-bottom: 2px solid var(--primary-color); cursor:pointer;">
             Log Transaksi
         </button>

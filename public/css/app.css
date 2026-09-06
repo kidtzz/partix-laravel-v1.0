@@ -1372,6 +1372,18 @@
             max-width: 100%;
         }
 
+        .mobile-stack-flex {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100%;
+            gap: 12px !important;
+        }
+        
+        .mobile-stack-flex > * {
+            width: 100% !important;
+        }
+
         /* Modals on Mobile */
         .modal-overlay {
             padding: 12px;
