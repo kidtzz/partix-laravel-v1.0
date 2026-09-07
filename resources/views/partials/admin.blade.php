@@ -1,6 +1,6 @@
 <link href="/css/modules/admin.css?v={{ time() }}" rel="stylesheet">
 <!-- Tab: Pengaturan Harga -->
-<section id="view-admin-harga" class="view-section" style="display:flex; flex-direction:column; gap:14px;">
+<section id="view-admin-harga" class="view-section admin-harga-flex">
     <x-view-header title="Pengaturan Harga Jual" icon="bx bx-dollar-circle"></x-view-header>
 
     <!-- â•â•â• SETTINGS BAR â•â•â• -->

@@ -8,7 +8,7 @@ function formatRupiah(amount) {
 
 // Dipanggil dari js.html atau pada load view
 function initPOS() {
-    if (AppState.user.role === "Restocker") return; // Restocker tak punya akses
+    if (!AppState.user || AppState.user.role === "Restocker") return; // Restocker tak punya akses
 
     const grid = document.getElementById('posProductGrid');
     grid.innerHTML = `<div style="padding:20px; text-align:center; grid-column: 1 / -1;"><i class='bx bx-loader-alt bx-spin' style='font-size: 20px;'></i> Memuat Data Barang...</div>`;

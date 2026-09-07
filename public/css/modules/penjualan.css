@@ -1212,7 +1212,7 @@ body.role-kasir .sidebar-overlay {
         display: block !important;
     }
 
-    .kasir-pos-view {
+    body.role-kasir .kasir-pos-view {
         height: auto !important;
         min-height: 100vh !important;
         display: flex !important;

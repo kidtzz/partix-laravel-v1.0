@@ -3,7 +3,7 @@ let masterStockList = [];
     let semuaBarangSupplierDataStock = null;
 
     function initStockView() {
-        if (AppState.user.role === "Kasir") return; // Akses ditolak untuk kasir
+        if (!AppState.user || AppState.user.role === "Kasir") return; // Akses ditolak untuk kasir
 
         Promise.all([
             BackendAPI.call('getStockList'),

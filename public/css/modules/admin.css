@@ -116,3 +116,4 @@
             }
             .harga-btn-group button { flex: 1; }
         }
+.admin-harga-flex.active { display: flex !important; flex-direction: column; gap: 14px; }

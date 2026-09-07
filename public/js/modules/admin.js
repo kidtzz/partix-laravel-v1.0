@@ -135,7 +135,7 @@ let adminBarangData = [];
     }
 
     function initAdminHargaView() {
-        if (AppState.user.role !== "Admin") {
+        if (!AppState.user || AppState.user.role !== "Admin") {
             return;
         }
         loadAdminHarga();
@@ -333,7 +333,7 @@ let adminBarangData = [];
     let isMasterBarangLoaded = false;
 
     function initMasterBarangView() {
-        if (AppState.user.role !== "Admin" && AppState.user.role !== "Restocker") return;
+        if (!AppState.user || (AppState.user.role !== "Admin" && AppState.user.role !== "Restocker")) return;
         loadMasterBarang();
     }
 
@@ -524,7 +524,7 @@ let adminBarangData = [];
     let isMasterSupplierLoaded = false;
 
     function initMasterSupplierView() {
-        if (AppState.user.role !== "Admin" && AppState.user.role !== "Restocker") return;
+        if (!AppState.user || (AppState.user.role !== "Admin" && AppState.user.role !== "Restocker")) return;
         loadMasterSupplier();
     }
 

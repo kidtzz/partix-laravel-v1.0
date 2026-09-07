@@ -72,7 +72,7 @@
         if (viewEl) {
             viewEl.classList.add('active');
             AppState.currentView = target;
-            localStorage.setItem('partix_last_view', target);
+            sessionStorage.setItem('partix_last_view', target);
         }
         
         // Re-apply role restrictions after changing active styles
@@ -194,6 +194,7 @@
         if (savedUser) {
             try {
                 AppState.user = JSON.parse(savedUser);
+                if (!AppState.user) throw new Error('User is null');
                 initDashboard();
             } catch(e) {
                 showLoginScreen();
@@ -234,7 +235,7 @@
         if (AppState.user.role === 'Admin') targetView = 'dashboard'; // Admin starts at dashboard
         
         // Cek jika ada last view yang disimpan
-        const lastView = localStorage.getItem('partix_last_view');
+        const lastView = sessionStorage.getItem('partix_last_view');
         if (lastView) {
             // Validasi apakah role boleh akses lastView
             if (AppState.user.role === 'Kasir' && ['penjualan', 'histori-transaksi', 'return', 'return-list'].includes(lastView)) targetView = lastView;
@@ -304,6 +305,9 @@
                 }
             }).finally(() => {
                 localStorage.removeItem('partix_user');
+                sessionStorage.removeItem('partix_last_view');
+                sessionStorage.removeItem('partix-theme');
+                document.documentElement.removeAttribute('data-theme');
                 AppState.user = null;
                 document.getElementById('appContainer').style.display = 'none';
                 const loginScreen = document.getElementById('loginScreen');

@@ -38,17 +38,17 @@
     </style>
     <script>
         // Apply theme immediately to prevent FOUC
-        const savedTheme = localStorage.getItem('partix-theme');
+        const savedTheme = sessionStorage.getItem('partix-theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
         function setTheme(themeName) {
             if (themeName) {
                 document.documentElement.setAttribute('data-theme', themeName);
-                localStorage.setItem('partix-theme', themeName);
+                sessionStorage.setItem('partix-theme', themeName);
             } else {
                 document.documentElement.removeAttribute('data-theme');
-                localStorage.removeItem('partix-theme');
+                sessionStorage.removeItem('partix-theme');
             }
             document.getElementById('themeDropdown').classList.add('hidden');
         }

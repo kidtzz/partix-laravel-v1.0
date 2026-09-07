@@ -656,31 +656,32 @@
     }
 
     .views-container {
-        flex: 1;
+        flex: 1 1 0%;
         position: relative;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%; /* Safari fix */
     }
 
     .view-section {
-        position: absolute;
-        top: 0;
-        left: 0;
+        display: none;
         width: 100%;
         height: 100%;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity var(--transition-normal), transform var(--transition-normal);
-        transform: translateY(10px);
         overflow-y: auto;
         padding: 0 24px 24px 24px;
         -webkit-overflow-scrolling: touch;
     }
 
     .view-section.active {
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        z-index: 1;
+        display: block;
+        animation: fadeViewIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeViewIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: none; }
     }
 
     .view-header {
@@ -1415,15 +1416,15 @@
 
         /* Toasts on Mobile */
         .toast-container {
-            bottom: 16px;
-            top: auto;
+            top: 16px;
+            bottom: auto;
             left: 16px;
             right: 16px;
             transform: none;
         }
 
         .toast {
-            transform: translateY(150%);
+            transform: translateY(-150%);
         }
 
         /* Stats Cards */
