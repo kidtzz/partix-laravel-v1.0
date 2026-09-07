@@ -241,12 +241,12 @@
                     <div class="kasir-datetime" id="kasirRealtimeClock">
                         --/--/----<br><strong>--:--:--</strong>
                     </div>
-                    <div class="kasir-profile">
+                    <div class="kasir-profile" onclick="this.classList.toggle('show-info')">
                         <div class="profile-info">
                             <strong id="kasirDisplayUserName">Kasir</strong>
                             <span id="kasirDisplayUserRole">Terminal 01</span>
                         </div>
-                        <div class="profile-avatar"><i class="bx bx-user"></i></div>
+                        <div class="profile-avatar" style="cursor: pointer;"><i class="bx bx-user"></i></div>
                     </div>
                     <button class="btn-kasir-logout" onclick="handleLogout()" title="Logout"><i class="bx bx-log-out-circle"></i></button>
                 </div>

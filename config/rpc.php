@@ -16,8 +16,8 @@ return [
         'cariBarangAktif' => [\App\Services\ReturnService::class, 'cariBarangAktif', ['Kasir', 'Restocker', 'Admin']],
         'prosesReturn' => [\App\Services\ReturnService::class, 'prosesReturn', ['Kasir', 'Admin']],
         'getListBarangReturn' => [\App\Services\ReturnService::class, 'getListBarangReturn', ['Kasir', 'Restocker', 'Admin']],
-        'getHistoriReturSupplier' => [\App\Services\ReturnService::class, 'getHistoriReturSupplier', ['Restocker', 'Admin']],
-        'prosesReturSupplier' => [\App\Services\ReturnService::class, 'prosesReturSupplier', ['Restocker', 'Admin']],
+        'getHistoriReturSupplier' => [\App\Services\ReturnService::class, 'getHistoriReturSupplier', ['Kasir', 'Restocker', 'Admin']],
+        'prosesReturSupplier' => [\App\Services\ReturnService::class, 'prosesReturSupplier', ['Kasir', 'Restocker', 'Admin']],
         
         // Stock / Inventory
         'getStockList' => [\App\Services\BarangService::class, 'getStockList', ['Restocker', 'Admin']],

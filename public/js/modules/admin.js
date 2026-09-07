@@ -1254,6 +1254,7 @@ let adminBarangData = [];
                 <td>${u.nama_lengkap}</td>
                 <td>${u.role}</td>
                 <td><span class="badge ${u.status === 'Aktif' ? 'badge-success' : 'badge-secondary'}">${u.status}</span></td>
+                <td><small style="color: var(--text-muted);">${u.keterangan || '-'}</small></td>
                 <td>
                     <div style="display: flex; gap: 8px;">
                         <button class="btn btn-secondary btn-sm" onclick="editModalUser('${u.username}')">Edit</button>
@@ -1278,6 +1279,7 @@ let adminBarangData = [];
         document.getElementById('formUserNama').value = "";
         document.getElementById('formUserPassword').value = "";
         document.getElementById('formUserRole').value = "Kasir";
+        if (document.getElementById('formUserKeterangan')) document.getElementById('formUserKeterangan').value = "";
         document.getElementById('formUserStatusGroup').style.display = 'none';
         document.getElementById('modalAdminUser').classList.add('active');
     }
@@ -1293,6 +1295,7 @@ let adminBarangData = [];
         document.getElementById('formUserNama').value = u.nama_lengkap;
         document.getElementById('formUserPassword').value = ""; // Kosongkan agar aman, user hanya isi jika ingin ubah
         document.getElementById('formUserRole').value = u.role;
+        if (document.getElementById('formUserKeterangan')) document.getElementById('formUserKeterangan').value = u.keterangan || "";
         document.getElementById('formUserStatus').value = u.status || "Aktif";
         document.getElementById('formUserStatusGroup').style.display = 'block';
         document.getElementById('modalAdminUser').classList.add('active');
@@ -1317,6 +1320,9 @@ let adminBarangData = [];
             nama_lengkap: nama,
             role: role
         };
+        const keteranganEl = document.getElementById('formUserKeterangan');
+        if (keteranganEl) data.keterangan = keteranganEl.value.trim();
+        
         if (password) data.password = password;
         if (mode === "edit") {
             data.status = document.getElementById('formUserStatus').value;

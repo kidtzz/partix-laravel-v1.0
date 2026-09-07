@@ -16,7 +16,8 @@ class UserService
                 'username' => $u->username,
                 'nama_lengkap' => $u->name,
                 'role' => $u->roles->first()->name ?? 'Guest',
-                'status' => str_replace('Non Aktif', 'Nonaktif', $u->status)
+                'status' => str_replace('Non Aktif', 'Nonaktif', $u->status),
+                'keterangan' => $u->keterangan
             ];
         })->toArray();
     }
@@ -33,7 +34,8 @@ class UserService
                 'username' => $payload['username'],
                 'name' => $payload['nama_lengkap'],
                 'password' => Hash::make($payload['password']),
-                'status' => 'Aktif'
+                'status' => 'Aktif',
+                'keterangan' => $payload['keterangan'] ?? null
             ]);
             $u->assignRole($payload['role'] ?? 'Kasir');
             LogService::log('CREATE', 'Master User', "Tambah user: " . $u->username);
@@ -59,6 +61,9 @@ class UserService
                 $updateData['status'] = str_replace('Nonaktif', 'Non Aktif', $payload['status_user']);
             } elseif (isset($payload['status'])) {
                 $updateData['status'] = str_replace('Nonaktif', 'Non Aktif', $payload['status']);
+            }
+            if (array_key_exists('keterangan', $payload)) {
+                $updateData['keterangan'] = $payload['keterangan'];
             }
 
             $u->update($updateData);

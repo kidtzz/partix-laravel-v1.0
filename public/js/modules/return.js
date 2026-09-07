@@ -285,8 +285,8 @@ let currentInvoice = null;
         }).join('');
 
         container.innerHTML = itemsHtml + `
-            <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid var(--border-solid); text-align: right;">
-                <button class="btn btn-primary" onclick="prosesReturnAPI()" id="btnProsesReturn">
+            <div style="margin-top: auto; padding-top: 12px; text-align: right;">
+                <button class="btn btn-primary" onclick="prosesReturnAPI()" id="btnProsesReturn" style="min-height: 44px; font-size: 14px; width: 100%; justify-content: center; border-radius: 12px;">
                     <i class='bx bx-check'></i> Proses Return
                 </button>
             </div>

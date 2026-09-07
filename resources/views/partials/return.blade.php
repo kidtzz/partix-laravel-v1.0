@@ -56,13 +56,13 @@
         </x-glass-card>
 
         <!-- Right Column: Return Items -->
-        <x-glass-card padding="24px" display="flex">
-            <h3 style="margin-top:0; margin-bottom: 16px; font-size: 14px;">Barang yang Dibeli</h3>
+        <div style="display: flex; flex-direction: column; flex: 1;">
+            <h3 style="margin-top:0; margin-bottom: 16px; font-size: 16px; font-weight: 700; color: var(--text-main);"><i class='bx bx-shopping-bag' style="color: var(--primary-color);"></i> Barang yang Dibeli</h3>
 
-            <div id="emptyInvoiceState"
-                style="text-align: center; color: var(--text-muted); padding: 40px 0; opacity: 0.7;">
-                <i class='bx bx-receipt' style="font-size: 40px; margin-bottom: 12px;"></i>
-                <p>Silakan cari nomor invoice terlebih dahulu</p>
+            <div id="emptyInvoiceState" class="glass-card"
+                style="text-align: center; color: var(--text-muted); padding: 60px 20px; opacity: 0.8; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <i class='bx bx-receipt' style="font-size: 48px; margin-bottom: 16px; color: var(--primary-color); opacity: 0.5;"></i>
+                <p style="font-weight: 500; font-size: 14px;">Silakan cari nomor invoice terlebih dahulu</p>
             </div>
 
             <div id="returnItemsContainer" style="display: none; flex: 1; flex-direction: column; gap: 16px;">
@@ -107,13 +107,13 @@
                 </div>
 
                 <div
-                    style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-solid); text-align: right;">
+                    style="margin-top: auto; padding-top: 16px; text-align: right;">
                     <button class="btn btn-primary" id="btnProsesReturn" onclick="prosesReturn()" style="min-height: 28px; padding: 4px 12px; font-size: 11px;">
                         <i class='bx bx-check'></i> Proses Return
                     </button>
                 </div>
             </div>
-        </x-glass-card>
+        </div>
 
     </div>
 </div>

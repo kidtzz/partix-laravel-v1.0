@@ -207,10 +207,10 @@
         </div>
     </x-view-header>
     <x-glass-card padding="24px" display="flex" flex="true">
-        <x-table :headers="['Username', 'Nama Lengkap', 'Role', 'Status', 'Aksi']">
+        <x-table :headers="['Username', 'Nama Lengkap', 'Role', 'Status', 'Keterangan', 'Aksi']">
             <tbody id="adminUserTableBody">
                 <tr>
-                    <td colspan="5" style="text-align:center;">Memuat data...</td>
+                    <td colspan="6" style="text-align:center;">Memuat data...</td>
                 </tr>
             </tbody>
         </x-table>
@@ -492,6 +492,10 @@
             <option value="Restocker">Restocker</option>
             <option value="Admin">Admin</option>
         </select>
+    </x-input-group>
+    
+    <x-input-group label="Keterangan">
+        <textarea id="formUserKeterangan" class="input-control" placeholder="Opsional, keterangan status user (cth: Sudah tidak kerja)" style="height: 60px; resize: none;"></textarea>
     </x-input-group>
     
     <x-input-group id="formUserStatusGroup" label="Status Akun" style="display:none;">
