@@ -31,9 +31,9 @@ function initDashboardView() {
             } else {
                 tbody.innerHTML = stats.notifikasiStockMinimum.map(b => `
                     <tr>
-                        <td style="font-weight: 600;">${b.id_barang}</td>
+                        <td>${b.id_barang}</td>
                         <td>${b.nama_barang}</td>
-                        <td><span class="badge badge-secondary" style="background: rgba(231, 76, 60, 0.1); color: var(--danger-color);">${b.stok_saat_ini}</span></td>
+                        <td><span class="badge badge-secondary" style="background: rgba(231, 76, 60, 0.1); color: var(--danger-color); font-weight: 400;">${b.stok_saat_ini}</span></td>
                         <td>${b.minimum_stock}</td>
                         <td>${b.satuan}</td>
                     </tr>

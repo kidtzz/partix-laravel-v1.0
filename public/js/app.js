@@ -531,7 +531,7 @@
                 });
                 th.dataset.order = newDesc ? 'desc' : 'asc';
                 const activeIcon = th.querySelector('.sorting-icon');
-                if (activeIcon) activeIcon.textContent = newDesc ? 'â–¼' : 'â–²';
+                if (activeIcon) activeIcon.textContent = newDesc ? '\u25BC' : '\u25B2';
             });
         });
 
@@ -547,11 +547,7 @@
 function initAdminTableSorting() {
     const tables = [
         'adminLogTableBody',
-        'systemLogTableBody',
-        'adminTransaksiTableBody',
-        'adminBarangTableBody',
-        'adminSupplierTableBody',
-        'adminUserTableBody'
+        'systemLogTableBody'
     ];
     tables.forEach(id => makeTbodySortable(id, 0, true));
 }

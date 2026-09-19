@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('barang_returns', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
             $table->string('no_invoice_asal');
             $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
             $table->integer('qty_rusak');

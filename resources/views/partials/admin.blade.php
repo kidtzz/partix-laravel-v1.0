@@ -3,112 +3,57 @@
 <section id="view-admin-harga" class="view-section admin-harga-flex">
     <x-view-header title="Pengaturan Harga Jual" icon="bx bx-dollar-circle"></x-view-header>
 
-    <!-- â•â•â• SETTINGS BAR â•â•â• -->
-    <div class="glass-card" style="padding: 16px 20px; box-sizing:border-box;">
+    <!-- Tabs Navigation -->
+    <div class="flex gap-4 mb-4" style="border-bottom: 1px solid var(--border-color); overflow-x: auto; white-space: nowrap; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; flex-shrink: 0;">
+        <button id="tabHargaDaftar" class="tab-btn active" onclick="switchAdminHargaTab('daftar')" style="padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--primary-color); border-bottom: 2px solid var(--primary-color); cursor:pointer;">
+            Daftar Harga Barang
+        </button>
+        <button id="tabHargaKonfigurasi" class="tab-btn" onclick="switchAdminHargaTab('konfigurasi')" style="padding: 10px 16px; border:none; background:none; font-weight:600; color:var(--text-muted); cursor:pointer;">
+            Konfigurasi Harga & Stok
+        </button>
+    </div>
+
+    <!-- TAB 1: KONFIGURASI -->
+    <div id="contentHargaKonfigurasi" style="display: none; flex-shrink: 0;">
+    <!-- ═══ SETTINGS BAR ═══ -->
+    <div class="glass-card" style="padding: 20px; box-sizing:border-box;">
+        <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <i class='bx bx-slider-alt' style="color: var(--primary-color); font-size: 20px;"></i>
+            <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Konfigurasi Harga & Stok</span>
+        </div>
         
-        <!-- Baris 1: Diskon -->
-        <div class="harga-settings-row diskon-row">
-            <!-- Label kiri (desktop only) -->
-            <div class="harga-label-kiri" style="display:flex;align-items:center;gap:5px;flex-shrink:0;padding-right:10px;border-right:1px solid var(--border-color);">
-                <i class='bx bxs-discount' style="color:var(--primary-color);font-size:16px;"></i>
-                <span style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">Diskon</span>
-            </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px;">
+            
+            <x-input-group label="Diskon Member (%)">
+                <input type="number" class="input-control" id="settingDiskonMember" min="0" max="100" oninput="updateDiskonVisual('Mem',this.value)" style="color:#3b82f6; font-weight: 600;">
+            </x-input-group>
 
-            <!-- Chip: Member -->
-            <div class="harga-chip" style="background:rgba(59,130,246,0.08);border:1.5px solid rgba(59,130,246,0.22);">
-                <span class="harga-chip-label" style="color:#3b82f6;">Member</span>
-                <input type="number" id="settingDiskonMember" placeholder="-" min="0" max="100"
-                    style="color:#3b82f6;" oninput="updateDiskonVisual('Mem',this.value)">
-                <span class="harga-chip-pct" style="color:#3b82f6;">%</span>
-            </div>
+            <x-input-group label="Diskon Langganan (%)">
+                <input type="number" class="input-control" id="settingDiskonLangganan" min="0" max="100" oninput="updateDiskonVisual('Lan',this.value)" style="color:#6366f1; font-weight: 600;">
+            </x-input-group>
 
-            <span class="harga-sep-dot">Â·</span>
+            <x-input-group label="Diskon Bengkel (%)">
+                <input type="number" class="input-control" id="settingDiskonBengkel" min="0" max="100" oninput="updateDiskonVisual('Beng',this.value)" style="color:#8b5cf6; font-weight: 600;">
+            </x-input-group>
 
-            <!-- Chip: Langganan -->
-            <div class="harga-chip" style="background:rgba(99,102,241,0.08);border:1.5px solid rgba(99,102,241,0.22);">
-                <span class="harga-chip-label" style="color:#6366f1;">Langganan</span>
-                <input type="number" id="settingDiskonLangganan" placeholder="-" min="0" max="100"
-                    style="color:#6366f1;" oninput="updateDiskonVisual('Lan',this.value)">
-                <span class="harga-chip-pct" style="color:#6366f1;">%</span>
-            </div>
+            <x-input-group label="Diskon Teman (%)">
+                <input type="number" class="input-control" id="settingDiskonTeman" min="0" max="100" oninput="updateDiskonVisual('Tem',this.value)" style="color:#f59e0b; font-weight: 600;">
+            </x-input-group>
 
-            <span class="harga-sep-dot">Â·</span>
+            <x-input-group label="Diskon Grosir (%)">
+                <input type="number" class="input-control" id="settingDiskonGrosir" min="0" max="100" oninput="updateDiskonVisual('Gro',this.value)" style="color:#ec4899; font-weight: 600;">
+            </x-input-group>
 
-            <!-- Chip: Bengkel -->
-            <div class="harga-chip" style="background:rgba(139,92,246,0.08);border:1.5px solid rgba(139,92,246,0.22);">
-                <span class="harga-chip-label" style="color:#8b5cf6;">Bengkel</span>
-                <input type="number" id="settingDiskonBengkel" placeholder="-" min="0" max="100"
-                    style="color:#8b5cf6;" oninput="updateDiskonVisual('Beng',this.value)">
-                <span class="harga-chip-pct" style="color:#8b5cf6;">%</span>
-            </div>
+            <x-input-group label="Min Peringatan Stok (PCS)">
+                <input type="number" class="input-control" id="settingMinimumStok" min="0" value="5" style="color:#0f172a; font-weight: 600;">
+            </x-input-group>
 
-            <span class="harga-sep-dot">Â·</span>
-
-            <!-- Chip: Teman -->
-            <div class="harga-chip" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.22);">
-                <span class="harga-chip-label" style="color:#f59e0b;">Teman</span>
-                <input type="number" id="settingDiskonTeman" placeholder="-" min="0" max="100"
-                    style="color:#f59e0b;" oninput="updateDiskonVisual('Tem',this.value)">
-                <span class="harga-chip-pct" style="color:#f59e0b;">%</span>
-            </div>
-
-            <span class="harga-sep-dot">Â·</span>
-
-            <!-- Chip: Grosir -->
-            <div class="harga-chip" style="background:rgba(236,72,153,0.08);border:1.5px solid rgba(236,72,153,0.22);">
-                <span class="harga-chip-label" style="color:#ec4899;">Grosir/VIP</span>
-                <input type="number" id="settingDiskonGrosir" placeholder="-" min="0" max="100"
-                    style="color:#ec4899;" oninput="updateDiskonVisual('Gro',this.value)">
-                <span class="harga-chip-pct" style="color:#ec4899;">%</span>
-            </div>
-
-            <!-- Simpan Diskon (desktop inline) -->
-            <button class="btn btn-primary harga-desktop-only" onclick="simpanPengaturanDiskon()" id="btnSimpanDiskon1"
-                style="font-size:12px;padding:8px 14px;flex-shrink:0;white-space:nowrap;margin-left:auto;">
-                <i class='bx bx-save'></i> Simpan Diskon
-            </button>
         </div>
 
-        <div class="harga-sep-h harga-desktop-only"></div>
-
-        <!-- Baris 2: Stok Minimum -->
-        <div class="harga-settings-row stok-row">
-            
-            <!-- Label + Chip stok (desktop inline) -->
-            <div class="harga-label-kiri" style="display:flex;align-items:center;gap:5px;flex-shrink:0;padding-right:10px;border-right:1px solid var(--border-color);">
-                <i class='bx bx-layer' style="color:#f59e0b;font-size:16px;"></i>
-                <span style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;">Min Stok</span>
-            </div>
-
-            <!-- Chip Stok Minimum -->
-            <div class="harga-chip harga-stok-chip" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.25);">
-                <span class="harga-chip-label mobile-only" style="color:#f59e0b; font-weight:700;"><i class='bx bx-layer'></i> Min Stok</span>
-                <input type="number" id="settingMinimumStok" value="5" min="0"
-                    style="width:80px;color:#f59e0b;font-size:18px;font-weight:800;text-align:center;border:none;background:transparent;outline:none;padding:0 2px;">
-                <span class="harga-chip-pct" style="color:#f59e0b;">PCS</span>
-            </div>
-            
-            <div class="harga-desktop-only" style="font-size:11px; color:var(--text-muted); margin-left:8px; line-height:1.4;">
-                <i class='bx bxs-bell' style="color:#f59e0b;"></i> Peringatan akan muncul di Dashboard jika stok &le; batas ini.
-            </div>
-
-            <!-- Simpan Stok (desktop inline) -->
-            <button class="btn btn-primary harga-desktop-only" onclick="simpanStokMinimum()" id="btnSimpanDiskon2"
-                style="font-size:12px;padding:8px 14px;flex-shrink:0;white-space:nowrap;margin-left:auto;">
-                <i class='bx bx-save'></i> Simpan Stok
+        <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="simpanSemuaPengaturanHarga()" id="btnSimpanPengaturanHarga" style="padding: 10px 24px;">
+                <i class='bx bx-save'></i> Simpan Pengaturan
             </button>
-
-            <!-- Mobile: tombol gabung -->
-            <div class="harga-btn-group mobile-only">
-                <button class="btn btn-primary" onclick="simpanPengaturanDiskon()"
-                    style="font-size:13px;padding:9px 0;justify-content:center;">
-                    <i class='bx bx-save'></i> Simpan Diskon
-                </button>
-                <button class="btn btn-primary" onclick="simpanStokMinimum()"
-                    style="font-size:13px;padding:9px 0;justify-content:center;background:rgba(245,158,11,0.9);">
-                    <i class='bx bx-save'></i> Simpan Stok
-                </button>
-            </div>
         </div>
 
         <!-- hidden bars untuk JS -->
@@ -120,18 +65,19 @@
             <div id="barDiskonGro"></div>
         </div>
     </div>
+    </div> <!-- END TAB 1 -->
 
-    <!-- â•â•â• TABEL HARGA â•â•â• -->
+    <!-- TAB 2: DAFTAR HARGA BARANG -->
+    <div id="contentHargaDaftar" style="display: flex; flex: 1; flex-direction: column;">
+    <!-- ═══ TABEL HARGA ═══ -->
     <div class="glass-card" style="padding:20px; display:flex; flex-direction:column; overflow:hidden; width:100%; box-sizing:border-box; flex:1; min-height:500px; margin-bottom:24px;">
 
         <!-- Search Bar -->
-        <div style="margin-bottom:14px; display:flex; align-items:center; gap:8px; padding:9px 14px; border:1.5px solid var(--border-color); border-radius:var(--radius-md); background:rgba(255,255,255,0.02); cursor:text; transition:border-color 0.2s, box-shadow 0.2s;"
-            onclick="document.getElementById('adminSearchHarga').focus()"
-            onmouseenter="this.style.borderColor='var(--primary-color)';this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.08)'"
-            onmouseleave="this.style.borderColor='var(--border-color)';this.style.boxShadow='none'">
-            <i class='bx bx-search' style="color:var(--text-muted);font-size:18px;flex-shrink:0;"></i>
-            <input type="text" id="adminSearchHarga" placeholder="Cari nama barang atau ID..."
-                style="border:none;outline:none;background:transparent;flex:1;font-size:14px;color:inherit;" />
+        <div style="margin-bottom: 16px;">
+            <div class="search-bar" style="width: 100%; max-width: 350px;">
+                <i class='bx bx-search'></i>
+                <input type="text" id="adminSearchHarga" placeholder="Cari nama barang atau ID...">
+            </div>
         </div>
 
         <!-- Table -->
@@ -145,8 +91,9 @@
             </x-table>
         </div>
     </div>
+    </div> <!-- END TAB 2 -->
 
-    </section>
+</section>
 
 <!-- Tab: Master Barang -->
 
@@ -226,7 +173,7 @@
         </div>
     </x-view-header>
     <x-glass-card padding="24px" display="flex" flex="true">
-        <x-table :headers="['Tanggal (WIB)', 'No Invoice', 'Kasir', 'Pelanggan', 'Status', 'Total', 'Aksi']">
+        <x-table :headers="['No Invoice', 'Tanggal (WIB)', 'Kasir', 'Pelanggan', 'Status', 'Total', 'Aksi']">
             <tbody id="adminTransaksiTableBody">
                 <tr>
                     <td colspan="7" style="text-align:center;">Memuat histori transaksi...</td>
@@ -238,7 +185,7 @@
 
 <!-- Tab: Log Aktivitas -->
 <section id="view-admin-log" class="view-section">
-    <x-view-header title="Log Audit Sistem Terpusat" icon="bx bx-list-ol">
+    <x-view-header title="Log Audit Sistem" icon="bx bx-list-ol">
         <button class="btn btn-secondary" onclick="loadAdminLog()"><i class='bx bx-refresh'></i> Refresh</button>
     </x-view-header>
     

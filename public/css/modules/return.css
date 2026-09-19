@@ -3,6 +3,11 @@
         grid-template-columns: 1fr;
         gap: 16px;
     }
+.return-grid-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
     @media (min-width: 768px) {
         .return-grid-layout {
             grid-template-columns: 320px 1fr;
@@ -10,42 +15,42 @@
         }
     }
     .invoice-receipt {
-        background: #F8FAFC;
-        border: 1px dashed #CBD5E1;
+        background: var(--surface-light, rgba(255,255,255,0.02));
+        border: 1px dashed var(--border-color);
         border-radius: var(--radius-md);
         padding: 16px;
         margin-top: 20px;
     }
     .return-item-card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
+        background: var(--surface-color, rgba(255,255,255,0.03));
+        border: 1px solid var(--border-color);
         border-radius: var(--radius-md);
         padding: 16px;
         box-shadow: var(--shadow-xs);
         transition: all var(--transition-fast);
     }
     .return-item-card:hover {
-        border-color: var(--primary-light);
-        box-shadow: var(--shadow-sm);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
     }
     .return-checkbox-wrapper {
         display: flex;
         align-items: center;
         gap: 8px;
         cursor: pointer;
-        background: #F1F5F9;
+        background: var(--surface-light, rgba(255,255,255,0.05));
         padding: 6px 12px;
         border-radius: var(--radius-full);
-        border: 1px solid transparent;
+        border: 1px solid var(--border-color);
         transition: all var(--transition-fast);
     }
     .return-checkbox-wrapper:hover {
-        background: #E2E8F0;
+        background: var(--surface-color, rgba(255,255,255,0.08));
     }
     .return-checkbox-wrapper.active {
-        background: var(--primary-light);
+        background: var(--primary-color);
         border-color: var(--primary-color);
-        color: var(--primary-color);
+        color: white;
     }
 
 @media (max-width: 768px) {
@@ -74,5 +79,10 @@
         justify-content: center;
         border-radius: 8px;
         box-sizing: border-box;
+    }
+    
+    .glass-card {
+        padding: 12px !important;
+        border-radius: 12px !important;
     }
 }

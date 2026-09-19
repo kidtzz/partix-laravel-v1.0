@@ -68,37 +68,37 @@ let masterStockList = [];
             return `
             <tr id="row-stock-${b.id_barang}" onclick="toggleDetailSupplierStock('${b.id_barang}')" style="cursor:pointer; border-bottom: 1px solid var(--border-color);">
                 <td>
-                    <div style="display:flex; flex-direction:column; font-weight: 500; word-break: break-all;">
+                    <div style="display:flex; flex-direction:column; word-break: break-all;">
                         <span>${b.id_barang}</span>
-                        ${barcodesHtml || `<span style="font-size: 11px; color: var(--text-muted);">-</span>`}
+                        ${barcodesHtml || `<span style="color: var(--text-muted);">-</span>`}
                     </div>
                 </td>
                 <td>
-                    <div style="font-weight: 500;">${b.nama_barang}</div>
+                    <div>${b.nama_barang}</div>
                 </td>
                 <td>
-                    <div style="font-size: 12px; color: var(--text-muted);">${b.lokasi_rak || '-'}</div>
+                    <div style="color: var(--text-muted);">${b.lokasi_rak || '-'}</div>
                 </td>
                 <td>
-                    <div style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="${namaSup}">${namaSup}</div>
+                    <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="${namaSup}">${namaSup}</div>
                     ${extraSupCount}
                 </td>
-                <td><span style="font-size: 11px;">Rp ${hargaBeli.toLocaleString('id-ID')}</span></td>
-                <td><span style="font-size: 11px;">${diskonPersen}%</span></td>
+                <td><span>Rp ${hargaBeli.toLocaleString('id-ID')}</span></td>
+                <td><span>${diskonPersen}%</span></td>
                 <td>
-                    <span style="color: ${isWarning ? 'var(--danger-color)' : 'inherit'}; font-weight: ${isWarning ? '700' : '500'};">
+                    <span style="color: ${isWarning ? 'var(--danger-color)' : 'inherit'};">
                         ${stok} ${satuan}
                         ${isWarning ? '<span style="color:var(--danger-color); margin-left: 4px;" title="Stok di bawah minimum!"><i class=\'bx bx-error-circle bx-flashing\'></i></span>' : ''}
                     </span>
                 </td>
-                <td><span style="font-size: 11px;">${tglMasukStr}</span></td>
-                <td><span class="badge ${statusBadge}">${statusVal}</span></td>
+                <td><span>${tglMasukStr}</span></td>
+                <td><span class="badge ${statusBadge}" style="font-weight: 400;">${statusVal}</span></td>
                 <td onclick="event.stopPropagation();" style="white-space: nowrap;">
-                    <button class="btn btn-secondary btn-sm" onclick="bukaModalEditStock('${b.id_barang}')"><i class='bx bx-edit'></i> Edit</button>
-                    ${statusVal === "Nonaktif" ? `<button class="btn btn-sm" style="background:var(--danger-color);color:white; margin-left: 4px;" onclick="hapusBarangStok('${b.id_barang}')" title="Hapus Permanen"><i class='bx bx-trash'></i></button>` : ''}
+                    <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px; font-weight: 400;" onclick="bukaModalEditStock('${b.id_barang}')"><i class='bx bx-edit'></i> Edit</button>
+                    ${statusVal === "Nonaktif" ? `<button type="button" class="btn btn-sm" style="background:var(--danger-color);color:white; font-size: 12px; font-weight: 400; margin-left: 4px;" onclick="hapusBarangStok('${b.id_barang}')" title="Hapus Permanen"><i class='bx bx-trash'></i></button>` : ''}
                 </td>
                 <td onclick="event.stopPropagation();">
-                    <button class="btn btn-secondary btn-sm" onclick="bukaHistoriBarang('${b.id_barang}', '${b.nama_barang}')" title="Histori"><i class='bx bx-history'></i></button>
+                    <button type="button" class="btn btn-secondary btn-sm" style="font-size: 12px; font-weight: 400;" onclick="bukaHistoriBarang('${b.id_barang}', '${b.nama_barang}')" title="Histori"><i class='bx bx-history'></i></button>
                 </td>
             </tr>
             <tr id="detail-stock-${b.id_barang}" style="display:none; background: ${trBg}; border-top: none;">
@@ -181,11 +181,11 @@ let masterStockList = [];
             const tdBorder = isPremium ? 'border-bottom: 1px solid rgba(255,255,255,0.1);' : 'border-bottom: 1px solid #eee;';
             html += `<tr>
                         <td style="padding: 8px 12px; ${tdBorder}">
-                            <div style="font-weight:600; font-size: 12px; margin-bottom:4px; display:flex; align-items:center; gap:8px; color: var(--text-main);">
+                            <div style="display:flex; align-items:center; gap:8px; color: var(--text-main);">
                                 ${s.nama_supplier}
                             </div>
                         </td>
-                        <td style="padding: 8px 12px; ${tdBorder} font-weight:600; color: var(--text-main);">Rp ${Number(s.harga_beli).toLocaleString('id-ID')}</td>
+                        <td style="padding: 8px 12px; ${tdBorder} color: var(--text-main);">Rp ${Number(s.harga_beli).toLocaleString('id-ID')}</td>
                         <td style="padding: 8px 12px; ${tdBorder} color: var(--text-muted);">${s.diskon_persen ? s.diskon_persen + '%' : '-'}</td>
                      </tr>`;
         });
@@ -221,7 +221,7 @@ let masterStockList = [];
                     return `
                     <tr>
                         <td>${date}</td>
-                        <td><span class="badge badge-secondary">${h.jenis}</span></td>
+                        <td><span class="badge badge-secondary" style="font-weight: 400;">${h.jenis}</span></td>
                         <td>${h.deskripsi}</td>
                         <td>${h.user}</td>
                     </tr>
@@ -326,18 +326,18 @@ let masterStockList = [];
             <td colspan="3">
                 <div style="display:flex; gap:8px; align-items:center;">
                     <div style="flex:1;">
-                        <small style="display:block;color:var(--text-muted);margin-bottom:2px;">Harga Beli</small>
-                        <input type="number" id="editStkHarga-${idBs}" class="input-control" value="${hargaBeli}" style="height:32px;font-size: 11px;">
+                        <div style="color:var(--text-muted);margin-bottom:2px;">Harga Beli</div>
+                        <input type="number" id="editStkHarga-${idBs}" class="input-control" value="${hargaBeli}" style="height:32px;">
                     </div>
                     <div style="flex:0 0 90px;">
-                        <small style="display:block;color:var(--text-muted);margin-bottom:2px;">Diskon (%)</small>
-                        <input type="number" id="editStkDiskon-${idBs}" class="input-control" value="${diskonPersen}" min="0" max="100" style="height:32px;font-size: 11px;">
+                        <div style="color:var(--text-muted);margin-bottom:2px;">Diskon (%)</div>
+                        <input type="number" id="editStkDiskon-${idBs}" class="input-control" value="${diskonPersen}" min="0" max="100" style="height:32px;">
                     </div>
                 </div>
             </td>
             <td style="text-align:center;">
-                <button class="btn btn-sm" style="background:var(--primary-color);color:white;margin-right:4px;" onclick="simpanEditTautanStockSupplier('${idBs}')"><i class='bx bx-check'></i></button>
-                <button class="btn btn-sm" style="background:var(--secondary-color,#6b7280);color:white;" onclick="batalEditTautanStockSupplier()"><i class='bx bx-x'></i></button>
+                <button type="button" class="btn btn-sm" style="background:var(--primary-color);color:white;margin-right:4px;" onclick="simpanEditTautanStockSupplier('${idBs}')"><i class='bx bx-check'></i></button>
+                <button type="button" class="btn btn-sm" style="background:var(--secondary-color,#6b7280);color:white;" onclick="batalEditTautanStockSupplier()"><i class='bx bx-x'></i></button>
             </td>
         `;
     }

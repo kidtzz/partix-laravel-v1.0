@@ -7,6 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class ReturnSupplier extends Model
 {
     protected $guarded = [];
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $latest = static::orderBy('id', 'desc')->first();
+                if (!$latest) {
+                    $model->id = 'RSP-001';
+                } else {
+                    $number = intval(substr($latest->id, 4)) + 1;
+                    $model->id = 'RSP-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+                }
+            }
+        });
+    }
 
     public function barang()
     {

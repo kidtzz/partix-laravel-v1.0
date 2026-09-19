@@ -16,9 +16,11 @@ class LogService
         ]);
     }
 
-    public function getLogActivityAdmin()
+    public function getLogActivityAdmin($page = 1)
     {
-        return LogActivity::with('user.roles')->orderBy('created_at', 'desc')->take(500)->get()->map(function($log) {
+        $paginator = LogActivity::with('user.roles')->orderBy('created_at', 'desc')->paginate(15, ['*'], 'page', $page);
+        
+        $data = $paginator->map(function($log) {
             $username = $log->user ? $log->user->username : 'System';
             $role = ($log->user && $log->user->roles->isNotEmpty()) ? $log->user->roles->first()->name : 'System';
             return [
@@ -30,10 +32,19 @@ class LogService
                 'details' => $log->details
             ];
         })->toArray();
+
+        return [
+            'data' => $data,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total()
+        ];
     }
-    public function getSystemLogs()
+    public function getSystemLogs($page = 1)
     {
-        return \App\Models\SystemLog::orderBy('created_at', 'desc')->take(200)->get()->map(function($log) {
+        $paginator = \App\Models\SystemLog::orderBy('created_at', 'desc')->paginate(15, ['*'], 'page', $page);
+        
+        $data = $paginator->map(function($log) {
             return [
                 'id' => $log->id,
                 'level' => $log->level,
@@ -45,6 +56,13 @@ class LogService
                 'timestamp' => $log->created_at->format('Y-m-d H:i:s')
             ];
         })->toArray();
+
+        return [
+            'data' => $data,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'total' => $paginator->total()
+        ];
     }
 
     public function logSystemEvent($payload)

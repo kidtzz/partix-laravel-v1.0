@@ -34,7 +34,7 @@
             </x-input-group>
 
             <div id="invoiceInfoPanel" style="display: none;" class="invoice-receipt">
-                <div style="text-align: center; margin-bottom: 16px; border-bottom: 1px solid #E2E8F0; padding-bottom: 12px;">
+                <div style="text-align: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
                     <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Nomor Invoice</div>
                     <div style="font-weight: 700; font-size: 16px; color: var(--text-main); margin-top: 4px; margin-bottom: 4px;" id="invInfoNo">INV-000</div>
                     <div id="invInfoStatus"></div>
@@ -48,7 +48,7 @@
                     <span style="color: var(--text-muted); font-size: 12px;"><i class='bx bx-user'></i> Kasir</span>
                     <span style="font-size: 12px; font-weight: 500;" id="invInfoKasir">-</span>
                 </div>
-                <div class="flex justify-between mt-4" style="border-top: 1px dashed #CBD5E1; padding-top: 12px;">
+                <div class="flex justify-between mt-4" style="border-top: 1px dashed var(--border-color); padding-top: 12px;">
                     <span style="color: var(--text-muted); font-size: 13px; font-weight: 600;">Total Belanja</span>
                     <span style="font-size: 14px; font-weight: 700; color: var(--primary-color);" id="invInfoTotal">-</span>
                 </div>
@@ -81,7 +81,7 @@
                     </div>
 
                     <div id="returnForm_RTN_B01"
-                        style="display: none; background: #F9FAFB; padding: 16px; border-radius: var(--radius-md); margin-top: 12px;">
+                        style="display: none; background: var(--surface-light, rgba(255,255,255,0.01)); padding: 16px; border-radius: var(--radius-md); margin-top: 12px; border: 1px solid var(--border-color);">
                         <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
                             <x-input-group label="Qty Direturn" marginBottom="0">
                                 <input type="number" class="input-control" max="2" min="1" value="1">
@@ -145,9 +145,9 @@
 
     <!-- Tab 1: Karantina -->
     <x-glass-card id="contentKarantina" padding="24px" display="flex" flex="true">
-        <x-table :headers="['ID Karantina', 'Tanggal Karantina', 'Nama Barang', 'Qty Rusak', 'Alasan / Keterangan', 'Aksi']">
+        <x-table :headers="['ID Karantina', 'Tanggal', 'No Invoice', 'Nama Barang', 'Qty Rusak', 'Keterangan', 'Aksi']">
             <tbody id="tbodyBarangReturn">
-                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
+                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
             </tbody>
         </x-table>
     </x-glass-card>
@@ -209,7 +209,7 @@
     </x-view-header>
     
     <x-glass-card id="contentHistoriRetur" padding="24px" display="flex" flex="true">
-        <x-table :headers="['Tanggal Retur', 'ID Retur', 'Supplier Tujuan', 'Barang Diretur', 'Qty', 'Harga Beli', 'No Invoice Supplier', 'User']">
+        <x-table :headers="['ID Retur', 'Tanggal Retur', 'Supplier Tujuan', 'Barang Diretur', 'Qty', 'Harga Beli', 'No Invoice Supplier', 'User']">
             <tbody id="tbodyHistoriRetur">
                 <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Memuat histori...</td></tr>
             </tbody>
@@ -217,5 +217,18 @@
     </x-glass-card>
 </section>
 
-<script src="/js/modules/return.js?v={{ time() }}"></script>
+<!-- Modal Detail Retur -->
+<x-modal id="modalDetailRetur" title="Detail Retur">
+    <div id="detailReturBody">
+        Memuat detail...
+    </div>
+</x-modal>
 
+<!-- Modal Detail Karantina -->
+<x-modal id="modalDetailKarantina" title="Detail Barang Karantina">
+    <div id="detailKarantinaBody" style="padding: 16px;">
+        Memuat detail...
+    </div>
+</x-modal>
+
+<script src="/js/modules/return.js?v={{ time() }}"></script>

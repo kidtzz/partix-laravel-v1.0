@@ -18,22 +18,22 @@ let globalHistoriReturData = [];
                         const selisih = Number(r.selisih_harga) || 0;
                         let selisihHtml = '-';
                         if (selisih < 0) {
-                            selisihHtml = `<span style="color: var(--danger-color); font-weight: 600;">Refund: ${formatRupiah(Math.abs(selisih))}</span>`;
+                            selisihHtml = `<span style="color: var(--danger-color);">Refund: ${formatRupiah(Math.abs(selisih))}</span>`;
                         } else if (selisih > 0) {
-                            selisihHtml = `<span style="color: var(--success-color); font-weight: 600;">Nambah: ${formatRupiah(selisih)}</span>`;
+                            selisihHtml = `<span style="color: var(--success-color);">Nambah: ${formatRupiah(selisih)}</span>`;
                         }
                         
                         return `
                         <tr>
-                            <td style="font-size: 13px; font-weight: 600; color: var(--primary-color);">${r.no_return}</td>
+                            <td>${r.no_return}</td>
                             <td>${new Date(r.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</td>
-                            <td><span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;">${r.no_invoice}</span></td>
+                            <td>${r.no_invoice}</td>
                             <td>${r.kasir}</td>
-                            <td><span class="badge badge-secondary">${r.jenis_return}</span></td>
+                            <td>${r.jenis_return}</td>
                             <td>${selisihHtml}</td>
                             <td>
-                                <button class="btn btn-outline btn-sm" onclick="printInvoiceReturn('${r.no_return}')" style="padding: 4px 8px;">
-                                    <i class='bx bx-printer'></i> Cetak
+                                <button type="button" class="btn btn-secondary btn-sm" style="font-weight: 400;" onclick="detailRetur('${r.no_return}')">
+                                    <i class='bx bx-receipt'></i> Detail
                                 </button>
                             </td>
                         </tr>
@@ -45,26 +45,36 @@ let globalHistoriReturData = [];
                 });
         }
 
-        function printInvoiceReturn(noReturn) {
+        function detailRetur(noReturn) {
             const data = globalHistoriReturData.find(r => r.no_return === noReturn);
             if (!data) return showToast("Data retur tidak ditemukan!", "error");
+            
+            document.getElementById('modalDetailRetur').classList.add('active');
 
             let itemsHtml = '';
             if (data.items && data.items.length > 0) {
                 data.items.forEach(item => {
                     itemsHtml += `
-                        <tr><td colspan="2" class="bold">${item.nama_barang_kembali}</td></tr>
                         <tr>
-                            <td>Retur: ${item.qty_kembali} PCS</td>
-                            <td class="right"></td>
+                            <td style="padding:12px; border-bottom:1px solid #e2e8f0; color: var(--text-main);">
+                                ${item.nama_barang_kembali} <span style="color: var(--danger-color); font-size: 10px;">(Retur)</span>
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #e2e8f0; text-align:center; color: var(--text-main);">${item.qty_kembali}</td>
                         </tr>
                     `;
                     if (item.nama_barang_pengganti) {
                         itemsHtml += `
-                            <tr><td colspan="2" style="padding-left: 10px;">➜ Ganti: ${item.nama_barang_pengganti} (${item.qty_pengganti} PCS)</td></tr>
+                            <tr>
+                                <td style="padding:12px; border-bottom:1px solid #e2e8f0; color: var(--success-color);">
+                                    ➜ Ganti: ${item.nama_barang_pengganti}
+                                </td>
+                                <td style="padding:12px; border-bottom:1px solid #e2e8f0; text-align:center; color: var(--success-color);">${item.qty_pengganti}</td>
+                            </tr>
                         `;
                     }
                 });
+            } else {
+                itemsHtml = `<tr><td colspan="2" style="padding:12px; text-align:center; color: var(--text-muted);">Tidak ada detail barang.</td></tr>`;
             }
 
             const selisih = Number(data.selisih_harga) || 0;
@@ -72,67 +82,34 @@ let globalHistoriReturData = [];
             if (selisih < 0) selisihInfo = `Refund Tunai ke Pelanggan: Rp ${Math.abs(selisih).toLocaleString('id-ID')}`;
             if (selisih > 0) selisihInfo = `Terima Tunai dari Pelanggan: Rp ${selisih.toLocaleString('id-ID')}`;
 
-            const htmlContent = `
-                <div class="center bold" style="font-size: 16px; margin-bottom: 5px;">PARTIX BENGKEL</div>
-                <div class="center" style="margin-bottom: 15px;">BUKTI TRANSAKSI RETUR</div>
-                
-                <table>
-                    <tr><td>No Retur</td><td class="right">${data.no_return}</td></tr>
-                    <tr><td>Tgl</td><td class="right">${new Date(data.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</td></tr>
-                    <tr><td>Kasir</td><td class="right">${data.kasir}</td></tr>
-                    <tr><td>Inv Asal</td><td class="right">${data.no_invoice}</td></tr>
-                    <tr><td>Jenis</td><td class="right">${data.jenis_return}</td></tr>
-                </table>
-                
-                <div class="divider"></div>
-                
-                <table>
-                    ${itemsHtml}
-                </table>
-                
-                <div class="divider"></div>
-                
-                <div class="center bold" style="margin: 15px 0;">
-                    ${selisihInfo}
+            const html = `
+                <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 12px;">
+                    <div>
+                        <div style="font-weight:600; color: var(--text-main); margin-bottom: 4px;">No Retur: ${data.no_return}</div>
+                        <div>${new Date(data.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</div>
+                        <div style="margin-top: 4px;">Jenis: ${data.jenis_return}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="margin-bottom: 4px;">Kasir: ${data.kasir}</div>
+                        <div>Inv Asal: ${data.no_invoice}</div>
+                    </div>
                 </div>
-                
-                <div class="divider"></div>
-                
-                <div class="center" style="margin-top: 20px;">
-                    Terima kasih<br>
-                    Barang yang sudah dibeli tidak dapat ditukar kecuali ada cacat pabrik.
+                <table style="width:100%; border-collapse:collapse; font-size: 12px;">
+                    <thead style="background:#f1f5f9; text-align:left; border-radius: 8px;">
+                        <tr>
+                            <th style="padding:12px; font-weight: 600; color: var(--text-main);">Barang</th>
+                            <th style="padding:12px; text-align:center; font-weight: 600; color: var(--text-main);">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml}
+                    </tbody>
+                </table>
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #e2e8f0; font-size: 12px; text-align:center;">
+                    <strong style="color: var(--text-main);">${selisihInfo}</strong>
                 </div>
             `;
-
-            const printWindow = window.open('', '_blank', 'width=400,height=600');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>Cetak Struk Retur - ${noReturn}</title>
-                    <style>
-                        body { font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #000; margin: 0; padding: 20px; }
-                        .center { text-align: center; }
-                        .bold { font-weight: bold; }
-                        .divider { border-bottom: 1px dashed #000; margin: 12px 0; }
-                        table { width: 100%; border-collapse: collapse; }
-                        td { padding: 4px 0; vertical-align: top; }
-                        .right { text-align: right; }
-                    </style>
-                </head>
-                <body>
-                    ${htmlContent}
-                    <script>
-                        window.onload = function() { 
-                            setTimeout(() => {
-                                window.print(); 
-                                window.close(); 
-                            }, 300);
-                        }
-                    <\/script>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
+            document.getElementById('detailReturBody').innerHTML = html;
         }
         
         // Modal detail tak lagi dipakai, dibiarkan kosong atau dihapus.
@@ -212,9 +189,9 @@ let currentInvoice = null;
             <div class="return-item-card">
                 <div class="flex justify-between items-center mb-2" style="flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <div style="font-weight: 700; font-size: 14px;">${d.nama_barang}</div>
-                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
-                            <span class="badge badge-secondary" style="font-size: 10px; margin-right: 4px;">${d.qty} PCS</span> 
+                        <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">${d.nama_barang}</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+                            <span class="badge badge-secondary" style="font-size: 11px; padding: 2px 6px; margin-right: 6px;">${d.qty} PCS</span> 
                             @ ${formatRupiah(d.harga_satuan)}
                         </div>
                     </div>
@@ -226,7 +203,7 @@ let currentInvoice = null;
                     `}
                 </div>
                 
-                <div id="${formId}" style="display: none; background: #F8FAFC; padding: 16px; border-radius: var(--radius-md); margin-top: 16px; border: 1px solid #E2E8F0;">
+                <div id="${formId}" style="display: none; background: var(--surface-light, rgba(255,255,255,0.01)); padding: 16px; border-radius: var(--radius-md); margin-top: 16px; border: 1px solid var(--border-color);">
                     <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                         <div class="input-group mb-0">
                             <label>Qty Diretur</label>
@@ -548,29 +525,40 @@ let currentInvoice = null;
     })();
 
 // Tab switching
+        let globalBarangReturnData = [];
                 // Load Tab 1
         function loadListBarangReturn() {
             const tbody = document.getElementById('tbodyBarangReturn');
             if (!tbody) return;
             
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);"><i class="bx bx-loader-alt bx-spin"></i> Memuat data...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);"><i class="bx bx-loader-alt bx-spin"></i> Memuat data...</td></tr>';
             
             BackendAPI.call('getListBarangReturn', [])
                 .then(res => {
+                    globalBarangReturnData = res;
                     if (res.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Tidak ada barang karantina yang menunggu diretur.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Tidak ada barang karantina yang menunggu diretur.</td></tr>';
                         return;
                     }
                     
                     tbody.innerHTML = res.map(r => `
                         <tr>
-                            <td style="font-size: 13px; color: var(--text-muted);">${r.id_return}</td>
+                            <td><div>${r.id_return}</div></td>
                             <td>${new Date(r.tanggal).toLocaleDateString('id-ID')}</td>
-                            <td style="font-weight: 500;">${r.nama_barang}</td>
-                            <td><b style="color: var(--danger-color);">${r.qty_rusak}</b></td>
-                            <td>${r.alasan} (Dari: ${r.no_invoice})</td>
-                            <td style="text-align: center;">
-                                <button class="btn btn-primary" style="padding: 4px 12px; font-size: 11px;" 
+                            <td><div>${r.no_invoice}</div></td>
+                            <td>${r.nama_barang}</td>
+                            <td style="color: var(--danger-color);">${r.qty_rusak}</td>
+                            <td>
+                                <div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${r.alasan}">
+                                    ${r.alasan}
+                                </div>
+                            </td>
+                            <td style="text-align: center; display: flex; gap: 8px; justify-content: center;">
+                                <button class="btn btn-secondary btn-sm" style="font-weight: 400;" 
+                                    onclick="detailKarantina('${r.id_return}')">
+                                    <i class='bx bx-receipt'></i> Detail
+                                </button>
+                                <button class="btn btn-primary btn-sm" style="font-weight: 400;" 
                                     onclick="openModalRetur('${r.id_return}', '${r.nama_barang}', ${r.qty_rusak})">
                                     Proses Retur
                                 </button>
@@ -579,8 +567,54 @@ let currentInvoice = null;
                     `).join('');
                 })
                 .catch(err => {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-color);">Gagal memuat data: ${err.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Gagal memuat data: ${err.message}</td></tr>`;
                 });
+        }
+        
+        function detailKarantina(idReturn) {
+            const data = globalBarangReturnData.find(r => r.id_return === idReturn);
+            if (!data) return showToast("Data tidak ditemukan!", "error");
+            
+            document.getElementById('modalDetailKarantina').classList.add('active');
+
+            const html = `
+                <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 12px;">
+                    <div>
+                        <div style="font-weight:600; color: var(--text-main); margin-bottom: 4px;">ID Karantina: ${data.id_return}</div>
+                        <div>${new Date(data.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</div>
+                        <div style="margin-top: 4px;">Kasir: ${data.kasir}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="margin-bottom: 4px;">Inv Asal: ${data.no_invoice}</div>
+                    </div>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size: 12px; margin-bottom: 16px;">
+                    <thead style="background:#f1f5f9; text-align:left; border-radius: 8px;">
+                        <tr>
+                            <th style="padding:12px; font-weight: 600; color: var(--text-main);">Barang Retur</th>
+                            <th style="padding:12px; font-weight: 600; text-align:center; color: var(--text-main);">Qty Rusak</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:12px; border-bottom:1px solid #e2e8f0; color: var(--text-main);">
+                                <div style="font-weight: 500;">${data.nama_barang}</div>
+                                <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Kode: ${data.id_barang}</div>
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #e2e8f0; text-align:center; color: var(--danger-color); font-weight: 600;">${data.qty_rusak}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="background: var(--surface-light, #f8fafc); padding: 12px; border-radius: 8px; border: 1px dashed var(--border-color, #cbd5e1);">
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase;">Alasan / Keterangan</div>
+                    <div style="font-size: 13px; color: var(--text-main); line-height: 1.5;">${data.alasan || '-'}</div>
+                </div>
+                <div class="modal-footer" style="justify-content: flex-end; padding-bottom: 0; padding-right: 0; border-top: none; margin-top: 24px;">
+                    <button class="btn btn-outline" onclick="document.getElementById('modalDetailKarantina').classList.remove('active')">Tutup</button>
+                </div>
+            `;
+            
+            document.getElementById('detailKarantinaBody').innerHTML = html;
         }
         
         // Load Tab 2
@@ -597,14 +631,14 @@ let currentInvoice = null;
                     }
                     
                     tbody.innerHTML = res.map(h => `
-                        <tr>
+                        <tr style="height: 52px;">
+                            <td><div>${h.id_return_supplier}</div></td>
                             <td>${new Date(h.tanggal_retur).toLocaleDateString('id-ID')}</td>
-                            <td style="font-size: 11px; color: var(--text-muted);">${h.id_return_supplier}</td>
-                            <td style="font-weight: 500;">${h.nama_supplier}</td>
+                            <td>${h.nama_supplier}</td>
                             <td>${h.nama_barang}</td>
-                            <td><b>${h.qty_retur}</b></td>
+                            <td>${h.qty_retur}</td>
                             <td>Rp ${Number(h.harga_beli).toLocaleString('id-ID')}</td>
-                            <td><span style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight:500;">${h.no_invoice_supplier}</span></td>
+                            <td>${h.no_invoice_supplier}</td>
                             <td>${h.user}</td>
                         </tr>
                     `).join('');
