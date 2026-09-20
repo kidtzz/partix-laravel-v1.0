@@ -70,14 +70,23 @@ class PenjualanService
             $noInvoice = $existingInvoiceNo;
             if (!$noInvoice) {
                 $todayStr = date('Ymd');
-                $latest = Penjualan::where('no_invoice', 'like', "INV-{$todayStr}-%")->orderBy('no_invoice', 'desc')->first();
+                $latest = Penjualan::where('no_invoice', 'like', "INV-{$todayStr}-%")->orderBy('id', 'desc')->first();
                 if ($latest) {
-                    $lastCount = (int) substr($latest->no_invoice, -4);
+                    $parts = explode('-', $latest->no_invoice);
+                    $lastCount = isset($parts[2]) ? (int) $parts[2] : 0;
                     $count = $lastCount + 1;
                 } else {
                     $count = 1;
                 }
-                $noInvoice = "INV-" . $todayStr . "-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+                
+                // Ensure unique by checking if exists (fallback)
+                do {
+                    $noInvoice = "INV-" . $todayStr . "-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+                    $exists = Penjualan::where('no_invoice', $noInvoice)->exists();
+                    if ($exists) {
+                        $count++;
+                    }
+                } while ($exists);
             }
 
             $subtotal = 0;

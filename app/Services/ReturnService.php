@@ -113,10 +113,18 @@ class ReturnService
             $lastReturn = ReturnTransaction::where('no_return', 'like', "RET-{$today}-%")->orderBy('id', 'desc')->first();
             $count = 1;
             if ($lastReturn) {
-                $lastCount = (int) substr($lastReturn->no_return, -4);
+                $parts = explode('-', $lastReturn->no_return);
+                $lastCount = isset($parts[2]) ? (int) $parts[2] : 0;
                 $count = $lastCount + 1;
             }
-            $noReturn = "RET-" . $today . "-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+            
+            do {
+                $noReturn = "RET-" . $today . "-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+                $exists = ReturnTransaction::where('no_return', $noReturn)->exists();
+                if ($exists) {
+                    $count++;
+                }
+            } while ($exists);
 
             $rt = ReturnTransaction::create([
                 'no_return' => $noReturn,
