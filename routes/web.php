@@ -30,18 +30,39 @@ Route::get('/partix-secret-storage-link-77', function () {
             mkdir($targetFolder, 0777, true);
         }
         
-        // Remove existing public/storage if it's a broken symlink or folder
+        $messages = [];
+        
+        // 1. Link standar Laravel (partix/public/storage)
         $linkFolder = public_path('storage');
         if (file_exists($linkFolder) || is_link($linkFolder)) {
-            if (PHP_OS_FAMILY === 'Windows') {
-                exec('rmdir /s /q "' . $linkFolder . '"');
-            } else {
-                exec('rm -rf "' . $linkFolder . '"');
+            if (PHP_OS_FAMILY === 'Windows') exec('rmdir /s /q "' . $linkFolder . '"');
+            else exec('rm -rf "' . $linkFolder . '"');
+        }
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        $messages[] = "Standar Laravel (public/storage) berhasil dibuat.";
+        
+        // 2. Link khusus cPanel (public_html/storage)
+        $cpanelPublicHtml = base_path('../public_html');
+        if (is_dir($cpanelPublicHtml)) {
+            $cpanelLink = $cpanelPublicHtml . '/storage';
+            
+            // Hapus jika sudah ada
+            if (file_exists($cpanelLink) || is_link($cpanelLink)) {
+                if (PHP_OS_FAMILY === 'Windows') exec('rmdir /s /q "' . $cpanelLink . '"');
+                else exec('rm -rf "' . $cpanelLink . '"');
             }
+            
+            // Bikin symlink manual
+            if (symlink($targetFolder, $cpanelLink)) {
+                $messages[] = "Khusus cPanel (public_html/storage) berhasil dibuat!";
+            } else {
+                $messages[] = "Gagal membuat symlink di public_html. Pastikan symlink diizinkan di hosting Anda.";
+            }
+        } else {
+            $messages[] = "Folder public_html tidak ditemukan (diabaikan).";
         }
 
-        \Illuminate\Support\Facades\Artisan::call('storage:link');
-        return "Storage Link berhasil dibuat!";
+        return nl2br(implode("\n", $messages));
     } catch (\Exception $e) {
         return "Error: " . $e->getMessage();
     }
