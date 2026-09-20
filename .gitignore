@@ -26,3 +26,6 @@ Thumbs.db
 
 # Panduan Lokal
 /cpanel_guide.txt
+
+# Dummy Data
+/database/seeders/DummyDataSeeder.php
