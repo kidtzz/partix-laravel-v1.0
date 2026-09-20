@@ -91,7 +91,7 @@ class ReturnService
                   ->orWhere('barcode1', 'like', "%$query%")
                   ->orWhere('barcode2', 'like', "%$query%");
             })
-            ->limit(10)
+            ->limit(100)
             ->get()
             ->map(function($b) {
                 $h = \App\Models\Harga::where('barang_id', $b->id)->where('status_harga', 'Aktif')->first();
