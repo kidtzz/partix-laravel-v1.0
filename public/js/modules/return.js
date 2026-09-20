@@ -234,7 +234,7 @@ let currentInvoice = null;
                         <div class="input-group mb-2">
                             <div class="search-bar" style="max-width: 100%;">
                                 <i class='bx bx-search'></i>
-                                <input type="text" class="input-control" style="border-radius: var(--radius-md);" id="searchBarang_${index}" placeholder="Ketik nama atau scan barcode barang pengganti..." oninput="searchPengganti('${index}')">
+                                <input type="text" class="input-control" style="border-radius: var(--radius-md);" id="searchBarang_${index}" placeholder="Ketik nama atau scan barcode barang pengganti..." oninput="searchPengganti('${index}')" onfocus="searchPengganti('${index}')">
                             </div>
                             <div id="searchResult_${index}" style="position: absolute; width: 100%; max-height: 250px; overflow-y: auto; background: white; border: 1px solid #e2e8f0; border-radius: var(--radius-md); z-index: 10; display: none; box-shadow: var(--shadow-md); margin-top: 40px;"></div>
                         </div>
@@ -323,10 +323,7 @@ let currentInvoice = null;
         const query = document.getElementById(`searchBarang_${index}`).value.trim();
         const resDiv = document.getElementById(`searchResult_${index}`);
         
-        if (query.length < 2) {
-            resDiv.style.display = 'none';
-            return;
-        }
+        // Removed minimum query length restriction so it fetches all data if empty
         
         searchTimeoutRet = setTimeout(() => {
             BackendAPI.call('cariBarangAktif', [query])
