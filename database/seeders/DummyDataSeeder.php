@@ -87,10 +87,10 @@ class DummyDataSeeder extends Seeder
             echo "Error generating Suppliers: " . $e->getMessage() . "\n";
         }
 
-        echo "Generating 100 SystemLogs...\n";
+        echo "Generating 1000 SystemLogs...\n";
         DB::beginTransaction();
         try {
-            for ($i = 0; $i < 100; $i++) {
+            for ($i = 0; $i < 1000; $i++) {
                 SystemLog::create([
                     'level' => $faker->randomElement(['info', 'warning', 'error', 'debug']),
                     'message' => $faker->sentence(),
@@ -102,7 +102,7 @@ class DummyDataSeeder extends Seeder
                 ]);
             }
             DB::commit();
-            echo "100 SystemLogs created successfully!\n";
+            echo "1000 SystemLogs created successfully!\n";
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error generating SystemLogs: " . $e->getMessage() . "\n";
@@ -110,10 +110,10 @@ class DummyDataSeeder extends Seeder
 
         $user = User::first();
         if ($user) {
-            echo "Generating 200 Extra LogActivities...\n";
+            echo "Generating 2000 Extra LogActivities...\n";
             DB::beginTransaction();
             try {
-                for ($i = 0; $i < 200; $i++) {
+                for ($i = 0; $i < 2000; $i++) {
                     LogActivity::create([
                         'user_id' => $user->id,
                         'action' => $faker->randomElement(['Login', 'Logout', 'Update Profile', 'Delete Barang', 'Print Invoice', 'Export Excel']),
@@ -123,7 +123,7 @@ class DummyDataSeeder extends Seeder
                     ]);
                 }
                 DB::commit();
-                echo "200 Extra LogActivities created successfully!\n";
+                echo "2000 Extra LogActivities created successfully!\n";
             } catch (\Exception $e) {
                 DB::rollBack();
                 echo "Error generating extra LogActivity: " . $e->getMessage() . "\n";
@@ -252,10 +252,10 @@ class DummyDataSeeder extends Seeder
             echo "Error generating Penjualan: " . $e->getMessage() . "\n";
         }
 
-        echo "Generating 100 LogActivities...\n";
+        echo "Generating 1000 LogActivities...\n";
         DB::beginTransaction();
         try {
-            for ($i = 0; $i < 100; $i++) {
+            for ($i = 0; $i < 1000; $i++) {
                 LogActivity::create([
                     'user_id' => $user->id,
                     'action' => $faker->randomElement(['Login', 'Create', 'Update', 'Delete', 'Checkout']),
@@ -265,17 +265,17 @@ class DummyDataSeeder extends Seeder
                 ]);
             }
             DB::commit();
-            echo "100 LogActivity created successfully!\n";
+            echo "1000 LogActivity created successfully!\n";
         } catch (\Exception $e) {
             DB::rollBack();
             echo "Error generating Logs: " . $e->getMessage() . "\n";
         }
 
         if ($supplier) {
-            echo "Generating 100 StockMovements...\n";
+            echo "Generating 1000 StockMovements...\n";
             DB::beginTransaction();
             try {
-                for ($i = 0; $i < 100; $i++) {
+                for ($i = 0; $i < 1000; $i++) {
                     $b = $barangs->random();
                     $isMasuk = rand(0, 1) == 1;
                     StockMovement::create([
@@ -292,7 +292,7 @@ class DummyDataSeeder extends Seeder
                     ]);
                 }
                 DB::commit();
-                echo "100 StockMovement created successfully!\n";
+                echo "1000 StockMovement created successfully!\n";
             } catch (\Exception $e) {
                 DB::rollBack();
                 echo "Error generating StockMovement: " . $e->getMessage() . "\n";
