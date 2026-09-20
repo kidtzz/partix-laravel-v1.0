@@ -88,17 +88,26 @@ class BarangService
         return $result;
     }
 
-    public function getStockList()
+    public function getStockList($page = 1, $perPage = 0, $search = '')
     {
-        $barangs = Barang::where('status_barang', 'Aktif')->get();
+        $query = Barang::query();
+        
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode1', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode2', 'LIKE', "%{$search}%");
+            });
+        }
+        
         $bsList = BarangSupplier::all()->groupBy('barang_id');
         $supplierList = Supplier::all()->keyBy('id');
         
-        $result = [];
-        foreach ($barangs as $b) {
+        $mapper = function ($b) use ($bsList, $supplierList) {
             $relasi = $bsList->get($b->id, collect([]));
             if ($relasi->isEmpty() && $b->status_barang === 'Aktif') {
-                continue; // skip if no supplier relation and active
+                return null; // skip if no supplier relation and active
             }
 
             $utama = $relasi->firstWhere('is_utama', true) ?? $relasi->first();
@@ -121,7 +130,7 @@ class BarangService
 
             $stok = $relasi->sum('stok_saat_ini');
             
-            $result[] = [
+            return [
                 'id_barang' => $b->kode_barang,
                 'nama_barang' => $b->nama_barang,
                 'barcode1' => $b->barcode1,
@@ -138,24 +147,45 @@ class BarangService
                 'tanggal_masuk' => $relasi->max('tanggal_masuk'),
                 'suppliers' => $suppliersDetail
             ];
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $mapped = $paginator->getCollection()->map($mapper)->filter()->values();
+            $paginator->setCollection($mapped);
+            return $paginator->toArray();
         }
-        return $result;
+
+        return $query->get()->map($mapper)->filter()->values()->toArray();
     }
 
     // ==========================================
     // PHASE 5 (WRITE & INVENTORY CRUD)
     // ==========================================
     
-    public function getHargaMasterList()
+    public function getHargaMasterList($page = 1, $perPage = 25, $search = '')
     {
-        $barangs = Barang::where('status_barang', 'Aktif')->get();
-        $bsList = BarangSupplier::where('status', 'Aktif')->get()->groupBy('barang_id');
-        $hargaList = Harga::get()->groupBy('barang_id');
+        $query = Barang::where('status_barang', 'Aktif');
+
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode1', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode2', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+        
+        $barangsIds = collect($paginator->items())->pluck('id');
+
+        $bsList = BarangSupplier::whereIn('barang_id', $barangsIds)->where('status', 'Aktif')->get()->groupBy('barang_id');
+        $hargaList = Harga::whereIn('barang_id', $barangsIds)->get()->groupBy('barang_id');
         $diskon = $this->getPengaturanDiskon();
 
-        return $barangs->filter(function ($b) use ($bsList) {
-            return $bsList->has($b->id);
-        })->map(function ($b) use ($bsList, $hargaList, $diskon) {
+        // Transform the items using map
+        $transformedItems = collect($paginator->items())->map(function ($b) use ($bsList, $hargaList, $diskon) {
             $relasi = $bsList->get($b->id, collect([]));
             $stok = $relasi->sum('stok_saat_ini');
             $maxHargaBeli = $relasi->max('harga_beli') ?: 0;
@@ -187,7 +217,18 @@ class BarangService
                 'status_harga' => $statusHarga,
                 'status_barang' => str_replace('Non Aktif', 'Nonaktif', $b->status_barang)
             ];
-        })->values()->toArray();
+        });
+
+        // Create a new paginator with the transformed items
+        $newPaginator = new \Illuminate\Pagination\LengthAwarePaginator(
+            $transformedItems,
+            $paginator->total(),
+            $paginator->perPage(),
+            $paginator->currentPage(),
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
+        );
+
+        return $newPaginator->toArray();
     }
 
     public function updatePengaturanDiskon($data)
@@ -215,12 +256,22 @@ class BarangService
         return $b;
     }
 
-    public function getSemuaBarangAdmin()
+    public function getSemuaBarangAdmin($page = 1, $perPage = 0, $search = '')
     {
-        $barangs = Barang::all();
+        $query = Barang::query();
+
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode1', 'LIKE', "%{$search}%")
+                  ->orWhere('barcode2', 'LIKE', "%{$search}%");
+            });
+        }
+
         $hargaList = Harga::where('status_harga', 'Aktif')->get()->keyBy('barang_id');
 
-        return $barangs->map(function ($b) use ($hargaList) {
+        $mapper = function ($b) use ($hargaList) {
             $h = $hargaList->get($b->id);
             return [
                 'id_barang' => $b->kode_barang,
@@ -238,7 +289,15 @@ class BarangService
                     'Teman' => $h ? (float)$h->harga_teman : 0,
                 ]
             ];
-        })->toArray();
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
     private function processGambarBase64($gambarData)

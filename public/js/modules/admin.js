@@ -152,11 +152,12 @@ function initAdminHargaView() {
     loadAdminPengaturan();
 }
 
-function loadAdminHarga() {
+function loadAdminHarga(page = 1, search = '') {
     document.getElementById('adminHargaTableBody').innerHTML = `<tr><td colspan="9" style="text-align:center;">Memuat data...</td></tr>`;
-    BackendAPI.call('getHargaMasterList').then(data => {
-        adminBarangData = data;
-        renderAdminHarga(data);
+    BackendAPI.call('getHargaMasterList', [page, 25, search]).then(data => {
+        adminBarangData = data.data;
+        renderAdminHarga(data.data);
+        renderPaginationTemplate('adminHargaPagination', data, 'loadAdminHarga', search);
         isAdminHargaLoaded = true;
     }).catch(err => {
         document.getElementById('adminHargaTableBody').innerHTML = `<tr><td colspan="9" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
@@ -206,10 +207,13 @@ function renderAdminHarga(data) {
     }).join('');
 }
 
-document.getElementById('adminSearchHarga').addEventListener('input', function () {
-    const kw = this.value.toLowerCase();
-    const filtered = adminBarangData.filter(b => String(b.nama_barang || '').toLowerCase().includes(kw) || String(b.id_barang || '').toLowerCase().includes(kw));
-    renderAdminHarga(filtered);
+let adminSearchHargaTimeout = null;
+document.getElementById('adminSearchHarga').addEventListener('input', function (e) {
+    const query = e.target.value;
+    clearTimeout(adminSearchHargaTimeout);
+    adminSearchHargaTimeout = setTimeout(() => {
+        loadAdminHarga(1, query);
+    }, 500);
 });
 
 function previewEditHarga() {
@@ -346,11 +350,12 @@ function initMasterBarangView() {
     loadMasterBarang();
 }
 
-function loadMasterBarang() {
-    document.getElementById('adminBarangTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>`;
-    BackendAPI.call('getSemuaBarangAdmin').then(data => {
-        if (data.length === 0) {
-            data = [{
+function loadMasterBarang(page = 1, search = '') {
+    document.getElementById('adminBarangTableBody').innerHTML = `<tr><td colspan="8" style="text-align:center;">Memuat data...</td></tr>`;
+    BackendAPI.call('getSemuaBarangAdmin', [page, 25, search]).then(data => {
+        let items = data.data;
+        if (items.length === 0 && search === '' && page === 1) {
+            items = [{
                 id_barang: "BRG-DUMMY",
                 barcode: "12345, 67890",
                 nama_barang: "Barang Dummy (Silakan Hapus)",
@@ -360,12 +365,15 @@ function loadMasterBarang() {
                 stok_saat_ini: 0,
                 status_barang: "Aktif"
             }];
+            data.data = items;
+            data.total = 1;
         }
-        masterBarangDataAdmin = data;
-        renderAdminBarang(data);
+        masterBarangDataAdmin = items;
+        renderAdminBarang(items);
+        renderPaginationTemplate('adminBarangPagination', data, 'loadMasterBarang', search);
         isMasterBarangLoaded = true;
     }).catch(err => {
-        document.getElementById('adminBarangTableBody').innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
+        document.getElementById('adminBarangTableBody').innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
     });
 }
 
@@ -430,10 +438,13 @@ function ubahStatusBarang(idBarang, statusBaru) {
     }, "Ubah Status Barang");
 }
 
+let barangSearchTimeout = null;
 document.getElementById('adminSearchBarang').addEventListener('input', function () {
-    const kw = this.value.toLowerCase();
-    const filtered = masterBarangDataAdmin.filter(b => String(b.nama_barang || '').toLowerCase().includes(kw) || String(b.barcode || '').toLowerCase().includes(kw));
-    renderAdminBarang(filtered);
+    const kw = this.value;
+    clearTimeout(barangSearchTimeout);
+    barangSearchTimeout = setTimeout(() => {
+        loadMasterBarang(1, kw);
+    }, 500);
 });
 
 let semuaBarangSupplierDataAdmin = null;
@@ -557,11 +568,12 @@ function initMasterSupplierView() {
     loadMasterSupplier();
 }
 
-function loadMasterSupplier() {
+function loadMasterSupplier(page = 1, search = '') {
     document.getElementById('adminSupplierTableBody').innerHTML = `<tr><td colspan="7" style="text-align:center;">Memuat data...</td></tr>`;
-    BackendAPI.call('getSemuaSupplier').then(data => {
-        masterSupplierDataAdmin = data;
-        renderAdminSupplier(data);
+    BackendAPI.call('getSemuaSupplier', [page, 25, search]).then(data => {
+        masterSupplierDataAdmin = data.data;
+        renderAdminSupplier(data.data);
+        renderPaginationTemplate('adminSupplierPagination', data, 'loadMasterSupplier', search);
         isMasterSupplierLoaded = true;
     }).catch(err => {
         document.getElementById('adminSupplierTableBody').innerHTML = `<tr><td colspan="7" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
@@ -603,22 +615,13 @@ function renderAdminSupplier(data) {
     }).join('');
 }
 
+let supplierSearchTimeout = null;
 document.getElementById('adminSearchSupplier').addEventListener('input', function () {
-    const kw = this.value.toLowerCase().trim();
-    const filtered = masterSupplierDataAdmin.filter(s => {
-        const nameMatch = String(s.nama_supplier || '').toLowerCase().includes(kw);
-        const idMatch = String(s.id_supplier || '').toLowerCase().includes(kw);
-        const emailMatch = String(s.email || '').toLowerCase().includes(kw);
-        const alamatMatch = false; // kolom alamat dihapus di v1.1
-        const picMatch = (s.pics || []).some(p =>
-            String(p.nama || '').toLowerCase().includes(kw) ||
-            String(p.hp || '').toLowerCase().includes(kw)
-        );
-        const legacyPicMatch = String(s.pic || '').toLowerCase().includes(kw);
-        const legacyHpMatch = String(s.nomor_hp || '').toLowerCase().includes(kw);
-        return nameMatch || idMatch || emailMatch || alamatMatch || picMatch || legacyPicMatch || legacyHpMatch;
-    });
-    renderAdminSupplier(filtered);
+    const kw = this.value;
+    clearTimeout(supplierSearchTimeout);
+    supplierSearchTimeout = setTimeout(() => {
+        loadMasterSupplier(1, kw);
+    }, 500);
 });
 
 function tambahBarisPicForm(nama = '', hp = '') {
@@ -1028,12 +1031,13 @@ function initAdminTransaksiView() {
     loadAdminTransaksi();
 }
 
-function loadAdminTransaksi() {
+function loadAdminTransaksi(page = 1, search = '') {
     const tbody = document.getElementById('adminTransaksiTableBody');
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Memuat histori transaksi...</td></tr>`;
-    BackendAPI.call('getDaftarTransaksi').then(data => {
-        allAdminTransaksiData = data;
-        renderAdminTransaksi(data);
+    BackendAPI.call('getDaftarTransaksi', [page, 25, search]).then(data => {
+        allAdminTransaksiData = data.data;
+        renderAdminTransaksi(data.data);
+        renderPaginationTemplate('adminTransaksiPagination', data, 'loadAdminTransaksi', search);
         isAdminTransaksiLoaded = true;
     }).catch(err => {
         tbody.innerHTML = `<tr><td colspan="7" style="color:var(--danger-color); text-align:center;">Error: ${err.message}</td></tr>`;
@@ -1070,18 +1074,13 @@ function renderAdminTransaksi(data) {
     }).join('');
 }
 
+let transaksiSearchTimeout = null;
 document.getElementById('adminSearchTransaksi').addEventListener('input', function (e) {
-    const query = e.target.value.toLowerCase().trim();
-    if (!query) {
-        renderAdminTransaksi(allAdminTransaksiData);
-        return;
-    }
-    const filtered = allAdminTransaksiData.filter(t => {
-        return (t.no_invoice || '').toLowerCase().includes(query) ||
-            (t.kasir || '').toLowerCase().includes(query) ||
-            (t.metode_bayar || '').toLowerCase().includes(query);
-    });
-    renderAdminTransaksi(filtered);
+    const query = e.target.value;
+    clearTimeout(transaksiSearchTimeout);
+    transaksiSearchTimeout = setTimeout(() => {
+        loadAdminTransaksi(1, query);
+    }, 500);
 });
 
 function cetakUlangTransaksi(noInvoice) {
@@ -1367,22 +1366,24 @@ function initAdminUserView() {
     loadAdminUser();
 }
 
-function loadAdminUser() {
+function loadAdminUser(page = 1, search = '') {
     const tbody = document.getElementById('adminUserTableBody');
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Memuat data user...</td></tr>`;
-    BackendAPI.call('getSemuaUser').then(data => {
-        masterUserDataAdmin = data;
-        renderAdminUser(data);
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Memuat data user...</td></tr>`;
+    BackendAPI.call('getSemuaUser', [page, 25, search]).then(data => {
+        masterUserDataAdmin = data.data; // paginated data
+        renderAdminUser(data.data);
+        renderPaginationTemplate('adminUserPagination', data, 'loadAdminUser', search);
         isMasterUserLoaded = true;
     }).catch(err => {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
     });
 }
+
 
 function renderAdminUser(data) {
     const tbody = document.getElementById('adminUserTableBody');
     if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Belum ada user.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Belum ada user.</td></tr>`;
         return;
     }
 
@@ -1391,8 +1392,9 @@ function renderAdminUser(data) {
                 <td><div style="color: var(--primary-color);">${u.username}</div></td>
                 <td>${u.nama_lengkap}</td>
                 <td>${u.role}</td>
+                <td>${u.email || '-'}</td>
+                <td><div>${u.keterangan || '-'}</div></td>
                 <td><span class="badge ${u.status === 'Aktif' ? 'badge-success' : 'badge-secondary'}" style="font-weight: 400;">${u.status}</span></td>
-                <td><div style="color: var(--text-muted);">${u.keterangan || '-'}</div></td>
                 <td>
                     <div style="display: flex; gap: 8px;">
                         <button type="button" class="btn btn-secondary btn-sm" style="font-weight: 400;" onclick="editModalUser('${u.username}')">Edit</button>
@@ -1403,10 +1405,13 @@ function renderAdminUser(data) {
         `).join('');
 }
 
+let userSearchTimeout = null;
 document.getElementById('adminSearchUser').addEventListener('input', function () {
-    const kw = this.value.toLowerCase();
-    const filtered = masterUserDataAdmin.filter(u => String(u.username || '').toLowerCase().includes(kw) || String(u.nama_lengkap || '').toLowerCase().includes(kw));
-    renderAdminUser(filtered);
+    const kw = this.value;
+    clearTimeout(userSearchTimeout);
+    userSearchTimeout = setTimeout(() => {
+        loadAdminUser(1, kw);
+    }, 500);
 });
 
 function bukaModalUser() {

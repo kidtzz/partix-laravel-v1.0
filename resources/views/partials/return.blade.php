@@ -6,12 +6,13 @@
         </button>
     </x-view-header>
 
-    <x-glass-card padding="24px" display="flex" flex="true">
+    <x-glass-card padding="24px" display="flex" flex="true" style="flex-direction: column;">
         <x-table :headers="['No Return', 'Tanggal', 'Invoice Asal', 'Kasir', 'Jenis Penyelesaian', 'Total Refund/Selisih', 'Aksi']">
             <tbody id="tbodyReturnList">
                 <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
             </tbody>
         </x-table>
+        <div id="returnListPagination"></div>
     </x-glass-card>
 
     </section>
@@ -144,12 +145,13 @@
     </x-view-header>
 
     <!-- Tab 1: Karantina -->
-    <x-glass-card id="contentKarantina" padding="24px" display="flex" flex="true">
-        <x-table :headers="['ID Karantina', 'Tanggal', 'No Invoice', 'Nama Barang', 'Qty Rusak', 'Keterangan', 'Aksi']">
+    <x-glass-card id="contentKarantina" padding="24px" display="flex" flex="true" style="flex-direction: column;">
+        <x-table :headers="['ID Karantina', 'Tanggal', 'No Invoice', 'Nama Barang', 'Qty', 'Keterangan', 'Aksi']">
             <tbody id="tbodyBarangReturn">
                 <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
             </tbody>
         </x-table>
+        <div id="barangReturnPagination"></div>
     </x-glass-card>
 
     
@@ -208,12 +210,13 @@
         </div>
     </x-view-header>
     
-    <x-glass-card id="contentHistoriRetur" padding="24px" display="flex" flex="true">
+    <x-glass-card id="contentHistoriRetur" padding="24px" display="flex" flex="true" style="flex-direction: column;">
         <x-table :headers="['ID Retur', 'Tanggal Retur', 'Supplier Tujuan', 'Barang Diretur', 'Qty', 'Harga Beli', 'No Invoice Supplier', 'User']">
             <tbody id="tbodyHistoriRetur">
                 <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Memuat histori...</td></tr>
             </tbody>
         </x-table>
+        <div id="historiReturSupplierPagination"></div>
     </x-glass-card>
 </section>
 

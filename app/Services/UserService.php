@@ -9,17 +9,31 @@ use Exception;
 
 class UserService
 {
-    public function getSemuaUser()
+    public function getSemuaUser($page = 1, $perPage = 25, $search = '')
     {
-        return User::with('roles')->get()->map(function($u) {
+        $query = User::with('roles');
+        
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('username', 'LIKE', "%{$search}%")
+                  ->orWhere('name', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+        
+        $paginator->getCollection()->transform(function($u) {
             return [
                 'username' => $u->username,
+                'email' => $u->email,
                 'nama_lengkap' => $u->name,
                 'role' => $u->roles->first()->name ?? 'Guest',
                 'status' => str_replace('Non Aktif', 'Nonaktif', $u->status),
                 'keterangan' => $u->keterangan
             ];
-        })->toArray();
+        });
+
+        return $paginator->toArray();
     }
 
     public function tambahUser($payload)

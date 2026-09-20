@@ -90,6 +90,7 @@
                 </tbody>
             </x-table>
         </div>
+        <div id="adminHargaPagination"></div>
     </div>
     </div> <!-- END TAB 2 -->
 
@@ -109,7 +110,7 @@
             <button class="btn btn-primary" onclick="bukaModalBarang()"><i class='bx bx-plus'></i> Tambah</button>
         </div>
     </x-view-header>
-      <x-glass-card padding="24px" display="flex" flex="true">
+      <x-glass-card padding="24px" display="flex" flex="true" style="flex-direction: column;">
           <x-table :headers="['ID', 'Gambar', 'Barcode 1', 'Barcode 2', 'Nama Barang', 'Lokasi Rak', 'Status', 'Aksi']">
               <tbody id="adminBarangTableBody">
                   <tr>
@@ -117,6 +118,7 @@
                 </tr>
             </tbody>
         </x-table>
+        <div id="adminBarangPagination"></div>
     </x-glass-card>
 </section>
 
@@ -131,7 +133,7 @@
             <button class="btn btn-primary" onclick="bukaModalSupplier()"><i class='bx bx-plus'></i> Tambah</button>
         </div>
     </x-view-header>
-    <x-glass-card padding="24px" display="flex" flex="true">
+    <x-glass-card padding="24px" display="flex" flex="true" style="flex-direction: column;">
         <x-table :headers="['ID Supplier', 'Nama Supplier', 'PIC', 'Kontak', 'Status', 'Aksi']">
             <tbody id="adminSupplierTableBody">
                 <tr>
@@ -139,6 +141,7 @@
                 </tr>
             </tbody>
         </x-table>
+        <div id="adminSupplierPagination"></div>
     </x-glass-card>
 </section>
 
@@ -153,14 +156,15 @@
             <button class="btn btn-primary" onclick="bukaModalUser()"><i class='bx bx-plus'></i> Tambah</button>
         </div>
     </x-view-header>
-    <x-glass-card padding="24px" display="flex" flex="true">
-        <x-table :headers="['Username', 'Nama Lengkap', 'Role', 'Status', 'Keterangan', 'Aksi']">
+    <x-glass-card padding="24px" display="flex" flex="true" style="flex-direction: column;">
+        <x-table :headers="['Username', 'Nama Lengkap', 'Role','Email', 'Keterangan', 'Status', 'Aksi']">
             <tbody id="adminUserTableBody">
                 <tr>
-                    <td colspan="6" style="text-align:center;">Memuat data...</td>
+                    <td colspan="7" style="text-align:center;">Memuat data...</td>
                 </tr>
             </tbody>
         </x-table>
+        <div id="adminUserPagination"></div>
     </x-glass-card>
 </section>
 
@@ -172,7 +176,7 @@
             <input type="text" id="adminSearchTransaksi" placeholder="No. Invoice...">
         </div>
     </x-view-header>
-    <x-glass-card padding="24px" display="flex" flex="true">
+    <x-glass-card padding="24px" display="flex" flex="true" style="flex-direction: column;">
         <x-table :headers="['No Invoice', 'Tanggal (WIB)', 'Kasir', 'Pelanggan', 'Status', 'Total', 'Aksi']">
             <tbody id="adminTransaksiTableBody">
                 <tr>
@@ -180,6 +184,7 @@
                 </tr>
             </tbody>
         </x-table>
+        <div id="adminTransaksiPagination"></div>
     </x-glass-card>
 </section>
 

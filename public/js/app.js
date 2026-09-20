@@ -52,6 +52,53 @@
     setInterval(updateDateTime, 1000);
     updateDateTime();
 
+    // --- Utility: Pagination Template ---
+    function renderPaginationTemplate(containerId, paginationData, loadFunctionStr, currentSearch = '') {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (!paginationData || !paginationData.total || paginationData.total === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const startRow = (paginationData.current_page - 1) * paginationData.per_page + 1;
+        const endRow = Math.min(paginationData.current_page * paginationData.per_page, paginationData.total);
+
+        let html = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <div style="font-size: 12px; color: var(--text-muted);">
+                Data: ${startRow}-${endRow} dari ${paginationData.total}
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+        `;
+        
+        // Prev Button
+        if (paginationData.prev_page_url) {
+            html += `<button class="btn btn-secondary btn-sm" onclick="${loadFunctionStr}(${paginationData.current_page - 1}, '${currentSearch}')" style="font-size: 12px; padding: 4px 8px; font-weight: 400;">Prev</button>`;
+        } else {
+            html += `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; cursor: not-allowed; font-size: 12px; padding: 4px 8px; font-weight: 400;">Prev</button>`;
+        }
+
+        // Page Info
+        html += `<span style="font-size: 12px; margin: 0 4px;">Hal ${paginationData.current_page}/${paginationData.last_page}</span>`;
+
+        // Next Button
+        if (paginationData.next_page_url) {
+            html += `<button class="btn btn-secondary btn-sm" onclick="${loadFunctionStr}(${paginationData.current_page + 1}, '${currentSearch}')" style="font-size: 12px; padding: 4px 8px; font-weight: 400;">Next</button>`;
+        } else {
+            html += `<button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5; cursor: not-allowed; font-size: 12px; padding: 4px 8px; font-weight: 400;">Next</button>`;
+        }
+
+        html += `
+            </div>
+        </div>
+        `;
+        
+        container.innerHTML = html;
+    }
+
+
     // --- Routing / SPA Navigation ---
     function navigateTo(target) {
         // Update nav UI

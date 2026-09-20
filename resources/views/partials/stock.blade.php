@@ -19,6 +19,7 @@
         </tr>
     </tbody>
 </x-table>
+<div id="stockPagination"></div>
 </section>
 
 <!-- Modal Input Barang Masuk -->

@@ -176,9 +176,15 @@ class PenjualanService
         }
     }
 
-    public function getDaftarTransaksi()
+    public function getDaftarTransaksi($page = 1, $perPage = 0, $search = '')
     {
-        return Penjualan::with('user')->orderBy('created_at', 'desc')->get()->map(function($p) {
+        $query = Penjualan::with('user')->orderBy('created_at', 'desc');
+
+        if (!empty($search)) {
+            $query->where('no_invoice', 'LIKE', "%{$search}%");
+        }
+
+        $mapper = function($p) {
             return [
                 'no_invoice' => $p->no_invoice,
                 'tanggal' => $p->created_at->format('Y-m-d H:i:s'),
@@ -188,7 +194,15 @@ class PenjualanService
                 'metode_bayar' => $p->metode_pembayaran,
                 'status' => $p->status_transaksi
             ];
-        })->toArray();
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
     public function cetakInvoice($noInvoice)

@@ -18,31 +18,44 @@ use Exception;
 
 class ReturnService
 {
-    public function getDaftarReturLengkap()
+    public function getDaftarReturLengkap($page = 1, $perPage = 0, $search = '')
     {
-        return ReturnTransaction::with(['user', 'details.barangDireturn', 'details.barangPengganti'])
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function($rt) {
-                return [
-                    'no_return' => $rt->no_return,
-                    'no_invoice' => $rt->no_invoice,
-                    'tanggal' => $rt->created_at->format('Y-m-d H:i:s'),
-                    'kasir' => $rt->user ? $rt->user->name : 'Unknown',
-                    'jenis_return' => $rt->jenis_return,
-                    'selisih_harga' => $rt->selisih_harga,
-                    'alasan' => $rt->alasan_return,
-                    'status' => $rt->status,
-                    'items' => $rt->details->map(function($d) {
-                        return [
-                            'nama_barang_kembali' => $d->barangDireturn ? $d->barangDireturn->nama_barang : '',
-                            'qty_kembali' => $d->qty_direturn,
-                            'nama_barang_pengganti' => $d->barangPengganti ? $d->barangPengganti->nama_barang : '',
-                            'qty_pengganti' => $d->qty_pengganti
-                        ];
-                    })->toArray()
-                ];
-            })->toArray();
+        $query = ReturnTransaction::with(['user', 'details.barangDireturn', 'details.barangPengganti'])
+            ->orderBy('created_at', 'desc');
+
+        if (!empty($search)) {
+            $query->where('no_return', 'LIKE', "%{$search}%")
+                  ->orWhere('no_invoice', 'LIKE', "%{$search}%");
+        }
+
+        $mapper = function($rt) {
+            return [
+                'no_return' => $rt->no_return,
+                'no_invoice' => $rt->no_invoice,
+                'tanggal' => $rt->created_at->format('Y-m-d H:i:s'),
+                'kasir' => $rt->user ? $rt->user->name : 'Unknown',
+                'jenis_return' => $rt->jenis_return,
+                'selisih_harga' => $rt->selisih_harga,
+                'alasan' => $rt->alasan_return,
+                'status' => $rt->status,
+                'items' => $rt->details->map(function($d) {
+                    return [
+                        'nama_barang_kembali' => $d->barangDireturn ? $d->barangDireturn->nama_barang : '',
+                        'qty_kembali' => $d->qty_direturn,
+                        'nama_barang_pengganti' => $d->barangPengganti ? $d->barangPengganti->nama_barang : '',
+                        'qty_pengganti' => $d->qty_pengganti
+                    ];
+                })->toArray()
+            ];
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
     public function generatePDFReturBase64($noReturn)
@@ -216,9 +229,18 @@ class ReturnService
         }
     }
 
-    public function getListBarangReturn()
+    public function getListBarangReturn($page = 1, $perPage = 0, $search = '')
     {
-        return BarangReturn::with(['barang', 'user'])->orderBy('created_at', 'desc')->get()->map(function($br) {
+        $query = BarangReturn::with(['barang', 'user'])->orderBy('created_at', 'desc');
+
+        if (!empty($search)) {
+            $query->whereHas('barang', function($q) use ($search) {
+                $q->where('nama_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_barang', 'LIKE', "%{$search}%");
+            })->orWhere('no_invoice_asal', 'LIKE', "%{$search}%");
+        }
+
+        $mapper = function($br) {
             return [
                 'id_return' => $br->id,
                 'tanggal' => $br->created_at->format('Y-m-d H:i:s'),
@@ -229,12 +251,31 @@ class ReturnService
                 'alasan' => $br->alasan,
                 'kasir' => $br->user ? $br->user->name : ''
             ];
-        })->toArray();
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
-    public function getHistoriReturSupplier()
+    public function getHistoriReturSupplier($page = 1, $perPage = 0, $search = '')
     {
-        return ReturnSupplier::with(['barang', 'supplier', 'user'])->orderBy('created_at', 'desc')->get()->map(function($rs) {
+        $query = ReturnSupplier::with(['barang', 'supplier', 'user'])->orderBy('created_at', 'desc');
+
+        if (!empty($search)) {
+            $query->whereHas('barang', function($q) use ($search) {
+                $q->where('nama_barang', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_barang', 'LIKE', "%{$search}%");
+            })->orWhereHas('supplier', function($q) use ($search) {
+                $q->where('nama_supplier', 'LIKE', "%{$search}%");
+            })->orWhere('no_invoice_supplier', 'LIKE', "%{$search}%");
+        }
+
+        $mapper = function($rs) {
             return [
                 'id_return_supplier' => 'RS-' . str_pad($rs->id, 4, '0', STR_PAD_LEFT),
                 'tanggal_retur' => $rs->created_at->format('Y-m-d H:i:s'),
@@ -246,7 +287,15 @@ class ReturnService
                 'no_invoice_supplier' => $rs->no_invoice_supplier,
                 'user' => $rs->user ? $rs->user->name : ''
             ];
-        })->toArray();
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
     public function prosesReturSupplier($payload)

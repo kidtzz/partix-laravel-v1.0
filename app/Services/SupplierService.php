@@ -6,9 +6,18 @@ use App\Models\Supplier;
 
 class SupplierService
 {
-    public function getSemuaSupplier()
+    public function getSemuaSupplier($page = 1, $perPage = 0, $search = '')
     {
-        return Supplier::all()->map(function ($sup) {
+        $query = Supplier::query();
+
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_supplier', 'LIKE', "%{$search}%")
+                  ->orWhere('kode_supplier', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $mapper = function ($sup) {
             $pics = [];
             if ($sup->pic) {
                 $decoded = json_decode($sup->pic, true);
@@ -33,7 +42,15 @@ class SupplierService
                 'status_supplier' => str_replace('Non Aktif', 'Nonaktif', $sup->status_supplier),
                 'pics' => $pics
             ];
-        })->toArray();
+        };
+
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $paginator->getCollection()->transform($mapper);
+            return $paginator->toArray();
+        }
+
+        return $query->get()->map($mapper)->toArray();
     }
 
     public function tambahSupplier($data)

@@ -5,26 +5,33 @@ let masterStockList = [];
     function initStockView() {
         if (!AppState.user || AppState.user.role === "Kasir") return; // Akses ditolak untuk kasir
 
-        Promise.all([
-            BackendAPI.call('getStockList'),
-            BackendAPI.call('getPengaturanDiskon')
-        ]).then(([data, diskon]) => {
+        BackendAPI.call('getPengaturanDiskon').then(diskon => {
             if (typeof globalDiskon !== 'undefined') {
                 globalDiskon = diskon;
             } else {
                 window.globalDiskon = diskon;
             }
-            masterStockList = data;
-            renderStockTable(data, diskon.MINIMUM_STOK || 5);
+            loadStockList();
         }).catch(err => {
-            document.getElementById('stockTableBody').innerHTML = `<tr><td colspan="10" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
+            document.getElementById('stockTableBody').innerHTML = `<tr><td colspan="11" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
+        });
+    }
+
+    function loadStockList(page = 1, search = '') {
+        document.getElementById('stockTableBody').innerHTML = `<tr><td colspan="11" style="text-align:center; padding:20px;">Memuat data stok...</td></tr>`;
+        BackendAPI.call('getStockList', [page, 25, search]).then(data => {
+            masterStockList = data.data;
+            renderStockTable(data.data, (typeof globalDiskon !== 'undefined' ? globalDiskon.MINIMUM_STOK : 5));
+            renderPaginationTemplate('stockPagination', data, 'loadStockList', search);
+        }).catch(err => {
+            document.getElementById('stockTableBody').innerHTML = `<tr><td colspan="11" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
         });
     }
 
     function renderStockTable(data, minStokGlobal) {
         const tbody = document.getElementById('stockTableBody');
         if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Tidak ada data barang.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;">Tidak ada data barang.</td></tr>`;
             return;
         }
 
@@ -193,15 +200,13 @@ let masterStockList = [];
         container.innerHTML = html;
     }
 
-    // Search filter
+    let stockSearchTimeout = null;
     document.getElementById('stockSearch').addEventListener('input', function (e) {
-        const keyword = this.value.toLowerCase();
-        const filtered = masterStockList.filter(b =>
-            String(b.nama_barang || '').toLowerCase().includes(keyword) ||
-            String(b.barcode || '').toLowerCase().includes(keyword) ||
-            String(b.id_barang || '').toLowerCase().includes(keyword)
-        );
-        renderStockTable(filtered);
+        const keyword = this.value;
+        clearTimeout(stockSearchTimeout);
+        stockSearchTimeout = setTimeout(() => {
+            loadStockList(1, keyword);
+        }, 500);
     });
 
     function bukaHistoriBarang(idBarang, namaBarang) {
