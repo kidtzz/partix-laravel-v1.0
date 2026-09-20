@@ -22,3 +22,12 @@ Route::get('/partix-secret-clear-cache-77', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     return "Cache, Config, dan Route berhasil dibersihkan!";
 });
+
+Route::get('/partix-secret-storage-link-77', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return "Storage Link berhasil dibuat!";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
