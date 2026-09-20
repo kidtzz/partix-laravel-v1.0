@@ -1,5 +1,7 @@
 let posCart = [];
 let masterBarangPOS = [];
+let posMinStok = 5; // Dynamic minimum stock
+
 
 function formatRupiah(amount) {
     if (isNaN(amount)) return "Rp 0";
@@ -39,6 +41,10 @@ function initPOS() {
         setDiskon('optHrgBengkelKasir', 'Bengkel / Reseller', diskon.DISKON_BENGKEL || 15);
         setDiskon('optHrgTemanKasir', 'Teman / Kenalan', diskon.DISKON_TEMAN || 20);
         setDiskon('optHrgGrosirKasir', 'Grosir / VIP', diskon.DISKON_GROSIR || 25);
+        
+        if (diskon.MINIMUM_STOK) {
+            posMinStok = parseInt(diskon.MINIMUM_STOK) || 5;
+        }
     }).catch(e => { });
 
     BackendAPI.call('getBarangUntukPOS').then(data => {
@@ -98,7 +104,7 @@ function renderPOSGrid() {
 
     grid.innerHTML = filtered.map(b => {
         const isHabis = b.stok_saat_ini <= 0;
-        const isLowStock = b.stok_saat_ini > 0 && b.stok_saat_ini <= 5;
+        const isLowStock = b.stok_saat_ini > 0 && b.stok_saat_ini <= posMinStok;
         const stockIcon = isHabis ? "<i class='bx bx-x-circle'></i>" : (isLowStock ? "<i class='bx bx-error'></i>" : "<i class='bx bx-check-circle'></i>");
         const stockColor = isHabis ? "var(--text-muted)" : (isLowStock ? "var(--danger-color)" : "var(--success-color)");
         
@@ -501,15 +507,20 @@ function renderPOSGridKasir() {
 
     grid.innerHTML = filtered.map(b => {
         const isHabis = b.stok_saat_ini <= 0;
+        const isLowStock = b.stok_saat_ini > 0 && b.stok_saat_ini <= posMinStok;
         const hargaAsli = b.harga["Regular"] || 0;
         let hargaAktif = hargaAsli;
         
         // Selalu tampilkan harga normal di card, diskon hanya muncul di keranjang
         const showCoret = false;
         
+        let badgeClass = "safe";
+        if (isHabis) badgeClass = "danger";
+        else if (isLowStock) badgeClass = "warning";
+        
         return `
         <div class="kasir-product-card">
-            <div class="badge-stock ${isHabis ? "danger" : "safe"}">
+            <div class="badge-stock ${badgeClass}">
                 ${isHabis ? "HABIS" : "STOK: " + b.stok_saat_ini}
             </div>
             <div class="img-area">
