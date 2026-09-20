@@ -46,17 +46,26 @@ Route::get('/partix-secret-storage-link-77', function () {
         if (is_dir($cpanelPublicHtml)) {
             $cpanelLink = $cpanelPublicHtml . '/storage';
             
-            // Hapus jika sudah ada
-            if (file_exists($cpanelLink) || is_link($cpanelLink)) {
+            // Hapus symlink lama jika dia symlink (jangan hapus folder kalau sudah folder beneran)
+            if (is_link($cpanelLink)) {
                 if (PHP_OS_FAMILY === 'Windows') exec('rmdir /s /q "' . $cpanelLink . '"');
                 else exec('rm -rf "' . $cpanelLink . '"');
             }
             
-            // Bikin symlink manual
-            if (symlink($targetFolder, $cpanelLink)) {
-                $messages[] = "Khusus cPanel (public_html/storage) berhasil dibuat!";
+            // Bikin folder sungguhan (Bukan Symlink!) biar nggak kena blokir cPanel
+            if (!file_exists($cpanelLink)) {
+                mkdir($cpanelLink, 0777, true);
+                
+                // Copy isi dari storage/app/public ke public_html/storage
+                if (PHP_OS_FAMILY === 'Windows') {
+                    exec('xcopy "' . $targetFolder . '" "' . $cpanelLink . '" /E /I /Y');
+                } else {
+                    exec('cp -r "' . $targetFolder . '/." "' . $cpanelLink . '/"');
+                }
+
+                $messages[] = "Khusus cPanel: Folder public_html/storage (Folder Asli) berhasil dibuat & isi disalin! Bypass Symlink Block aktif.";
             } else {
-                $messages[] = "Gagal membuat symlink di public_html. Pastikan symlink diizinkan di hosting Anda.";
+                $messages[] = "Khusus cPanel: Folder public_html/storage sudah ada sebagai folder asli. Aman!";
             }
         } else {
             $messages[] = "Folder public_html tidak ditemukan (diabaikan).";
