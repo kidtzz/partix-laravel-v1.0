@@ -81,6 +81,15 @@
         if (target === 'histori-retur-supplier' && typeof loadHistoriReturSupplier === 'function') {
             loadHistoriReturSupplier();
         }
+
+        if (target === 'penjualan' && typeof resetPenjualan === 'function') {
+            resetPenjualan();
+        }
+
+        if (target === 'proses-retur' && typeof resetReturnView === 'function') {
+            resetReturnView();
+        }
+
         if (target === 'return-supplier' && typeof loadListBarangReturn === 'function') {
             loadListBarangReturn();
         }

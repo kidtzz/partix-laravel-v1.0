@@ -388,11 +388,16 @@ function renderAdminBarang(data) {
         if (statusVal === "Nonaktif") {
             actionButtons += `<button type="button" class="btn btn-sm" style="background:var(--danger-color);color:white;margin-left:4px; font-weight: 400;" onclick="hapusBarang('${b.id_barang}')" title="Hapus Permanen"><i class='bx bx-trash'></i></button>`;
         }
+        
+        let gambarImg = b.gambar ? `<img src="${b.gambar}" onerror="this.onerror=null; this.outerHTML='<div style=\\'width: 40px; height: 40px; border-radius: 4px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa;\\'>No Img</div>';" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;">` : `<div style="width: 40px; height: 40px; border-radius: 4px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa;">No Img</div>`;
 
         return `
             <tr class="main-row hoverable-row">
                 <td>
                     <div>${b.id_barang}</div>
+                </td>
+                <td>
+                    ${gambarImg}
                 </td>
                 <td>
                     <div>${bc1}</div>
@@ -439,6 +444,10 @@ function bukaModalBarang() {
     document.getElementById('modalAdminBarangTitle').textContent = "Tambah Barang Baru";
     document.getElementById('formBarangId').value = "";
     document.getElementById('formBarangNama').value = "";
+    document.getElementById('formBarangGambar').value = "";
+    currentGambarBase64 = null;
+    document.getElementById('gambarPreviewContainer').style.display = 'none';
+    document.getElementById('formBarangGambarPreview').src = "";
     document.getElementById('formBarangBarcode1').value = "";
     document.getElementById('formBarangBarcode2').value = "";
     document.getElementById('formBarangLokasiRak').value = "";
@@ -453,6 +462,16 @@ function editModalBarang(idBarang) {
     document.getElementById('modalAdminBarangTitle').textContent = "Edit Barang";
     document.getElementById('formBarangId').value = b.id_barang;
     document.getElementById('formBarangNama').value = b.nama_barang;
+    document.getElementById('formBarangGambar').value = ""; // Reset file input
+    if (b.gambar) {
+        currentGambarBase64 = b.gambar;
+        document.getElementById('formBarangGambarPreview').src = b.gambar;
+        document.getElementById('gambarPreviewContainer').style.display = 'block';
+    } else {
+        currentGambarBase64 = null;
+        document.getElementById('gambarPreviewContainer').style.display = 'none';
+        document.getElementById('formBarangGambarPreview').src = "";
+    }
     const bc = String(b.barcode || '').split(',').map(s => s.trim());
     document.getElementById('formBarangBarcode1').value = bc[0] || "";
     document.getElementById('formBarangBarcode2').value = bc[1] || "";
@@ -474,6 +493,7 @@ function simpanBarang() {
 
     let data = {
         nama_barang: document.getElementById('formBarangNama').value,
+        gambar: currentGambarBase64,
         barcode: barcodeCombined,
         status_barang: document.getElementById('formBarangStatus').value,
         kategori: "-",
@@ -756,6 +776,26 @@ function hapusSupplierPermanen(idSupplier) {
 // ==========================================
 let currentIdBarangUntukSupplier = null;
 let currentBarangSupplierData = [];
+let currentGambarBase64 = null;
+
+// File Upload Preview
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('formBarangGambar');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    currentGambarBase64 = evt.target.result;
+                    document.getElementById('formBarangGambarPreview').src = currentGambarBase64;
+                    document.getElementById('gambarPreviewContainer').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
 
 function bukaModalBarangSupplier(idBarang) {
     const barang = masterBarangDataAdmin.find(b => b.id_barang === idBarang);
@@ -1211,8 +1251,8 @@ function loadAdminLog(page = 1) {
                 tbody.insertAdjacentHTML('beforeend', html);
             }
             
-            // Pasang observer di baris terakhir yang baru dirender
-            setupIntersectionObserver('adminLogTableBody', adminLogState, loadAdminLog);
+            // Scroll otomatis dinonaktifkan sesuai permintaan (infinitenya takeout aja)
+            // setupIntersectionObserver('adminLogTableBody', adminLogState, loadAdminLog);
         }
         
         adminLogState.loading = false;
@@ -1284,7 +1324,8 @@ function loadSystemLog(page = 1) {
                 tbody.insertAdjacentHTML('beforeend', html);
             }
             
-            setupIntersectionObserver('systemLogTableBody', systemLogState, loadSystemLog);
+            // Scroll otomatis dinonaktifkan sesuai permintaan
+            // setupIntersectionObserver('systemLogTableBody', systemLogState, loadSystemLog);
         }
         
         systemLogState.loading = false;

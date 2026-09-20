@@ -67,15 +67,14 @@
 
     .kasir-table th {
         font-size: 12px;
-        font-weight: 400;
+        font-weight: 600;
         color: var(--text-muted, #4B5563);
-        background: rgba(0,0,0,0.04);
+        background: #F9FAFB; /* Solid background to prevent overlap visibility */
         padding: 12px 20px;
         border-bottom: 1px solid var(--border-solid, #E5E7EB);
         position: sticky;
         top: 0;
         z-index: 10;
-        backdrop-filter: blur(4px);
         white-space: nowrap;
     }
     

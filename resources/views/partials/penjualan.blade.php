@@ -20,16 +20,23 @@
                     </div>
                 </div>
 
-                <div class="product-grid" id="posProductGrid">
-                    <!-- Products will be injected via JS -->
+                <div style="flex: 1; display: flex; flex-direction: column;">
+                    <x-table id="posProductTable">
+                        <!-- Products will be injected via JS into tbody -->
+                    </x-table>
                 </div>
             </div>
 
             <!-- Right Side: Cart / Checkout -->
             <div class="pos-cart glass-effect">
-                <div class="cart-header">
-                    <h3>Keranjang</h3>
-                    <span class="cart-count badge badge-primary" id="cartItemCount">0 Item</span>
+                <div class="cart-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Keranjang</h3>
+                        <span class="cart-count badge badge-primary" id="cartItemCount">0 Item</span>
+                    </div>
+                    <button onclick="clearCart()" style="background: transparent; border: none; color: #EF4444; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#FEE2E2'" onmouseout="this.style.background='transparent'">
+                        <i class='bx bx-trash'></i> Kosongkan
+                    </button>
                 </div>
 
                 <div class="cart-items" id="cartItemsContainer">
@@ -39,13 +46,36 @@
                     </div>
                 </div>
 
-                <div class="cart-summary">
-                    <div class="summary-row">
+                <div class="cart-summary" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                    <div class="summary-row" style="color: var(--text-muted); font-size: 14px; display: flex; justify-content: space-between;">
                         <span>Subtotal</span>
-                        <span id="cartSubtotal">Rp 0</span>
+                        <span id="cartSubtotal" style="font-weight: 600;">Rp 0</span>
+                    </div>
+                    <div class="summary-row total" style="display: flex; justify-content: space-between; border-top: 1px dashed #E5E7EB; padding-top: 12px; margin-top: 4px; margin-bottom: 12px;">
+                        <span style="font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">Grand Total</span>
+                        <span id="cartSubtotal2" style="font-size: 14px; font-weight: 700; color: #111827;">Rp 0</span>
                     </div>
 
-                    <x-input-group label="Tipe Harga / Customer" class="mt-4">
+                    <button class="btn btn-primary btn-checkout" onclick="openCheckoutModal()" style="padding: 10px 14px; font-size: 12px; font-weight: 600; border-radius: 6px; display: flex; justify-content: center; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; width: 100%;">
+                        <span>CHECKOUT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Modal (Hidden by default) -->
+        <div id="checkoutModalPOS" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(4px); padding: 16px;">
+            <div class="modal-content glass-effect" style="background: white; width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); display: flex; flex-direction: column; max-height: 90vh;">
+                
+                <!-- Modal Header -->
+                <div style="padding: 16px 20px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: #F9FAFB; flex-shrink: 0;">
+                    <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827;">Detail Pembayaran</h3>
+                    <button onclick="closeCheckoutModal()" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: #6B7280;"><i class="bx bx-x"></i></button>
+                </div>
+                
+                <!-- Modal Body (Scrollable) -->
+                <div style="padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex-grow: 1;">
+                    <x-input-group label="Tipe Harga / Customer">
                         <select class="input-control" id="tipeHarga" onchange="changeTipeHarga()">
                             <option value="Regular" id="optHrgRegular">Regular (0%)</option>
                             <option value="Member" id="optHrgMember">Member (-5%)</option>
@@ -56,45 +86,61 @@
                         </select>
                     </x-input-group>
 
-                    <x-input-group label="Potongan Manual (Diskon Kasir)" class="mt-3">
+                    <x-input-group label="Potongan Manual (Diskon Kasir)">
                         <input type="number" class="input-control" id="potonganPenjualan" placeholder="Cth: 5000" min="0" oninput="updateCartUI()">
                     </x-input-group>
 
-                    <x-input-group label="Metode Bayar" class="mt-3">
-                        <select class="input-control" id="metodeBayar" onchange="toggleCashInput()">
-                            <option value="Cash">Cash (Tunai)</option>
-                            <option value="Transfer">Transfer Bank</option>
-                            <option value="QRIS">QRIS</option>
-                        </select>
+                    <x-input-group label="Metode Bayar">
+                        <div class="payment-grid" style="margin-top: 6px;">
+                            <button type="button" class="pay-btn active" data-admin-method="Cash" onclick="selectPaymentAdmin('Cash')">Cash</button>
+                            <button type="button" class="pay-btn" data-admin-method="Transfer" onclick="selectPaymentAdmin('Transfer')">Transfer</button>
+                            <button type="button" class="pay-btn" data-admin-method="QRIS" onclick="selectPaymentAdmin('QRIS')">QRIS</button>
+                        </div>
+                        <input type="hidden" id="metodeBayar" value="Cash">
                     </x-input-group>
 
                     <div id="cashInputContainer">
-                        <x-input-group label="Uang Diterima" class="mt-3">
-                            <input type="number" class="input-control" id="uangDiterima" placeholder="Cth: 100000">
+                        <x-input-group label="Uang Diterima (Rp)">
+                            <input type="number" class="input-control" id="uangDiterima" placeholder="Cth: 100000" style="font-size: 14px; font-weight: 600; color: #111827;" oninput="calcAdminKembalian()">
                         </x-input-group>
+                        
+                        <div class="quick-cash-grid" id="adminQuickCashGrid" style="margin-top: 8px;">
+                            <!-- injected by JS -->
+                        </div>
+                        
+                        <div class="kembalian-box mt-3" id="adminKembalianBox" style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; background: #F3F4F6; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB; transition: all 0.3s ease;">
+                            <span id="adminKembalianLabel" style="font-size: 13px; font-weight: 600; color: #4B5563;">Kembalian</span>
+                            <h3 id="adminKembalianStr" style="margin: 0; font-size: 16px; font-weight: 700; color: #111827;">Rp 0</h3>
+                        </div>
                     </div>
 
-                    <div class="summary-row" style="color: var(--text-muted); font-size: 12px; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                        <span>Subtotal</span>
-                        <span id="cartSubtotal2">Rp 0</span>
+                    <!-- Summary -->
+                    <div style="background: #F3F4F6; padding: 16px; border-radius: 12px; margin-top: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #4B5563; margin-bottom: 6px;">
+                            <span>Subtotal Setelah Diskon:</span>
+                            <span id="cartSubtotalModal" style="font-weight: 600;">Rp 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #DC2626; margin-bottom: 10px;">
+                            <span>Potongan Kasir:</span>
+                            <span id="cartPotonganModal" style="font-weight: 600;">- Rp 0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px dashed #D1D5DB; padding-top: 10px;">
+                            <span style="font-size: 14px; font-weight: 700; color: #111827;">Total Tagihan:</span>
+                            <span id="cartTotal" style="font-size: 16px; font-weight: 800; color: #2563EB;">Rp 0</span>
+                        </div>
                     </div>
-                    <div class="summary-row" style="color: var(--danger-color); font-size: 12px; margin-bottom: 8px; display: flex; justify-content: space-between;">
-                        <span>Potongan</span>
-                        <span id="cartPotongan">- Rp 0</span>
-                    </div>
-                    <div class="summary-row total" style="display: flex; justify-content: space-between; border-top: 1px dashed var(--border-color); padding-top: 8px;">
-                        <span>Total Tagihan</span>
-                        <span id="cartTotal">Rp 0</span>
-                    </div>
+                </div>
 
-                    <button class="btn btn-primary btn-checkout" onclick="processCheckout()">
-                        <i class="bx bx-check-circle"></i> Bayar Sekarang
+                <!-- Modal Footer -->
+                <div style="padding: 16px 20px; border-top: 1px solid #E5E7EB; background: #F9FAFB; display: flex; gap: 12px; flex-shrink: 0;">
+                    <button class="btn btn-secondary" style="flex: 1; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; background: white; border: 1px solid #D1D5DB; color: #4B5563;" onclick="closeCheckoutModal()">BATAL</button>
+                    <button class="btn btn-primary" id="btnProsesModal" style="flex: 2; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase;" onclick="processCheckout()">
+                        PROSES TRANSAKSI
                     </button>
                 </div>
+                
             </div>
         </div>
-    </div>
-
 
     <!-- ========================================== -->
     <!-- 2. KASIR POS VIEW (Tampilan Replica)      -->

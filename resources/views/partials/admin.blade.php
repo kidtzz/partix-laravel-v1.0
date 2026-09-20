@@ -109,11 +109,11 @@
             <button class="btn btn-primary" onclick="bukaModalBarang()"><i class='bx bx-plus'></i> Tambah</button>
         </div>
     </x-view-header>
-    <x-glass-card padding="24px" display="flex" flex="true">
-        <x-table :headers="['ID', 'Barcode 1', 'Barcode 2', 'Nama Barang', 'Lokasi Rak', 'Status', 'Aksi']">
-            <tbody id="adminBarangTableBody">
-                <tr>
-                    <td colspan="7" style="text-align:center;">Memuat data...</td>
+      <x-glass-card padding="24px" display="flex" flex="true">
+          <x-table :headers="['ID', 'Gambar', 'Barcode 1', 'Barcode 2', 'Nama Barang', 'Lokasi Rak', 'Status', 'Aksi']">
+              <tbody id="adminBarangTableBody">
+                  <tr>
+                      <td colspan="8" style="text-align:center;">Memuat data...</td>
                 </tr>
             </tbody>
         </x-table>
@@ -199,8 +199,8 @@
         </button>
     </div>
     
-    <div id="contentLogTransaksi" style="display: block;">
-        <x-glass-card padding="24px" display="flex" flex="true">
+    <div id="contentLogTransaksi" style="display: block; height: calc(100vh - 200px); min-height: 400px; overflow: hidden;">
+        <x-glass-card padding="24px" display="flex" flex="true" style="height: 100%; display: flex; flex-direction: column;">
             <x-table :headers="['Waktu (WIB)', 'User', 'Role', 'Aksi', 'Modul', 'Detail']">
                 <tbody id="adminLogTableBody">
                     <tr>
@@ -211,8 +211,8 @@
         </x-glass-card>
     </div>
     
-    <div id="contentLogSistem" style="display: none;">
-        <x-glass-card padding="24px" display="flex" flex="true">
+    <div id="contentLogSistem" style="display: none; height: calc(100vh - 200px); min-height: 400px; overflow: hidden;">
+        <x-glass-card padding="24px" display="flex" flex="true" style="height: 100%; display: flex; flex-direction: column;">
             <x-table :headers="['Waktu (WIB)', 'Level', 'User', 'URL', 'Pesan Error', 'Aksi']">
                 <tbody id="systemLogTableBody">
                     <tr>
@@ -291,10 +291,16 @@
 <x-modal id="modalAdminBarang" title="Tambah Barang Baru" titleId="modalAdminBarangTitle">
     <input type="hidden" id="formBarangId">
     <div class="grid" style="grid-template-columns: 1fr; gap: 16px;">
-        <x-input-group label="Nama Barang *" marginBottom="0">
-            <input type="text" class="input-control" id="formBarangNama" required>
-        </x-input-group>
-        <x-input-group label="Lokasi Rak" marginBottom="0">
+          <x-input-group label="Nama Barang *" marginBottom="0">
+              <input type="text" class="input-control" id="formBarangNama" required>
+          </x-input-group>
+          <x-input-group label="Gambar (Opsional)" marginBottom="0">
+              <input type="file" class="input-control" id="formBarangGambar" accept="image/*">
+              <div id="gambarPreviewContainer" style="display: none; margin-top: 8px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB; width: fit-content; max-height: 150px;">
+                  <img id="formBarangGambarPreview" src="" style="height: 100px; width: auto; object-fit: cover;">
+              </div>
+          </x-input-group>
+          <x-input-group label="Lokasi Rak" marginBottom="0">
             <input type="text" class="input-control" id="formBarangLokasiRak" placeholder="Kosongkan jika belum ada">
         </x-input-group>
         <x-input-group label="Barcode 1" marginBottom="0">

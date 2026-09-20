@@ -24,7 +24,7 @@ class LogService
             $username = $log->user ? $log->user->username : 'System';
             $role = ($log->user && $log->user->roles->isNotEmpty()) ? $log->user->roles->first()->name : 'System';
             return [
-                'timestamp' => $log->created_at->format('Y-m-d\TH:i:s.v\Z'),
+                'timestamp' => $log->created_at->format('Y-m-d H:i:s'),
                 'username' => $username,
                 'role' => $role,
                 'action' => $log->action,

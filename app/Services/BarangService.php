@@ -74,6 +74,8 @@ class BarangService
                 $result[] = [
                     'id_barang' => $b->kode_barang,
                     'nama_barang' => $b->nama_barang,
+                    'gambar' => $b->gambar,
+                    'kategori' => $b->kategori,
                     'stok_saat_ini' => $stok,
                     'barcode1' => $b->barcode1,
                     'barcode2' => $b->barcode2,
@@ -226,6 +228,7 @@ class BarangService
                 'barcode2' => $b->barcode2 ?? '',
                 'barcode' => implode(', ', array_filter([$b->barcode1, $b->barcode2])),
                 'nama_barang' => $b->nama_barang,
+                'gambar' => $b->gambar,
                 'lokasi_rak' => $b->lokasi_rak ?? '',
                 'kategori' => $b->kategori ?? '',
                 'status_barang' => str_replace('Non Aktif', 'Nonaktif', $b->status_barang),
@@ -236,6 +239,30 @@ class BarangService
                 ]
             ];
         })->toArray();
+    }
+
+    private function processGambarBase64($gambarData)
+    {
+        if (!$gambarData || !str_starts_with($gambarData, 'data:image')) {
+            return $gambarData; // might be null or URL
+        }
+
+        try {
+            list($type, $gambarData) = explode(';', $gambarData);
+            list(, $gambarData)      = explode(',', $gambarData);
+            
+            $gambarData = base64_decode($gambarData);
+            
+            $mime = explode(':', $type)[1];
+            $ext = explode('/', $mime)[1];
+            $filename = uniqid('barang_') . '.' . $ext;
+            
+            \Storage::disk('public')->put('barangs/' . $filename, $gambarData);
+            
+            return '/storage/barangs/' . $filename;
+        } catch (\Exception $e) {
+            return null; // fallback on error
+        }
     }
 
     private function generateKodeBarang()
@@ -270,11 +297,14 @@ class BarangService
 
         DB::beginTransaction();
         try {
+            $processedGambar = $this->processGambarBase64($data['gambar'] ?? null);
+
             $b = Barang::create([
                 'kode_barang' => $kode,
                 'barcode1' => $bc1 ?: null,
                 'barcode2' => $bc2 ?: null,
                 'nama_barang' => $data['nama_barang'],
+                'gambar' => $processedGambar,
                 'lokasi_rak' => $data['lokasi_rak'] ?? null,
                 'kategori' => $data['kategori'] ?? null,
                 'status_barang' => str_replace('Nonaktif', 'Non Aktif', $data['status_barang'] ?? 'Aktif')
@@ -305,10 +335,13 @@ class BarangService
 
         DB::beginTransaction();
         try {
+            $processedGambar = $this->processGambarBase64($data['gambar'] ?? $b->gambar);
+
             $b->update([
                 'nama_barang' => $data['nama_barang'],
                 'barcode1' => $bc1 ?: null,
                 'barcode2' => $bc2 ?: null,
+                'gambar' => $processedGambar,
                 'lokasi_rak' => $data['lokasi_rak'] ?? $b->lokasi_rak,
                 'kategori' => $data['kategori'] ?? $b->kategori,
                 'status_barang' => str_replace('Nonaktif', 'Non Aktif', $data['status_barang'] ?? $b->status_barang)
