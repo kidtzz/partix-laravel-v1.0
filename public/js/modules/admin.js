@@ -1252,7 +1252,7 @@ function loadAdminLog(page = 1) {
             }
             
             // Scroll otomatis dinonaktifkan sesuai permintaan (infinitenya takeout aja)
-            // setupIntersectionObserver('adminLogTableBody', adminLogState, loadAdminLog);
+            setupIntersectionObserver('adminLogTableBody', adminLogState, loadAdminLog);
         }
         
         adminLogState.loading = false;
@@ -1325,7 +1325,7 @@ function loadSystemLog(page = 1) {
             }
             
             // Scroll otomatis dinonaktifkan sesuai permintaan
-            // setupIntersectionObserver('systemLogTableBody', systemLogState, loadSystemLog);
+            setupIntersectionObserver('systemLogTableBody', systemLogState, loadSystemLog);
         }
         
         systemLogState.loading = false;
