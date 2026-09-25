@@ -1,7 +1,7 @@
 <link href="/css/modules/penjualan.css?v={{ time() }}" rel="stylesheet">
 
 <!-- BUNGKUSAN UTAMA -->
-<div class="pos-master-container">
+<div class="pos-master-container" style="height: 100%; width: 100%; display: flex; flex-direction: column;">
 
     <!-- ========================================== -->
     <!-- 1. ADMIN POS VIEW (Tampilan Lama)         -->
@@ -141,6 +141,7 @@
                 
             </div>
         </div>
+    </div> <!-- CLOSED admin-pos-view -->
 
     <!-- ========================================== -->
     <!-- 2. KASIR POS VIEW (Tampilan Replica)      -->

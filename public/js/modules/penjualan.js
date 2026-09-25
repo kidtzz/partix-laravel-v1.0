@@ -17,10 +17,10 @@ function initPOS() {
     
     if(!grid && !kasirGrid) return;
     
-    if (grid) {
-        grid.innerHTML = `<tr><td colspan="6" style="padding:40px; text-align:center; color:var(--text-muted);"><i class='bx bx-loader-alt bx-spin' style='font-size:24px;'></i> Memuat Data Barang...</td></tr>`;
-    } else if (kasirGrid) {
-        kasirGrid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--text-muted);"><i class='bx bx-loader-alt bx-spin' style='font-size:24px;'></i> Memuat Data Barang...</div>`;
+    if (document.body.classList.contains('role-kasir')) {
+        if (kasirGrid) kasirGrid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--text-muted);"><i class='bx bx-loader-alt bx-spin' style='font-size:24px;'></i> Memuat Data Barang...</div>`;
+    } else {
+        if (grid) grid.innerHTML = `<tr><td colspan="6" style="padding:40px; text-align:center; color:var(--text-muted);"><i class='bx bx-loader-alt bx-spin' style='font-size:24px;'></i> Memuat Data Barang...</td></tr>`;
     }
 
     BackendAPI.call('getPengaturanDiskon').then(diskon => {
@@ -54,10 +54,10 @@ function initPOS() {
         const grid = document.querySelector('#posProductTable tbody');
         const kasirGrid = document.getElementById("kasirProductGrid");
         
-        if (grid) {
-            grid.innerHTML = `<tr><td colspan="6" style="padding:40px; text-align:center; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Gagal memuat data barang</b><br><span style='font-size:12px; color:var(--text-muted);'>${err.message || 'Terjadi kesalahan pada server'}</span></td></tr>`;
-        } else if (kasirGrid) {
-            kasirGrid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Gagal memuat data barang</b><br><span style='font-size:12px; color:var(--text-muted);'>${err.message || 'Terjadi kesalahan pada server'}</span></div>`;
+        if (document.body.classList.contains('role-kasir')) {
+            if (kasirGrid) kasirGrid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Gagal memuat data barang</b><br><span style='font-size:12px; color:var(--text-muted);'>${err.message || 'Terjadi kesalahan pada server'}</span></div>`;
+        } else {
+            if (grid) grid.innerHTML = `<tr><td colspan="6" style="padding:40px; text-align:center; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Gagal memuat data barang</b><br><span style='font-size:12px; color:var(--text-muted);'>${err.message || 'Terjadi kesalahan pada server'}</span></td></tr>`;
         }
         showToast("Gagal memuat barang: " + err.message, "error");
     });
@@ -505,41 +505,47 @@ function renderPOSGridKasir() {
         return;
     }
 
-    grid.innerHTML = filtered.map(b => {
-        const isHabis = b.stok_saat_ini <= 0;
-        const isLowStock = b.stok_saat_ini > 0 && b.stok_saat_ini <= posMinStok;
-        const hargaAsli = b.harga["Regular"] || 0;
-        let hargaAktif = hargaAsli;
-        
-        // Selalu tampilkan harga normal di card, diskon hanya muncul di keranjang
-        const showCoret = false;
-        
-        let badgeClass = "safe";
-        if (isHabis) badgeClass = "danger";
-        else if (isLowStock) badgeClass = "warning";
-        
-        return `
-        <div class="kasir-product-card">
-            <div class="badge-stock ${badgeClass}">
-                ${isHabis ? "HABIS" : "STOK: " + b.stok_saat_ini}
-            </div>
-            <div class="img-area">
-                  ${b.gambar ? `<img src="${b.gambar}" onerror="this.onerror=null; this.outerHTML='<i class=\\'bx bx-package\\'></i>';">` : `<i class="bx bx-package"></i>`}
-            </div>
-            <div class="k-sku">${b.id_barang || b.barcode || ""}</div>
-            <div class="k-name" title="${b.nama_barang}">${b.nama_barang}</div>
-            <div class="k-price-row">
-                <div style="display:flex; flex-direction:column;">
-                    ${showCoret ? `<span class="k-price-coret">${formatRupiah(hargaAsli)}</span>` : ""}
-                    <span class="k-price-active">${formatRupiah(hargaAktif)}</span>
+    try {
+        grid.innerHTML = filtered.map(b => {
+            const stok = parseInt(b.stok_saat_ini) || 0;
+            const isDanger = stok <= 0;
+            const isWarning = stok > 0 && stok <= posMinStok;
+            const hargaAsli = b.harga["Regular"] || 0;
+            let hargaAktif = hargaAsli;
+            
+            const showCoret = false;
+            
+            let badgeClass = "safe";
+            if (isDanger) badgeClass = "danger";
+            else if (isWarning) badgeClass = "warning";
+            
+            return `
+            <div class="kasir-product-card" onclick="addToCart('${b.id_barang}')">
+                <div class="badge-stock ${badgeClass}">
+                    STOK: ${stok}
                 </div>
-                <button class="k-btn-add ${isHabis ? "disabled" : ""}" onclick="${isHabis ? "" : `addToCart('${b.id_barang}')`}">
-                    <i class="bx bx-plus"></i>
-                </button>
+                <div class="img-area">
+                      ${b.gambar ? `<img src="${b.gambar}" onerror="this.onerror=null; this.outerHTML='<i class=\\'bx bx-package\\'></i>';">` : `<i class='bx bx-package'></i>`}
+                </div>
+                <div class="k-card-content">
+                    <div class="k-sku">${b.id_barang || b.barcode || ""}</div>
+                    <div class="k-name" title="${b.nama_barang}">${b.nama_barang}</div>
+                    <div class="k-price-row">
+                        <div style="display:flex; flex-direction:column;">
+                            ${showCoret ? `<span class="k-price-coret">${formatRupiah(hargaAsli)}</span>` : ""}
+                            <span class="k-price-active">${formatRupiah(hargaAktif)}</span>
+                        </div>
+                        <button class="k-btn-add" onclick="event.stopPropagation(); addToCart('${b.id_barang}')">
+                            <i class="bx bx-plus"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        `;
-    }).join("");
+            `;
+        }).join("");
+    } catch (renderError) {
+        grid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Error Render HTML</b><br><span style='font-size:12px; color:var(--text-muted);'>${renderError.message}</span></div>`;
+    }
 }
 
 function updateCartUIKasir() {
@@ -985,8 +991,8 @@ function calcAdminKembalian() {
 }
 
 window.resetPenjualan = function() {
-    cart = [];
-    currentCategory = "Semua";
+    posCart = [];
+    currentPosFilter = "Semua";
     currentKasirCategory = "Semua";
     document.querySelectorAll('.cat-chip, .kasir-cat-chip').forEach(btn => {
         if(btn.textContent.trim() === "Semua") btn.classList.add('active');
