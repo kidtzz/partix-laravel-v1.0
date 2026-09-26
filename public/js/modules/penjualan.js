@@ -1,6 +1,7 @@
 let posCart = [];
 let masterBarangPOS = [];
 let posMinStok = 5; // Dynamic minimum stock
+let kasirProductLimit = 25;
 
 
 function formatRupiah(amount) {
@@ -469,6 +470,7 @@ function filterCategoryKasir(category) {
     document.querySelectorAll(".kasir-cat-chip").forEach(btn => btn.classList.remove("active"));
     event.target.classList.add("active");
     currentKasirCategory = category;
+    kasirProductLimit = 25; // Reset limit when category changes
     renderPOSGridKasir();
 }
 
@@ -504,9 +506,13 @@ function renderPOSGridKasir() {
         grid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:#9ca3af; font-weight:600;">Produk tidak ditemukan</div>`;
         return;
     }
+    
+    // Apply limit
+    const isLimited = filtered.length > kasirProductLimit;
+    const paginated = isLimited ? filtered.slice(0, kasirProductLimit) : filtered;
 
     try {
-        grid.innerHTML = filtered.map(b => {
+        grid.innerHTML = paginated.map(b => {
             const stok = parseInt(b.stok_saat_ini) || 0;
             const isDanger = stok <= 0;
             const isWarning = stok > 0 && stok <= posMinStok;
@@ -543,9 +549,24 @@ function renderPOSGridKasir() {
             </div>
             `;
         }).join("");
+        
+        if (isLimited) {
+            grid.innerHTML += `
+            <div style="grid-column: 1/-1; text-align: center; padding: 24px 16px;">
+                <button onclick="loadMoreKasirProducts()" style="background: white; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 13px;">
+                    Tampilkan Lebih Banyak (${filtered.length - kasirProductLimit} lagi) <i class='bx bx-chevron-down'></i>
+                </button>
+            </div>
+            `;
+        }
     } catch (renderError) {
         grid.innerHTML = `<div style="padding:40px; text-align:center; grid-column: 1/-1; color:var(--danger-color);"><i class='bx bx-error-circle' style='font-size:32px; margin-bottom:8px;'></i><br><b>Error Render HTML</b><br><span style='font-size:12px; color:var(--text-muted);'>${renderError.message}</span></div>`;
     }
+}
+
+function loadMoreKasirProducts() {
+    kasirProductLimit += 25;
+    renderPOSGridKasir();
 }
 
 function updateCartUIKasir() {
@@ -564,12 +585,19 @@ function clearCartKasir() {
 function openModalBatal() {
     if (posCart.length === 0) return;
     const modal = document.getElementById('kasirBatalModal');
-    if (modal) modal.style.display = 'flex';
+    if (modal) {
+        document.body.appendChild(modal);
+        modal.style.display = 'flex';
+        document.body.style.overflow = "hidden";
+    }
 }
 
 function closeModalBatal() {
     const modal = document.getElementById('kasirBatalModal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    document.body.style.overflow = "";
 }
 
 function executeBatalKasir() {
@@ -608,9 +636,7 @@ function renderCartKasir() {
             const sub = hargaSatuan * item.qty;
             return `
             <div class="k-cart-item">
-                <div class="k-cart-qty-box" onclick="promptKasirQty('${item.id_barang}', ${item.qty})" title="Ubah Jumlah">
-                    ${item.qty}x
-                </div>
+                <input type="number" class="kasir-qty-input" value="${item.qty}" min="1" max="${item.stok_maksimal}" onchange="updateQtyDirectKasir('${item.id_barang}', this.value)" title="Ubah Jumlah (Maks: ${item.stok_maksimal})">
                 <div class="k-cart-info">
                     <div class="k-cart-name">${item.nama_barang}</div>
                     <div class="k-cart-unit">${formatRupiah(hargaSatuan)} / unit</div>
@@ -628,44 +654,81 @@ function renderCartKasir() {
     const subtotalRaw = posCart.reduce((sum, item) => sum + ((item.harga["Regular"] || 0) * item.qty), 0);
     const subtotalReal = posCart.reduce((sum, item) => sum + ((item.harga[tipeHarga] || 0) * item.qty), 0);
     const diskonPromo = subtotalRaw - subtotalReal;
-    const potonganManual = Number(document.getElementById("potonganKasir")?.value) || 0;
+    const potonganManual = getCleanNumberVal("potonganKasir");
     const grandTotal = Math.max(0, subtotalReal - potonganManual);
     
-    document.getElementById("kSumSubtotal").textContent = formatRupiah(subtotalRaw);
-    document.getElementById("kSumDiskon").textContent = "- " + formatRupiah(diskonPromo);
-    document.getElementById("kSumPotongan").textContent = "- " + formatRupiah(potonganManual);
-    document.getElementById("kSumGrandTotal").textContent = formatRupiah(grandTotal);
+    if (document.getElementById("kSumSubtotal")) document.getElementById("kSumSubtotal").textContent = formatRupiah(subtotalRaw);
+    if (document.getElementById("kSumDiskon")) document.getElementById("kSumDiskon").textContent = "- " + formatRupiah(diskonPromo);
+    if (document.getElementById("kSumPotongan")) document.getElementById("kSumPotongan").textContent = "- " + formatRupiah(potonganManual);
+    if (document.getElementById("kSumGrandTotal")) document.getElementById("kSumGrandTotal").textContent = formatRupiah(grandTotal);
+    if (document.getElementById("kSumGrandTotalSidebar")) document.getElementById("kSumGrandTotalSidebar").textContent = formatRupiah(grandTotal);
+
+    // Update Quick Cash buttons if the modal is currently open and active
+    const cashModal = document.getElementById("kasirCashModal");
+    const method = document.getElementById("metodeBayarKasir")?.value || "Cash";
+    if (cashModal && cashModal.classList.contains("active") && (method === "Cash" || method === "Mixed")) {
+        generateKasirQuickCash(grandTotal);
+    }
 }
 
-function promptKasirQty(id_barang, oldQty) {
-    const res = prompt("Masukkan jumlah barang (Qty):", oldQty);
-    if (res !== null) {
-        const val = parseInt(res);
-        if (!isNaN(val) && val > 0) {
-            const item = posCart.find(i => i.id_barang === id_barang);
-            if (item) {
-                if (val > item.stok_maksimal) {
-                    showToast(`Maksimal stok tercapai (${item.stok_maksimal})`, "error");
-                    item.qty = item.stok_maksimal;
-                } else {
-                    item.qty = val;
-                }
-                renderCartKasir();
+function updateQtyDirectKasir(id_barang, newQtyStr) {
+    const val = parseInt(newQtyStr);
+    if (!isNaN(val) && val > 0) {
+        const item = posCart.find(i => i.id_barang === id_barang);
+        if (item) {
+            if (val > item.stok_maksimal) {
+                showToast(`Maksimal stok tercapai (${item.stok_maksimal})`, "error");
+                item.qty = item.stok_maksimal;
+            } else {
+                item.qty = val;
             }
+            renderCartKasir();
         }
+    } else if (val === 0) {
+        updateQty(id_barang, -999);
+    } else {
+        renderCartKasir();
     }
 }
 
 function selectPaymentKasir(method) {
     document.querySelectorAll(".pay-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelector(`.pay-btn[data-method="\${method}"]`).classList.add("active");
+    const btn = document.querySelector(`.pay-btn[data-method="${method}"]`);
+    if (btn) btn.classList.add("active");
     document.getElementById("metodeBayarKasir").value = method;
+    
+    const cashArea = document.getElementById("kasirCashInputArea");
+    if (cashArea) {
+        if (method === "Cash" || method === "Mixed") {
+            cashArea.style.display = "block";
+            const total = getKasirGrandTotal();
+            generateKasirQuickCash(total);
+        } else {
+            cashArea.style.display = "none";
+            document.getElementById("kasirUangDiterima").value = getKasirGrandTotal().toLocaleString('id-ID');
+        }
+    }
+}
+
+window.formatRupiahInput = function(elm) {
+    let raw = elm.value.replace(/[^0-9]/g, '');
+    if (raw === "") {
+        elm.value = "";
+        return;
+    }
+    elm.value = parseInt(raw, 10).toLocaleString('id-ID');
+}
+
+function getCleanNumberVal(id) {
+    const el = document.getElementById(id);
+    if (!el || !el.value) return 0;
+    return Number(el.value.replace(/\./g, '')) || 0;
 }
 
 function getKasirGrandTotal() {
     const tipeHarga = document.getElementById("tipeHargaKasir")?.value || "Regular";
     const subtotalReal = posCart.reduce((sum, item) => sum + ((item.harga[tipeHarga] || 0) * item.qty), 0);
-    const potonganManual = Number(document.getElementById("potonganKasir")?.value) || 0;
+    const potonganManual = getCleanNumberVal("potonganKasir");
     return Math.max(0, subtotalReal - potonganManual);
 }
 
@@ -674,23 +737,31 @@ function processSelesaikanTransaksi() {
         return showToast("Keranjang kosong!", "error");
     }
     
+    updateCartUIKasir();
+    
     const method = document.getElementById("metodeBayarKasir").value;
     const total = getKasirGrandTotal();
     
-    if (method === "Cash") {
-        document.getElementById("cashModalTotalTagihan").textContent = formatRupiah(total);
+    const modal = document.getElementById("kasirCashModal");
+    if (modal) {
+        document.body.appendChild(modal); // Ensure it sits on top of navbar
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent background scrolling
+    }
+    
+    const cashArea = document.getElementById("kasirCashInputArea");
+    if (method === "Cash" || method === "Mixed") {
+        if (cashArea) cashArea.style.display = "block";
         document.getElementById("kasirUangDiterima").value = "";
         document.getElementById("kasirKembalianStr").textContent = "Rp 0";
         document.getElementById("kasirKembalianStr").style.color = "#10B981";
         
         generateKasirQuickCash(total);
-        
-        document.getElementById("kasirCashModal").classList.add("active");
         setTimeout(() => document.getElementById("kasirUangDiterima").focus(), 100);
     } else {
-        // Non cash => set uang diterima = total tagihan
-        document.getElementById("kasirUangDiterima").value = total;
-        submitKasirCheckout();
+        // Non cash => set uang diterima = total tagihan, hide cash area
+        if (cashArea) cashArea.style.display = "none";
+        document.getElementById("kasirUangDiterima").value = total.toLocaleString('id-ID');
     }
 }
 
@@ -704,28 +775,52 @@ function generateKasirQuickCash(total) {
     btnPas.onclick = () => setKasirCashAmount(total);
     container.appendChild(btnPas);
     
-    const denoms = [50000, 100000, 150000, 200000, 300000, 500000];
-    let added = 0;
-    for (let d of denoms) {
-        if (d > total && added < 2) {
+    if (total > 0) {
+        let possible = [];
+        
+        // Pilih kelipatan berdasarkan besaran total
+        let multipliers = [10000, 20000, 50000, 100000];
+        if (total > 100000) multipliers = [50000, 100000];
+        if (total > 1000000) multipliers = [50000, 100000, 500000];
+        
+        for (let m of multipliers) {
+            let nextM = Math.ceil(total / m) * m;
+            // Hanya masukkan jika nilainya lebih besar dari total dan belum ada di array
+            if (nextM > total && !possible.includes(nextM)) {
+                possible.push(nextM);
+            }
+        }
+        
+        // Urutkan dari yang terkecil ke terbesar
+        possible.sort((a, b) => a - b);
+        let finalDenoms = possible.slice(0, 2);
+        
+        // Fallback jika tidak cukup tombol yang tergenerasi
+        if (finalDenoms.length === 0) {
+            finalDenoms = [total + 50000, total + 100000];
+        } else if (finalDenoms.length === 1) {
+            let nextFallback = finalDenoms[0] + (total > 100000 ? 50000 : 20000);
+            finalDenoms.push(nextFallback);
+        }
+
+        for (let d of finalDenoms) {
             const btn = document.createElement("button");
             btn.className = "qcb";
             btn.textContent = formatRupiah(d);
             btn.onclick = () => setKasirCashAmount(d);
             container.appendChild(btn);
-            added++;
         }
     }
 }
 
 function setKasirCashAmount(amount) {
-    document.getElementById("kasirUangDiterima").value = amount;
+    document.getElementById("kasirUangDiterima").value = amount.toLocaleString('id-ID');
     calcCashKembalian();
 }
 
 function calcCashKembalian() {
     const total = getKasirGrandTotal();
-    const uang = Number(document.getElementById("kasirUangDiterima").value) || 0;
+    const uang = getCleanNumberVal("kasirUangDiterima");
     const sisa = uang - total;
     
     const kStr = document.getElementById("kasirKembalianStr");
@@ -739,12 +834,16 @@ function calcCashKembalian() {
 }
 
 function closeCashModal() {
-    document.getElementById("kasirCashModal").classList.remove("active");
+    const modal = document.getElementById("kasirCashModal");
+    if (modal) {
+        modal.classList.remove("active");
+    }
+    document.body.style.overflow = ""; // Restore scrolling
 }
 
 function submitKasirCheckout() {
     const total = getKasirGrandTotal();
-    const uangDiterima = Number(document.getElementById("kasirUangDiterima").value) || 0;
+    const uangDiterima = getCleanNumberVal("kasirUangDiterima");
     const method = document.getElementById("metodeBayarKasir").value;
     
     if (method === "Cash" && uangDiterima < total) {
@@ -752,7 +851,7 @@ function submitKasirCheckout() {
     }
     
     const tipeHarga = document.getElementById("tipeHargaKasir").value;
-    const potonganManual = Number(document.getElementById("potonganKasir").value) || 0;
+    const potonganManual = getCleanNumberVal("potonganKasir");
     
     // show loading state on confirm button
     const btnConfirm = document.querySelector(".btn-confirm");
@@ -782,6 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const kSearch = document.getElementById("kasirPosSearch");
     if (kSearch) {
         kSearch.addEventListener("input", function() {
+            kasirProductLimit = 25; // Reset limit on search
             renderPOSGridKasir();
         });
         
@@ -994,6 +1094,7 @@ window.resetPenjualan = function() {
     posCart = [];
     currentPosFilter = "Semua";
     currentKasirCategory = "Semua";
+    kasirProductLimit = 25; // Reset limit
     document.querySelectorAll('.cat-chip, .kasir-cat-chip').forEach(btn => {
         if(btn.textContent.trim() === "Semua") btn.classList.add('active');
         else btn.classList.remove('active');

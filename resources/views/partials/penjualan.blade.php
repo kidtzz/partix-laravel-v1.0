@@ -185,58 +185,15 @@
                     </div>
                 </div>
 
-                <div class="kasir-checkout-form">
-                    <div class="form-group">
-                        <label><i class="bx bx-user"></i> Pilih Pelanggan</label>
-                        <select class="kasir-input-gray" id="tipeHargaKasir" onchange="updateCartUIKasir()">
-                            <option value="Regular" selected>Reguler (Umum)</option>
-                            <option id="optHrgMemberKasir" value="Member">Member</option>
-                            <option id="optHrgLanggananKasir" value="Langganan">Langganan</option>
-                            <option id="optHrgBengkelKasir" value="Bengkel">Bengkel / Reseller</option>
-                            <option id="optHrgTemanKasir" value="Teman">Teman / Kenalan</option>
-                            <option id="optHrgGrosirKasir" value="Grosir">Grosir / VIP</option>
-                        </select>
-                    </div>
-                    <div class="form-group mt-3">
-                        <label><i class="bx bx-tag"></i> Potongan Manual (Rp)</label>
-                        <div class="kasir-input-group">
-                            <span class="prefix">Rp</span>
-                            <input type="number" class="kasir-input-gray pl-8" id="potonganKasir" placeholder="0" oninput="updateCartUIKasir()">
-                        </div>
+                <div class="kasir-summary-box" style="margin-top: auto; border-radius: 0; border-left: none; border-right: none; border-bottom: none; margin: 0; padding: 12px 16px;">
+                    <div class="sum-row grand-total" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
+                        <span style="font-size: clamp(12px, 1vw + 4px, 15px); font-weight: 700; color: #4B5563;">TOTAL</span>
+                        <strong class="text-primary-huge" id="kSumGrandTotalSidebar" style="font-size: clamp(16px, 1.2vw + 8px, 22px) !important;">Rp 0</strong>
                     </div>
                 </div>
 
-                <div class="kasir-summary-box">
-                    <div class="sum-row">
-                        <span>Subtotal</span>
-                        <strong id="kSumSubtotal">Rp 0</strong>
-                    </div>
-                    <div class="sum-row">
-                        <span>Diskon (Promo)</span>
-                        <strong class="text-danger" id="kSumDiskon">- Rp 0</strong>
-                    </div>
-                    <div class="sum-row">
-                        <span>Potongan Manual</span>
-                        <strong class="text-danger" id="kSumPotongan">- Rp 0</strong>
-                    </div>
-                    <div class="dashed-divider"></div>
-                    <div class="sum-row grand-total">
-                        <span>GRAND TOTAL</span>
-                        <strong class="text-primary-huge" id="kSumGrandTotal">Rp 0</strong>
-                    </div>
-                </div>
-
-                <div class="kasir-payment-methods">
-                    <label>Metode Pembayaran</label>
-                    <div class="payment-grid">
-                        <button class="pay-btn active" data-method="Cash" onclick="selectPaymentKasir('Cash')"><i class="bx bx-money"></i> Cash</button>
-                        <button class="pay-btn" data-method="QRIS" onclick="selectPaymentKasir('QRIS')"><i class="bx bx-qr-scan"></i> QRIS</button>
-                        <button class="pay-btn" data-method="Transfer" onclick="selectPaymentKasir('Transfer')"><i class="bx bxs-bank"></i> Transfer</button>
-                        <button class="pay-btn" data-method="Mixed" onclick="selectPaymentKasir('Mixed')"><i class="bx bx-wallet"></i> Mixed</button>
-                    </div>
-                    <input type="hidden" id="metodeBayarKasir" value="Cash">
-                    
-                    <button class="btn-kasir-selesaikan" onclick="processSelesaikanTransaksi()" style="margin-top: 12px;">
+                <div class="kasir-payment-methods" style="padding: 0 16px 12px 16px;">
+                    <button class="btn-kasir-selesaikan" onclick="processSelesaikanTransaksi()">
                         BAYAR SEKARANG
                     </button>
                     <div style="display: flex; gap: 12px; margin-top: 12px;">
@@ -247,38 +204,110 @@
             </div>
         </div>
         
-        <!-- Cash Popup Modal -->
-        <div class="kasir-cash-modal-overlay" id="kasirCashModal">
-            <div class="kasir-cash-modal">
-                <div class="cash-modal-header">
-                    <h3>Penerimaan Tunai</h3>
-                    <button onclick="closeCashModal()" class="close-btn"><i class="bx bx-x"></i></button>
+        <!-- Checkout Popup Modal (Landscape / Portrait on Mobile) -->
+        <div class="kasir-cash-modal-overlay" id="kasirCashModal" style="z-index: 9999999 !important; backdrop-filter: blur(8px); background: rgba(0,0,0,0.65);">
+            <div class="kasir-cash-modal" style="width: 850px; max-width: 95vw; display: flex; flex-direction: column; border-radius: 12px;">
+                <div class="cash-modal-header" style="padding: 12px 20px; background: #F9FAFB; border-bottom: 1px solid #E5E7EB;">
+                    <h3 style="font-size: 16px; display: flex; align-items: center; gap: 8px;"><i class='bx bx-credit-card' style="color: #2563EB; font-size: 20px;"></i> Detail Pembayaran</h3>
+                    <button onclick="closeCashModal()" class="close-btn" style="font-size: 24px;"><i class="bx bx-x"></i></button>
                 </div>
-                <div class="cash-modal-body">
-                    <p class="tagihan-label">Total Tagihan:</p>
-                    <h2 class="tagihan-amount" id="cashModalTotalTagihan">Rp 0</h2>
+                
+                <div class="cash-modal-body kasir-modal-split" style="padding: 20px; display: flex; gap: 24px; max-height: 80vh; overflow-y: auto;">
                     
-                    <label style="margin-top:20px;display:block;font-size:14px;color:#6b7280;margin-bottom:8px;">Uang Diterima (Rp)</label>
-                    <input type="number" id="kasirUangDiterima" class="input-uang-diterima" placeholder="0" oninput="calcCashKembalian()">
-                    
-                    <div class="quick-cash-grid" id="kasirQuickCashGrid">
-                        <!-- injected by JS -->
+                    <!-- LEFT COLUMN -->
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                        
+                        <!-- Form Pelanggan & Potongan -->
+                        <div class="kasir-checkout-form" style="padding: 0; margin: 0;">
+                            <div class="form-group">
+                                <label style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; display: block;"><i class="bx bx-user"></i> Pilih Pelanggan</label>
+                                <select class="kasir-input-gray" id="tipeHargaKasir" onchange="updateCartUIKasir()" style="padding: 8px 10px; font-size: 13px;">
+                                    <option value="Regular" selected>Reguler (Umum)</option>
+                                    <option id="optHrgMemberKasir" value="Member">Member</option>
+                                    <option id="optHrgLanggananKasir" value="Langganan">Langganan</option>
+                                    <option id="optHrgBengkelKasir" value="Bengkel">Bengkel / Reseller</option>
+                                    <option id="optHrgTemanKasir" value="Teman">Teman / Kenalan</option>
+                                    <option id="optHrgGrosirKasir" value="Grosir">Grosir / VIP</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-top: 12px;">
+                                <label style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; display: block;"><i class="bx bx-tag"></i> Potongan Manual (Rp)</label>
+                                <div class="kasir-input-group">
+                                    <span class="prefix" style="font-size: 13px; left: 10px; top: 8px;">Rp</span>
+                                    <input type="text" class="kasir-input-gray" id="potonganKasir" placeholder="0" oninput="formatRupiahInput(this); updateCartUIKasir()" style="padding: 8px 10px 8px 36px; font-size: 14px; font-weight: 700;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metode Pembayaran -->
+                        <div class="kasir-payment-methods" style="padding: 0; margin: 0;">
+                            <label style="font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; display: block;">Metode Pembayaran</label>
+                            <div class="payment-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="pay-btn active" data-method="Cash" onclick="selectPaymentKasir('Cash')" style="padding: 10px; font-size: 13px;"><i class="bx bx-money" style="font-size: 16px;"></i> Cash</button>
+                                <button class="pay-btn" data-method="QRIS" onclick="selectPaymentKasir('QRIS')" style="padding: 10px; font-size: 13px;"><i class="bx bx-qr-scan" style="font-size: 16px;"></i> QRIS</button>
+                                <button class="pay-btn" data-method="Transfer" onclick="selectPaymentKasir('Transfer')" style="padding: 10px; font-size: 13px;"><i class="bx bxs-bank" style="font-size: 16px;"></i> Transfer</button>
+                                <button class="pay-btn" data-method="Mixed" onclick="selectPaymentKasir('Mixed')" style="padding: 10px; font-size: 13px;"><i class="bx bx-wallet" style="font-size: 16px;"></i> Mixed</button>
+                            </div>
+                            <input type="hidden" id="metodeBayarKasir" value="Cash">
+                        </div>
+
                     </div>
-                    
-                    <div class="kembalian-box mt-3">
-                        <span>Kembalian</span>
-                        <h3 id="kasirKembalianStr">Rp 0</h3>
+
+                    <!-- DIVIDER -->
+                    <div class="kasir-modal-divider" style="width: 1px; background: #E5E7EB;"></div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div style="flex: 1.2; display: flex; flex-direction: column;">
+                        
+                        <!-- Ringkasan -->
+                        <div class="kasir-summary-box" style="margin: 0 0 16px 0; background: #F9FAFB; padding: 16px; border-radius: 10px;">
+                            <div class="sum-row" style="font-size: 13px;">
+                                <span>Subtotal</span>
+                                <strong id="kSumSubtotal">Rp 0</strong>
+                            </div>
+                            <div class="sum-row" style="font-size: 13px;">
+                                <span>Diskon (Promo)</span>
+                                <strong class="text-danger" id="kSumDiskon">- Rp 0</strong>
+                            </div>
+                            <div class="sum-row" style="font-size: 13px;">
+                                <span>Potongan Manual</span>
+                                <strong class="text-danger" id="kSumPotongan">- Rp 0</strong>
+                            </div>
+                            <div class="dashed-divider" style="margin: 12px 0;"></div>
+                            <div class="sum-row grand-total" style="margin-top: 10px;">
+                                <span style="font-size: 13px; color: #6B7280;">TOTAL TAGIHAN</span>
+                                <strong class="text-primary-huge" id="kSumGrandTotal" style="font-size: 24px !important;">Rp 0</strong>
+                            </div>
+                        </div>
+
+                        <!-- Area Input Uang -->
+                        <div id="kasirCashInputArea" style="flex: 1; display: flex; flex-direction: column;">
+                            <label style="display:block;font-size:13px;color:#374151;margin-bottom:6px;font-weight:700;">Uang Diterima (Rp)</label>
+                            <input type="text" id="kasirUangDiterima" class="input-uang-diterima" placeholder="0" oninput="formatRupiahInput(this); calcCashKembalian()" style="font-size: 20px; padding: 10px 12px; height: auto;">
+                            
+                            <div class="quick-cash-grid" id="kasirQuickCashGrid" style="grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; margin-bottom: 12px;">
+                                <!-- injected by JS -->
+                            </div>
+                            
+                            <div class="kembalian-box mt-3" style="margin-top: auto; padding: 16px; background: #ECFDF5; border-color: #34D399; border-width: 2px;">
+                                <span style="font-size: 14px;">Kembalian</span>
+                                <h3 id="kasirKembalianStr" style="font-size: 24px;">Rp 0</h3>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="cash-modal-footer">
-                    <button class="btn-cancel" onclick="closeCashModal()">Batal</button>
-                    <button class="btn-confirm" onclick="submitKasirCheckout()">Konfirmasi & Cetak</button>
+
+                <!-- FOOTER -->
+                <div class="cash-modal-footer" style="padding: 16px 20px; gap: 12px; background: #F9FAFB; border-top: 1px solid #E5E7EB;">
+                    <button class="btn-cancel" onclick="closeCashModal()" style="padding: 10px; font-size: 14px; flex: 1;">Kembali</button>
+                    <button class="btn-confirm" onclick="submitKasirCheckout()" style="padding: 10px; font-size: 14px; flex: 2; display: flex; align-items: center; justify-content: center; gap: 8px;"> Konfirmasi & Cetak</button>
                 </div>
             </div>
         </div>
 
         <!-- Batal Popup Modal -->
-        <div class="kasir-cash-modal-overlay" id="kasirBatalModal">
+        <div class="kasir-cash-modal-overlay" id="kasirBatalModal" style="z-index: 9999999 !important; backdrop-filter: blur(8px); background: rgba(0,0,0,0.65);">
             <div class="kasir-cash-modal">
                 <div class="cash-modal-header">
                     <h3>Konfirmasi Batal</h3>

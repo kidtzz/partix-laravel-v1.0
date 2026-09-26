@@ -1088,26 +1088,27 @@ function cetakUlangTransaksi(noInvoice) {
     document.getElementById('detailTransaksiBody').innerHTML = `<div style="text-align:center; padding: 20px;"><i class='bx bx-loader-alt bx-spin' style='font-size: 20px;'></i><br>Memuat...</div>`;
     BackendAPI.call('cetakInvoice', [noInvoice]).then(res => {
         let html = `
-                <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 12px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 14px;">
                     <div>
                         <div style="font-weight:600; color: var(--text-main); margin-bottom: 4px;">No Invoice: ${res.no_invoice}</div>
-                        <div>${new Date(res.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</div>
+                        <div style="color: var(--text-muted);">${new Date(res.tanggal).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}</div>
                     </div>
                     <div style="text-align:right;">
                         <div style="margin-bottom: 4px;">Kasir: ${res.kasir}</div>
-                        <div>Metode: ${res.metode_bayar || '-'}</div>
+                        <div style="color: var(--text-muted);">Metode: ${res.metode_bayar || '-'}</div>
                     </div>
                 </div>
-                <table style="width:100%; border-collapse:collapse; font-size: 12px;">
-                    <thead style="background:#f1f5f9; text-align:left; border-radius: 8px;">
-                        <tr>
-                            <th style="padding:12px; font-weight: 600; color: var(--text-main);">Barang</th>
-                            <th style="padding:12px; text-align:center; font-weight: 600; color: var(--text-main);">Qty</th>
-                            <th style="padding:12px; text-align:right; font-weight: 600; color: var(--text-main);">Harga</th>
-                            <th style="padding:12px; text-align:right; font-weight: 600; color: var(--text-main);">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div style="width: 100%; overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <table style="width:100%; border-collapse:collapse; font-size: 14px; min-width: 500px;">
+                        <thead style="background:#f1f5f9; text-align:left;">
+                            <tr>
+                                <th style="padding:12px; font-weight: 600; color: var(--text-main);">Barang</th>
+                                <th style="padding:12px; text-align:center; font-weight: 600; color: var(--text-main);">Qty</th>
+                                <th style="padding:12px; text-align:right; font-weight: 600; color: var(--text-main);">Harga</th>
+                                <th style="padding:12px; text-align:right; font-weight: 600; color: var(--text-main);">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             `;
         res.items.forEach(d => {
             html += `<tr>
@@ -1118,9 +1119,10 @@ function cetakUlangTransaksi(noInvoice) {
                 </tr>`;
         });
         html += `
-                    </tbody>
-                </table>
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #e2e8f0; font-size: 12px;">
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 2px dashed #e2e8f0; font-size: 14px; max-width: 300px; margin-left: auto;">
                     <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
                         <span>Subtotal</span>
                         <span>Rp ${Number(res.subtotal).toLocaleString('id-ID')}</span>
@@ -1130,8 +1132,8 @@ function cetakUlangTransaksi(noInvoice) {
                         <span>Potongan</span>
                         <span style="color: var(--danger-color);">- Rp ${Number(res.potongan).toLocaleString('id-ID')}</span>
                     </div>` : ''}
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
-                        <strong style="color: var(--text-main);">Total</strong>
+                    <div style="display:flex; justify-content:space-between; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 16px;">
+                        <strong style="color: var(--text-main);">Total Tagihan</strong>
                         <strong style="color: var(--success-color);">Rp ${Number(res.total).toLocaleString('id-ID')}</strong>
                     </div>
                 </div>

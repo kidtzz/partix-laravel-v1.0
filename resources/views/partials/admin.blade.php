@@ -236,7 +236,7 @@
 </x-modal>
 
 <!-- Modal Detail Transaksi -->
-<x-modal id="modalDetailTransaksi" title="Detail Transaksi">
+<x-modal id="modalDetailTransaksi" title="Detail Transaksi" maxWidth="850px">
     <div id="detailTransaksiBody">
         Memuat detail...
     </div>
